@@ -1,0 +1,17 @@
+{
+  "name": "agroferia-web",
+  "type": "module",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@fontsource-variable/bitter": "^5.3.0",
+    "@fontsource-variable/figtree": "^5.3.0",
+    "@fontsource/barlow-condensed": "^5.3.0",
+    "astro": "^7.4.1"
+  }
+}

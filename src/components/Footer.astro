@@ -1,0 +1,159 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/marca/logo-agroferia.png';
+import Icon from './Icon.astro';
+import { categorias } from '../data/productos';
+---
+
+<footer class="footer">
+  <div class="container">
+    <div class="footer__top">
+      <div class="footer__brand">
+        <span class="footer__logo"><Image src={logo} alt="Agroferia, Asociación Agropecuaria La Feria" width={140} height={132} /></span>
+        <p class="footer__motto">Amor y abundancia.</p>
+        <p class="footer__sub">
+          Asociación Agropecuaria La Feria. 30 familias campesinas del corregimiento La Feria, Pradera, Valle del Cauca.
+        </p>
+      </div>
+
+      <nav class="footer__col" aria-label="Productos">
+        <p class="footer__head">Productos</p>
+        <ul>
+          {
+            categorias.map((c) => (
+              <li>
+                <a href={c.key === 'pal-arranque' ? '/pal-arranque' : `/productos#${c.key}`}>{c.nombre}</a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+
+      <nav class="footer__col" aria-label="Agroferia">
+        <p class="footer__head">Agroferia</p>
+        <ul>
+          <li><a href="/nosotros">Nuestra historia</a></li>
+          <li><a href="/nosotros#territorio">El territorio</a></li>
+          <li><a href="/nosotros#como-nos-organizamos">Cómo nos organizamos</a></li>
+          <li><a href="/pal-arranque#ruta">Ruta para ciclistas</a></li>
+        </ul>
+      </nav>
+
+      <div class="footer__col">
+        <p class="footer__head">Visítanos</p>
+        <ul class="footer__contact">
+          <li>
+            <Icon name="map-pin" size={18} />
+            <span>Centro de Acopio, corregimiento La Feria. 12 km de Pradera, Valle del Cauca.</span>
+          </li>
+          <li>
+            <Icon name="message" size={18} />
+            <!-- PENDIENTE: número de WhatsApp real -->
+            <span>WhatsApp: por definir</span>
+          </li>
+          <li>
+            <Icon name="mail" size={18} />
+            <!-- PENDIENTE: correo real -->
+            <span>Correo: por definir</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer__bottom">
+      <p>© {new Date().getFullYear()} AGROFERIA · Asociación Agropecuaria La Feria. Entidad sin ánimo de lucro.</p>
+      <p>Versión base del sitio. Imágenes y datos en construcción.</p>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    margin-top: clamp(48px, 8vw, 96px);
+    padding: clamp(56px, 7vw, 88px) 0 28px;
+    background: var(--green-deep);
+    color: var(--ink-on-dark-2);
+  }
+  .footer__top {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 1.3fr;
+    gap: 40px;
+  }
+  .footer__logo {
+    display: grid;
+    place-items: center;
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: #fff;
+  }
+  .footer__logo img {
+    width: 78px;
+  }
+  .footer__motto {
+    margin-top: 22px;
+    color: var(--sun);
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+  .footer__sub {
+    margin-top: 8px;
+    max-width: 34ch;
+    font-size: 0.95rem;
+  }
+  .footer__head {
+    margin-bottom: 14px;
+    color: #fff;
+    font-weight: 600;
+  }
+  .footer ul {
+    display: grid;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0.95rem;
+  }
+  .footer a {
+    color: var(--ink-on-dark-2);
+    text-decoration: none;
+  }
+  .footer a:hover {
+    color: #fff;
+    text-decoration: underline;
+  }
+  .footer__contact li {
+    display: grid;
+    grid-template-columns: 18px 1fr;
+    gap: 10px;
+    align-items: start;
+  }
+  .footer__contact :global(svg) {
+    margin-top: 3px;
+    color: var(--sun);
+  }
+  .footer__bottom {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 8px 24px;
+    margin-top: 56px;
+    padding-top: 22px;
+    border-top: 1px solid rgb(255 255 255 / 0.14);
+    font-size: 0.85rem;
+  }
+  @media (max-width: 900px) {
+    .footer__top {
+      grid-template-columns: 1fr 1fr;
+    }
+    .footer__brand {
+      grid-column: 1 / -1;
+    }
+  }
+  @media (max-width: 520px) {
+    .footer__top {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,538 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/marca/logo-agroferia.png';
+import Icon from './Icon.astro';
+import { categorias, productosDe, productoUrl } from '../data/productos';
+
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const is = (href: string) => (href === '/' ? path === '/' : path.startsWith(href));
+
+const links = [
+  { href: '/', label: 'Inicio' },
+  { href: '/productos', label: 'Productos', mega: true },
+  { href: '/pal-arranque', label: "Pal' Arranque" },
+  { href: '/nosotros', label: 'Nosotros' },
+];
+---
+
+<header class="site-header" data-header>
+  <div class="container site-header__inner">
+    <a class="brand" href="/" aria-label="Agroferia, ir al inicio">
+      <Image src={logo} alt="" width={120} height={113} loading="eager" />
+    </a>
+
+    <nav class="nav" aria-label="Principal">
+      <ul class="nav__list">
+        {
+          links.map((l) =>
+            l.mega ? (
+              <li class="nav__item nav__item--mega" data-mega>
+                <button
+                  class="nav__link"
+                  type="button"
+                  aria-expanded="false"
+                  aria-controls="mega-productos"
+                  aria-current={is(l.href) ? 'page' : undefined}
+                  data-mega-toggle
+                >
+                  {l.label}
+                  <Icon name="chevron-down" size={16} class="nav__chev" />
+                </button>
+                <div class="mega" id="mega-productos" data-mega-panel hidden>
+                  <div class="mega__grid">
+                    {categorias.map((c) => (
+                      <div class:list={['mega__col', { 'mega__col--pa': c.key === 'pal-arranque' }]}>
+                        <a class="mega__title" href={c.key === 'pal-arranque' ? '/pal-arranque' : `/productos#${c.key}`}>
+                          {c.nombre}
+                        </a>
+                        <ul>
+                          {productosDe(c.key).map((p) => (
+                            <li>
+                              <a href={productoUrl(p)}>{p.nombre}</a>
+                            </li>
+                          ))}
+                          {c.key === 'pal-arranque' && (
+                            <li>
+                              <a class="mega__route" href="/pal-arranque#ruta">
+                                <Icon name="route" size={16} />
+                                Descripción de ruta
+                              </a>
+                            </li>
+                          )}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                  <a class="mega__all" href="/productos">
+                    Ver todos los productos <Icon name="arrow-right" size={16} />
+                  </a>
+                </div>
+              </li>
+            ) : (
+              <li class="nav__item">
+                <a class="nav__link" href={l.href} aria-current={is(l.href) ? 'page' : undefined}>
+                  {l.label}
+                </a>
+              </li>
+            ),
+          )
+        }
+      </ul>
+
+      <a class="nav__cta" href="/nosotros#visitanos">
+        <Icon name="map-pin" size={18} />
+        Visítanos
+      </a>
+
+      <button class="nav__burger" type="button" aria-expanded="false" aria-controls="menu-movil" data-burger>
+        <Icon name="menu" size={22} class="i-open" />
+        <Icon name="close" size={22} class="i-close" />
+        <span class="visually-hidden">Abrir menú</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- Menú móvil -->
+  <div class="mobile" id="menu-movil" data-mobile hidden>
+    <ul class="mobile__list">
+      <li><a href="/" aria-current={is('/') ? 'page' : undefined}>Inicio</a></li>
+      <li>
+        <details>
+          <summary>Productos <Icon name="chevron-down" size={18} /></summary>
+          <div class="mobile__cats">
+            {
+              categorias.map((c) => (
+                <div>
+                  <p class="mobile__cat">{c.nombre}</p>
+                  <ul>
+                    {productosDe(c.key).map((p) => (
+                      <li>
+                        <a href={productoUrl(p)}>{p.nombre}</a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))
+            }
+            <a class="mobile__all" href="/productos">Ver todos los productos</a>
+          </div>
+        </details>
+      </li>
+      <li><a href="/pal-arranque" aria-current={is('/pal-arranque') ? 'page' : undefined}>Pal' Arranque</a></li>
+      <li><a href="/nosotros" aria-current={is('/nosotros') ? 'page' : undefined}>Nosotros</a></li>
+    </ul>
+    <a class="btn" href="/nosotros#visitanos">
+      Visítanos en La Feria
+      <span class="btn__arrow"><Icon name="arrow-right" size={18} /></span>
+    </a>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    padding-top: 14px;
+    pointer-events: none;
+  }
+  .site-header__inner {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    pointer-events: auto;
+  }
+
+  .brand {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    background: #fff;
+    box-shadow: var(--shadow-float);
+  }
+  .brand img {
+    width: 62px;
+    height: auto;
+  }
+
+  .nav {
+    position: relative;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 64px;
+    padding: 8px 8px 8px 20px;
+    border-radius: 999px;
+    background: #fff;
+    box-shadow: var(--shadow-float);
+  }
+  .nav__list {
+    display: flex;
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    flex: 1;
+  }
+  .nav__link {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 10px 16px;
+    border: 0;
+    border-radius: 999px;
+    background: none;
+    color: var(--ink-2);
+    font: 500 0.98rem/1.2 var(--font-body);
+    text-decoration: none;
+    cursor: pointer;
+    transition: color 0.2s ease, background-color 0.2s ease;
+  }
+  .nav__link:hover,
+  .nav__link[aria-expanded='true'] {
+    color: var(--ink);
+    background: var(--paper);
+  }
+  .nav__link[aria-current='page'] {
+    color: var(--ink);
+    font-weight: 600;
+  }
+  .nav__link[aria-current='page']::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: 3px;
+    width: 5px;
+    height: 5px;
+    margin-left: -2.5px;
+    border-radius: 50%;
+    background: var(--field);
+  }
+  .nav__item--mega .nav__link[aria-current='page']::after {
+    margin-left: -10px;
+  }
+  .nav__link :global(.nav__chev) {
+    transition: transform 0.3s var(--ease-out);
+  }
+  .nav__link[aria-expanded='true'] :global(.nav__chev) {
+    transform: rotate(180deg);
+  }
+
+  .nav__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 48px;
+    padding: 0 20px 0 16px;
+    border-radius: 999px;
+    background: var(--green);
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.98rem;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+  }
+  .nav__cta:hover {
+    background: var(--green-hover);
+  }
+
+  /* ---------- Mega menú ---------- */
+  .nav__item--mega {
+    position: static;
+  }
+  .mega {
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 0;
+    right: 0;
+    padding: 30px 32px 22px;
+    border-radius: 22px;
+    background: #fff;
+    box-shadow: 0 24px 60px -24px rgb(9 55 35 / 0.35), 0 2px 8px -2px rgb(9 55 35 / 0.08);
+    transform-origin: top center;
+    animation: mega-in 0.32s var(--ease-out);
+  }
+  @keyframes mega-in {
+    from {
+      opacity: 0;
+      transform: translateY(-6px);
+      clip-path: inset(0 0 30% 0 round 22px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+      clip-path: inset(0 0 0 0 round 22px);
+    }
+  }
+  .mega__grid {
+    display: grid;
+    grid-template-columns: 1fr 1.25fr 1fr 1.2fr 0.9fr;
+    gap: 28px;
+  }
+  .mega__title {
+    display: block;
+    padding-bottom: 10px;
+    margin-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+    color: var(--ink);
+    font-weight: 600;
+    font-size: 1rem;
+    text-decoration: none;
+  }
+  .mega__title:hover {
+    color: var(--green);
+  }
+  .mega__col ul {
+    display: grid;
+    gap: 2px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .mega__col li a {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 0;
+    color: var(--ink-2);
+    font-size: 0.94rem;
+    line-height: 1.35;
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+  .mega__col li a:hover {
+    color: var(--green);
+    text-decoration: underline;
+  }
+  .mega__col--pa {
+    margin: -14px -14px;
+    padding: 14px;
+    border-radius: 14px;
+    background: var(--green-deep);
+  }
+  .mega__col--pa .mega__title {
+    color: var(--sun);
+    border-color: rgb(235 213 104 / 0.3);
+    font-family: var(--font-sport);
+    font-size: 1.2rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+  .mega__col--pa li a {
+    color: var(--ink-on-dark-2);
+  }
+  .mega__col--pa li a:hover {
+    color: #fff;
+  }
+  .mega__col--pa .mega__route {
+    margin-top: 6px;
+    color: var(--sun) !important;
+    font-weight: 600;
+  }
+  .mega__all {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 26px;
+    color: var(--green);
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-decoration: none;
+  }
+  .mega__all:hover {
+    text-decoration: underline;
+  }
+
+  .nav__burger {
+    display: none;
+  }
+  .mobile {
+    display: none;
+  }
+
+  @media (max-width: 960px) {
+    .mega__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (max-width: 860px) {
+    .site-header {
+      padding-top: 10px;
+    }
+    .brand {
+      width: 60px;
+      height: 60px;
+    }
+    .brand img {
+      width: 48px;
+    }
+    .site-header__inner {
+      justify-content: space-between;
+    }
+    .nav {
+      flex: 0 0 auto;
+      min-height: 56px;
+      gap: 6px;
+      padding: 6px;
+    }
+    .nav__list {
+      display: none;
+    }
+    .nav__cta {
+      min-height: 44px;
+      padding: 0 16px 0 12px;
+      font-size: 0.92rem;
+    }
+    .nav__burger {
+      display: grid;
+      place-items: center;
+      width: 44px;
+      height: 44px;
+      border: 0;
+      border-radius: 50%;
+      background: var(--paper);
+      color: var(--ink);
+      cursor: pointer;
+    }
+    .nav__burger :global(.i-close),
+    .nav__burger[aria-expanded='true'] :global(.i-open) {
+      display: none;
+    }
+    .nav__burger[aria-expanded='true'] :global(.i-close) {
+      display: block;
+    }
+
+    .mobile:not([hidden]) {
+      display: block;
+      pointer-events: auto;
+      margin: 10px var(--gutter) 0;
+      padding: 12px 20px 24px;
+      max-height: calc(100dvh - 100px);
+      overflow-y: auto;
+      border-radius: 22px;
+      background: #fff;
+      box-shadow: var(--shadow-float);
+      animation: mega-in 0.3s var(--ease-out);
+    }
+    .mobile__list {
+      margin: 0 0 20px;
+      padding: 0;
+      list-style: none;
+    }
+    .mobile__list > li {
+      border-bottom: 1px solid var(--line);
+    }
+    .mobile__list > li > a,
+    .mobile summary {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 0;
+      color: var(--ink);
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      font-weight: 600;
+      text-decoration: none;
+      list-style: none;
+      cursor: pointer;
+    }
+    .mobile summary::-webkit-details-marker {
+      display: none;
+    }
+    .mobile details[open] summary :global(svg) {
+      transform: rotate(180deg);
+    }
+    .mobile__list a[aria-current='page'] {
+      color: var(--green);
+    }
+    .mobile__cats {
+      display: grid;
+      gap: 18px;
+      padding: 0 0 20px;
+    }
+    .mobile__cat {
+      margin-bottom: 4px;
+      color: var(--ink);
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+    .mobile__cats ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .mobile__cats li a {
+      display: block;
+      padding: 6px 0;
+      color: var(--ink-2);
+      text-decoration: none;
+    }
+    .mobile__all {
+      color: var(--green);
+      font-weight: 600;
+    }
+  }
+
+  @media (max-width: 360px) {
+    .nav__cta {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-header]');
+  const item = root?.querySelector<HTMLElement>('[data-mega]');
+  const toggle = root?.querySelector<HTMLButtonElement>('[data-mega-toggle]');
+  const panel = root?.querySelector<HTMLElement>('[data-mega-panel]');
+
+  if (item && toggle && panel) {
+    let closeTimer: number | undefined;
+    const set = (open: boolean) => {
+      toggle.setAttribute('aria-expanded', String(open));
+      panel.hidden = !open;
+    };
+    toggle.addEventListener('click', () => set(panel.hidden));
+
+    const fine = window.matchMedia('(hover: hover) and (pointer: fine)');
+    item.addEventListener('mouseenter', () => {
+      if (!fine.matches) return;
+      window.clearTimeout(closeTimer);
+      set(true);
+    });
+    item.addEventListener('mouseleave', () => {
+      if (!fine.matches) return;
+      closeTimer = window.setTimeout(() => set(false), 160);
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !panel.hidden) {
+        set(false);
+        toggle.focus();
+      }
+    });
+    document.addEventListener('click', (e) => {
+      if (!item.contains(e.target as Node)) set(false);
+    });
+    item.addEventListener('focusout', (e) => {
+      if (!item.contains(e.relatedTarget as Node)) set(false);
+    });
+  }
+
+  const burger = root?.querySelector<HTMLButtonElement>('[data-burger]');
+  const mobile = root?.querySelector<HTMLElement>('[data-mobile]');
+  if (burger && mobile) {
+    burger.addEventListener('click', () => {
+      const open = mobile.hidden;
+      mobile.hidden = !open;
+      burger.setAttribute('aria-expanded', String(open));
+      burger.querySelector('.visually-hidden')!.textContent = open ? 'Cerrar menú' : 'Abrir menú';
+    });
+  }
+</script>

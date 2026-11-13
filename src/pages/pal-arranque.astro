@@ -1,0 +1,733 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import ProductGlyph from '../components/ProductGlyph.astro';
+import RouteProfile from '../components/RouteProfile.astro';
+import { productosDe, productoUrl, type Producto } from '../data/productos';
+
+import ciclistas from '../assets/fotos/ciclistas-acopio.jpeg';
+import muralFeria from '../assets/fotos/mural-la-feria.png';
+import rutaWikiloc from '../assets/fotos/ruta-wikiloc.jpeg';
+
+const linea = productosDe('pal-arranque');
+const grupos = [
+  {
+    titulo: 'Para el bolsillo',
+    texto: 'Los compras en el punto de venta y te acompañan en el resto de la rodada.',
+    icono: 'pocket',
+    items: linea.filter((p) => p.ruta?.consumo === 'Para llevar'),
+  },
+  {
+    titulo: 'En la parada',
+    texto: 'Se sirven en el punto de venta, para comer con el grupo en el tercer tiempo.',
+    icono: 'cup',
+    items: linea.filter((p) => p.ruta?.consumo === 'En el punto de venta'),
+  },
+] as const;
+
+const dato = (p: Producto, nutriente: string) => p.nutricion.find((r) => r.nutriente.startsWith(nutriente))?.porPorcion;
+
+const pilares = [
+  {
+    icono: 'mountain',
+    titulo: 'Territorio con memoria',
+    texto:
+      'Más allá de la ciudad hay montaña, río y gente. La ruta llega a La Feria para que conozcas la historia y los saberes de quienes viven ahí.',
+  },
+  {
+    icono: 'cup',
+    titulo: 'Tercer tiempo',
+    texto: 'Un lugar para detenerse, quedarse un rato y compartir con el grupo y con la gente del lugar.',
+  },
+  {
+    icono: 'leaf',
+    titulo: 'Comida con origen',
+    texto: 'Lácteos hechos con la leche de las fincas que ves desde la bici. Puedes preguntar cómo se hacen.',
+  },
+  {
+    icono: 'users',
+    titulo: 'Nadie se queda atrás',
+    texto: 'Como en la rodada, con guía y ciclista escoba: aquí todos los niveles son bienvenidos.',
+  },
+] as const;
+---
+
+<Base
+  title="Pal' Arranque"
+  theme="pal-arranque"
+  description="Pal' Arranque: el programa de Agroferia para ciclistas de montaña. Ruta circular de 13,95 km desde La Feria, tercer tiempo en el centro de acopio y cinco productos lácteos para pedalear."
+>
+  <!-- ============ HERO ============ -->
+  <section class="container hero" aria-labelledby="pa-h1">
+    <Image
+      class="hero__bg"
+      src={ciclistas}
+      alt=""
+      widths={[640, 897]}
+      sizes="(max-width: 860px) 100vw, 1180px"
+      loading="eager"
+      fetchpriority="high"
+    />
+    <div class="hero__copy">
+      <!-- PENDIENTE: reemplazar el wordmark tipográfico por el logo oficial de Pal' Arranque -->
+      <h1 id="pa-h1" class="wordmark">Pal'<br />Arranque</h1>
+      <p class="hero__by">Un programa de Agroferia</p>
+      <p class="hero__tag">Energía de montaña para tu rodada.</p>
+      <p class="hero__text">
+        Sal desde La Feria hacia la montaña, haz tu tercer tiempo en el centro de acopio y recarga con lácteos hechos por las
+        familias que viven en la ruta.
+      </p>
+      <div class="hero__actions">
+        <a class="btn btn--sun" href="#ruta">
+          Ver la ruta
+          <span class="btn__arrow"><Icon name="route" size={18} /></span>
+        </a>
+        <a class="hero__link" href="#productos">Ver los 5 productos <Icon name="arrow-right" size={18} /></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ INICIATIVA ============ -->
+  <section class="section" aria-labelledby="ini-title">
+    <div class="container ini">
+      <div class="ini__lead">
+        <h2 id="ini-title">Rodar, parar y conocer quién hace lo que comes</h2>
+        <p class="lead">
+          Los clubes del Valle salen los fines de semana entre las 5 y las 6 de la mañana, de pueblo en pueblo. Pal' Arranque le
+          da a esa rodada un destino en La Feria: una parada con comida de origen, en una comunidad campesina que recibe al grupo
+          como recibe a cualquiera que llega.
+        </p>
+      </div>
+      <ul class="pillars">
+        {
+          pilares.map((p) => (
+            <li>
+              <span class="pillars__icon">
+                <Icon name={p.icono} size={22} />
+              </span>
+              <div>
+                <h3>{p.titulo}</h3>
+                <p>{p.texto}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ PRODUCTOS ============ -->
+  <section id="productos" class="container prods" aria-labelledby="prod-title">
+    <div class="section-head">
+      <h2 id="prod-title">Cinco productos para pedalear</h2>
+      <p>
+        Proteína para recuperar, carbohidrato para seguir y algo salado para el camino. Todos hechos con leche de La Feria,
+        yogurt griego, fruta de temporada y miel.
+      </p>
+    </div>
+
+    <div class="groups">
+      {
+        grupos.map((g) => (
+          <div class="group">
+            <div class="group__head">
+              <Icon name={g.icono} size={24} />
+              <div>
+                <h3>{g.titulo}</h3>
+                <p>{g.texto}</p>
+              </div>
+            </div>
+            <ul class="plist">
+              {g.items.map((p) => (
+                <li>
+                  <a class="prow" href={productoUrl(p)}>
+                    <span class="prow__media">
+                      <ProductGlyph name={p.glyph} size={64} />
+                    </span>
+                    <span class="prow__body">
+                      <span class="prow__name">{p.nombre}</span>
+                      <span class="prow__sum">{p.resumen}</span>
+                      <span class="prow__stats">
+                        <span>
+                          <b>{dato(p, 'Proteína')}</b> proteína
+                        </span>
+                        <span>
+                          <b>{dato(p, 'Calorías')}</b> kcal
+                        </span>
+                        <span>{p.porcion}</span>
+                      </span>
+                    </span>
+                    <span class="prow__arrow">
+                      <Icon name="arrow-right" size={18} />
+                    </span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+    <p class="placeholder-note prods__note">
+      <Icon name="info" size={16} />
+      Valores nutricionales por porción, de referencia temporal.
+    </p>
+  </section>
+
+  <!-- ============ RUTA ============ -->
+  <section id="ruta" class="container ruta" aria-labelledby="ruta-title">
+    <div class="ruta__head">
+      <div>
+        <h2 id="ruta-title" class="ruta__title">Descripción de ruta</h2>
+        <p class="ruta__sub">La Feria · ruta circular</p>
+      </div>
+      <p class="ruta__text">
+        Sale de La Feria, sube por el cañón hacia la zona de Bolo Negro hasta los 2.262 m y vuelve al Centro de Acopio de
+        Agroferia, donde te espera el tercer tiempo. Tiene subidas empinadas y un gran desnivel positivo.
+      </p>
+    </div>
+
+    <RouteProfile />
+
+    <dl class="ruta__facts">
+      <div><dt>Distancia</dt><dd>13,95 km</dd></div>
+      <div><dt>Desnivel positivo</dt><dd>881 m</dd></div>
+      <div><dt>Altitud</dt><dd>1.568 → 2.262 m</dd></div>
+      <div><dt>Dificultad</dt><dd>Difícil</dd></div>
+      <div><dt>Tipo de ruta</dt><dd>Circular</dd></div>
+      <div><dt>Mejor hora</dt><dd>Salida entre 5 y 6 a. m.</dd></div>
+    </dl>
+
+    <figure class="ruta__map">
+      <Image
+        src={rutaWikiloc}
+        alt="Captura de Wikiloc con el trazado de la ruta sobre imagen satelital, desde La Feria hacia Bolo Negro, y su perfil de altitud entre 1.568 y 2.262 m"
+        widths={[640, 1014]}
+        sizes="(max-width: 860px) 100vw, 1050px"
+      />
+      <figcaption>Así se ve la ruta en Wikiloc: trazado, puntos de interés y perfil de altitud.</figcaption>
+    </figure>
+
+    <div class="ruta__actions">
+      <!-- PENDIENTE: pegar aquí el enlace de la ruta en Wikiloc y el GPX descargable -->
+      <span class="btn btn--sun" aria-disabled="true" role="link">
+        Ver en Wikiloc · enlace por agregar
+        <span class="btn__arrow"><Icon name="arrow-right" size={18} /></span>
+      </span>
+      <span class="btn btn--ghost ruta__ghost" aria-disabled="true" role="link">
+        Descargar GPX · próximamente
+        <span class="btn__arrow"><Icon name="arrow-right" size={18} /></span>
+      </span>
+    </div>
+    <p class="ruta__note">
+      Las fincas de La Feria están entre 1.600 y 2.200 m s. n. m. Estamos mapeando zonas húmedas y puntos de avistamiento de
+      aves para sumar nuevas variantes de la ruta.
+    </p>
+  </section>
+
+  <!-- ============ TERCER TIEMPO ============ -->
+  <section class="section" aria-labelledby="tt-title">
+    <div class="container tt">
+      <div class="tt__media">
+        <Image src={muralFeria} alt="Mural de colores con la palabra La Feria, aves y flores, en una casa del corregimiento" widths={[480, 640]} sizes="(max-width: 860px) 100vw, 560px" />
+      </div>
+      <div class="tt__copy">
+        <h2 id="tt-title">El tercer tiempo es en La Feria</h2>
+        <p class="lead">
+          Así estamos preparando la parada en el Centro de Acopio, para que el grupo llegue, deje la bici y se quede un rato.
+        </p>
+        <ul class="tt__list">
+          <li><Icon name="cup" size={20} /> Barra de batidos y cuchareables atendida por personas de la asociación.</li>
+          <li><Icon name="snowflake" size={20} /> Neveras con productos empacados para llevar.</li>
+          <li><Icon name="bike" size={20} /> Biciparqueaderos y bancas con vista a la montaña.</li>
+          <li><Icon name="sprout" size={20} /> Señales que cuentan cómo se ordeña, cómo se guarda la leche en frío y cómo funciona la huerta.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CIERRE ============ -->
+  <section class="container close" aria-labelledby="close-title">
+    <h2 id="close-title">Trae a tu club hasta La Feria</h2>
+    <p>Cuéntanos cuándo suben y cuántos son. Preparamos la parada para que nadie llegue a esperar.</p>
+    <!-- PENDIENTE: enlace de WhatsApp real de Agroferia -->
+    <a class="btn btn--sun" href="/nosotros#visitanos">
+      Cómo llegar y contacto
+      <span class="btn__arrow"><Icon name="arrow-right" size={18} /></span>
+    </a>
+  </section>
+</Base>
+
+<style>
+  /* ---------- Hero ---------- */
+  .hero {
+    position: relative;
+    display: grid;
+    align-items: end;
+    min-height: min(680px, calc(100svh - 110px));
+    border-radius: var(--r-frame);
+    overflow: hidden;
+    background: var(--green-deep);
+    isolation: isolate;
+  }
+  .hero :global(.hero__bg) {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 60% 40%;
+  }
+  .hero::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    background:
+      linear-gradient(90deg, rgb(9 55 35 / 0.96) 0%, rgb(9 55 35 / 0.86) 38%, rgb(9 55 35 / 0.2) 75%),
+      linear-gradient(0deg, rgb(9 55 35 / 0.7), transparent 45%);
+  }
+  .hero__copy {
+    max-width: 560px;
+    padding: clamp(32px, 5vw, 64px);
+    color: var(--ink-on-dark);
+  }
+  .wordmark {
+    color: var(--sun);
+    font-family: var(--font-sport);
+    font-weight: 800;
+    font-size: clamp(4.2rem, 11vw, 7.6rem);
+    line-height: 0.84;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+  }
+  .hero__by {
+    margin-top: 14px;
+    color: var(--ink-on-dark-2);
+    font-size: 0.95rem;
+  }
+  .hero__tag {
+    margin-top: 26px;
+    color: #fff;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(1.5rem, 2.4vw, 2rem);
+    line-height: 1.15;
+  }
+  .hero__text {
+    margin-top: 12px;
+    max-width: 46ch;
+    color: var(--ink-on-dark-2);
+    font-size: 1.06rem;
+  }
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px 26px;
+    margin-top: 28px;
+  }
+  .hero__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #fff;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .hero__link:hover {
+    color: var(--sun);
+  }
+  @media (max-width: 700px) {
+    .hero {
+      min-height: 0;
+      padding-top: 46vw;
+    }
+    .hero::after {
+      background: linear-gradient(0deg, rgb(9 55 35 / 1) 45%, rgb(9 55 35 / 0.25) 100%);
+    }
+  }
+
+  /* ---------- Iniciativa ---------- */
+  .ini {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: clamp(32px, 6vw, 88px);
+    align-items: start;
+  }
+  .ini__lead {
+    position: sticky;
+    top: 120px;
+  }
+  .ini__lead .lead {
+    margin-top: 20px;
+  }
+  .pillars {
+    display: grid;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .pillars li {
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    gap: 20px;
+    padding: 26px 0;
+    border-top: 1px solid var(--line);
+  }
+  .pillars li:last-child {
+    border-bottom: 1px solid var(--line);
+  }
+  .pillars__icon {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--green-deep);
+    color: var(--sun);
+  }
+  .pillars h3 {
+    color: var(--green);
+    font-family: var(--font-sport);
+    font-size: 1.55rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    line-height: 1.1;
+    text-transform: uppercase;
+  }
+  .pillars p {
+    margin-top: 6px;
+    color: var(--ink-2);
+  }
+  @media (max-width: 860px) {
+    .ini {
+      grid-template-columns: 1fr;
+    }
+    .ini__lead {
+      position: static;
+    }
+  }
+
+  /* ---------- Productos ---------- */
+  .prods {
+    padding-bottom: clamp(56px, 8vw, 104px);
+  }
+  .groups {
+    display: grid;
+    grid-template-columns: 1.25fr 1fr;
+    gap: 24px;
+  }
+  .group {
+    padding: 24px;
+    border-radius: 22px;
+    background: #fff;
+    box-shadow: var(--shadow-card);
+  }
+  .group__head {
+    display: grid;
+    grid-template-columns: 24px 1fr;
+    gap: 14px;
+    padding-bottom: 18px;
+    margin-bottom: 8px;
+    border-bottom: 1px solid var(--line);
+  }
+  .group__head > :global(svg) {
+    color: var(--green);
+    margin-top: 4px;
+  }
+  .group__head h3 {
+    font-family: var(--font-sport);
+    font-size: 1.7rem;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    line-height: 1.05;
+    text-transform: uppercase;
+  }
+  .group__head p {
+    margin-top: 4px;
+    color: var(--ink-2);
+    font-size: 0.97rem;
+  }
+  .plist {
+    display: grid;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .prow {
+    display: grid;
+    grid-template-columns: 92px 1fr 40px;
+    gap: 18px;
+    align-items: center;
+    padding: 14px 0;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .plist li + li .prow {
+    border-top: 1px solid var(--line);
+  }
+  .prow__media {
+    display: grid;
+    place-items: center;
+    width: 92px;
+    height: 92px;
+    border-radius: 14px;
+    background: var(--green-deep);
+    color: var(--sun);
+  }
+  .prow__media :global(svg) {
+    transition: transform 0.45s var(--ease-out);
+  }
+  .prow:hover .prow__media :global(svg) {
+    transform: translateY(-3px) rotate(-4deg);
+  }
+  .prow__body {
+    display: grid;
+    gap: 3px;
+    min-width: 0;
+  }
+  .prow__name {
+    font-weight: 700;
+    font-size: 1.08rem;
+    line-height: 1.25;
+  }
+  .prow__sum {
+    color: var(--ink-2);
+    font-size: 0.95rem;
+  }
+  .prow__stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 14px;
+    margin-top: 4px;
+    color: var(--ink-2);
+    font-size: 0.86rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .prow__stats b {
+    color: var(--green);
+  }
+  .prow__arrow {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--paper);
+    color: var(--green);
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.35s var(--ease-out);
+  }
+  .prow:hover .prow__arrow {
+    background: var(--green);
+    color: #fff;
+    transform: translateX(3px);
+  }
+  .prods__note {
+    margin-top: 18px;
+  }
+  @media (max-width: 960px) {
+    .groups {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 480px) {
+    .group {
+      padding: 18px;
+    }
+    .prow {
+      grid-template-columns: 72px 1fr;
+      gap: 14px;
+    }
+    .prow__media {
+      width: 72px;
+      height: 72px;
+    }
+    .prow__media :global(svg) {
+      width: 52px;
+      height: 52px;
+    }
+    .prow__arrow {
+      display: none;
+    }
+  }
+
+  /* ---------- Ruta ---------- */
+  .ruta {
+    padding: clamp(36px, 5vw, 64px);
+    border-radius: var(--r-frame);
+    background: var(--green-deep);
+    color: var(--ink-on-dark-2);
+  }
+  .ruta__head {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px 48px;
+    align-items: end;
+    margin-bottom: 36px;
+  }
+  .ruta__title {
+    color: var(--sun);
+    font-family: var(--font-sport);
+    font-size: clamp(2.6rem, 5vw, 4.2rem);
+    font-weight: 800;
+    letter-spacing: -0.005em;
+    line-height: 0.95;
+    text-transform: uppercase;
+  }
+  .ruta__sub {
+    margin-top: 8px;
+    color: #fff;
+    font-weight: 600;
+  }
+  .ruta__text {
+    max-width: 52ch;
+  }
+  .ruta__facts {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    margin: 32px 0 0;
+    border-top: 1px solid rgb(235 213 104 / 0.25);
+  }
+  .ruta__facts div {
+    padding: 18px 16px 0 0;
+  }
+  .ruta__facts div + div {
+    padding-left: 16px;
+    border-left: 1px solid rgb(235 213 104 / 0.25);
+  }
+  .ruta__facts dt {
+    font-size: 0.85rem;
+  }
+  .ruta__facts dd {
+    margin: 4px 0 0;
+    color: #fff;
+    font-family: var(--font-sport);
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1.1;
+    font-variant-numeric: tabular-nums;
+  }
+  .ruta__facts small {
+    display: block;
+    color: var(--sun);
+    font-family: var(--font-body);
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+  .ruta__map {
+    margin: 36px 0 0;
+  }
+  .ruta__map img {
+    width: 100%;
+    height: auto;
+    border-radius: 18px;
+  }
+  .ruta__map figcaption {
+    margin-top: 10px;
+    font-size: 0.88rem;
+  }
+  .ruta__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px 28px;
+    margin-top: 36px;
+  }
+  .ruta__ghost {
+    color: var(--ink-on-dark);
+  }
+  .ruta__note {
+    margin-top: 22px;
+    max-width: 70ch;
+    font-size: 0.93rem;
+  }
+  @media (max-width: 960px) {
+    .ruta__facts {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .ruta__facts div:nth-child(4) {
+      padding-left: 0;
+      border-left: 0;
+    }
+  }
+  @media (max-width: 700px) {
+    .ruta__head {
+      grid-template-columns: 1fr;
+    }
+    .ruta__facts {
+      grid-template-columns: 1fr 1fr;
+    }
+    .ruta__facts div:nth-child(n) {
+      padding: 14px 0;
+      border-left: 0;
+      border-bottom: 1px solid rgb(235 213 104 / 0.18);
+    }
+  }
+
+  /* ---------- Tercer tiempo ---------- */
+  .tt {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(32px, 6vw, 80px);
+    align-items: center;
+  }
+  .tt__media img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: var(--r-frame);
+  }
+  .tt__copy .lead {
+    margin-top: 18px;
+  }
+  .tt__list {
+    display: grid;
+    gap: 14px;
+    margin: 26px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .tt__list li {
+    display: grid;
+    grid-template-columns: 20px 1fr;
+    gap: 14px;
+    color: var(--ink-2);
+  }
+  .tt__list :global(svg) {
+    margin-top: 3px;
+    color: var(--green);
+  }
+  @media (max-width: 860px) {
+    .tt {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ---------- Cierre ---------- */
+  .close {
+    display: grid;
+    justify-items: center;
+    gap: 16px;
+    padding: clamp(48px, 6vw, 80px) var(--gutter);
+    border-radius: var(--r-frame);
+    background: var(--green);
+    color: var(--ink-on-dark);
+    text-align: center;
+  }
+  .close h2 {
+    color: #fff;
+    font-family: var(--font-sport);
+    font-size: clamp(2.4rem, 5vw, 3.8rem);
+    font-weight: 800;
+    letter-spacing: 0;
+    line-height: 0.95;
+    text-transform: uppercase;
+  }
+  .close p {
+    max-width: 48ch;
+    margin-bottom: 12px;
+    color: var(--ink-on-dark-2);
+  }
+</style>

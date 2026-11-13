@@ -1,0 +1,186 @@
+---
+/**
+ * Perfil de altimetría de la ruta circular de La Feria (Wikiloc: 13,95 km, +881 m).
+ * Puntos leídos a mano del perfil de Wikiloc: reemplazar con el GPX cuando exista.
+ */
+const puntos: [km: number, m: number][] = [
+  [0, 1568], [0.6, 1610], [1.5, 1650], [2.1, 1670], [2.75, 1760], [3.6, 1840], [4.5, 2050],
+  [5.4, 2130], [6.3, 2210], [6.95, 2262], [7.5, 2235], [8.05, 2165], [8.65, 1985], [8.95, 2020],
+  [9.55, 2150], [10.2, 1985], [11, 1830], [11.7, 1760], [12.65, 1650], [13.95, 1568],
+];
+const paradas = [
+  { km: 0, label: 'Salida', sub: 'La Feria · 1.568 m' },
+  { km: 6.95, label: 'Punto más alto', sub: '2.262 m' },
+  { km: 13.95, label: 'Tercer tiempo', sub: 'Centro de Acopio' },
+];
+
+const W = 1000, H = 320;
+const pad = { l: 56, r: 24, t: 70, b: 44 };
+const minM = 1500, maxM = 2300, maxKm = 13.95;
+const x = (km: number) => pad.l + (km / maxKm) * (W - pad.l - pad.r);
+const y = (m: number) => pad.t + (1 - (m - minM) / (maxM - minM)) * (H - pad.t - pad.b);
+
+const line = puntos.map(([k, m], i) => `${i ? 'L' : 'M'}${x(k).toFixed(1)} ${y(m).toFixed(1)}`).join(' ');
+const area = `${line} L${x(maxKm)} ${H - pad.b} L${x(0)} ${H - pad.b} Z`;
+const grid = [1600, 1800, 2000, 2200];
+const altura = (km: number) => puntos.find((p) => p[0] === km)![1];
+---
+
+<figure class="profile" data-profile>
+  <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-labelledby="profile-title profile-desc">
+    <title id="profile-title">Perfil de altimetría de la ruta circular de La Feria</title>
+    <desc id="profile-desc">Ruta de 13,95 kilómetros: sube desde 1.568 metros en La Feria hasta 2.262 metros cerca del kilómetro 7 y regresa al punto de partida.</desc>
+
+    {
+      grid.map((g) => (
+        <g class="profile__grid">
+          <line x1={pad.l} x2={W - pad.r} y1={y(g)} y2={y(g)} />
+          <text x={pad.l - 10} y={y(g) + 4} text-anchor="end">{g.toLocaleString('es-CO')}</text>
+        </g>
+      ))
+    }
+    {
+      [0, 3, 6, 9, 12, 13.95].map((k) => (
+        <text class="profile__km" x={x(k)} y={H - pad.b + 26} text-anchor={k === 13.95 ? 'end' : 'middle'}>
+          {k.toLocaleString('es-CO')} km
+        </text>
+      ))
+    }
+
+    <path class="profile__area" d={area} />
+    <path class="profile__line" d={line} pathLength="1" />
+
+    {
+      paradas.map((p, i) => (
+        <g class="profile__stop" style={`--i:${i}`}>
+          <line x1={x(p.km)} x2={x(p.km)} y1={y(altura(p.km))} y2={pad.t - 36} />
+          <circle cx={x(p.km)} cy={y(altura(p.km))} r="7" />
+          <text
+            x={x(p.km) + (i === 0 ? -6 : i === paradas.length - 1 ? 6 : 0)}
+            y={pad.t - 46}
+            text-anchor={i === 0 ? 'start' : i === paradas.length - 1 ? 'end' : 'middle'}
+            class="profile__label"
+          >{p.label}</text>
+          <text
+            x={x(p.km) + (i === 0 ? -6 : i === paradas.length - 1 ? 6 : 0)}
+            y={pad.t - 26}
+            text-anchor={i === 0 ? 'start' : i === paradas.length - 1 ? 'end' : 'middle'}
+            class="profile__sub"
+          >{p.sub}</text>
+        </g>
+      ))
+    }
+  </svg>
+</figure>
+
+<style>
+  .profile {
+    margin: 0;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--sun) transparent;
+  }
+  .profile svg {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+  .profile__grid line {
+    stroke: rgb(255 255 255 / 0.12);
+    stroke-width: 1;
+  }
+  .profile__grid text,
+  .profile__km {
+    fill: var(--ink-on-dark-2);
+    font: 500 13px var(--font-body);
+    font-variant-numeric: tabular-nums;
+  }
+  .profile__area {
+    fill: rgb(235 213 104 / 0.1);
+    opacity: 0;
+    transition: opacity 1.2s ease 0.6s;
+  }
+  .profile__line {
+    fill: none;
+    stroke: var(--sun);
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    transition: stroke-dashoffset 1.8s cubic-bezier(0.65, 0, 0.35, 1);
+  }
+  .profile__stop {
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity 0.5s ease, transform 0.6s var(--ease-out);
+    transition-delay: calc(0.4s + var(--i) * 0.55s);
+  }
+  .profile__stop line {
+    stroke: rgb(235 213 104 / 0.45);
+    stroke-dasharray: 3 4;
+  }
+  .profile__stop circle {
+    fill: var(--green-deep);
+    stroke: var(--sun);
+    stroke-width: 3;
+  }
+  .profile__label {
+    fill: #fff;
+    font: 700 22px var(--font-sport);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .profile__sub {
+    fill: var(--ink-on-dark-2);
+    font: 500 14px var(--font-body);
+  }
+
+  .profile.is-drawn .profile__line {
+    stroke-dashoffset: 0;
+  }
+  .profile.is-drawn .profile__area,
+  .profile.is-drawn .profile__stop {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Sin JS o con movimiento reducido, el perfil se ve completo */
+  :global(html:not(.js)) .profile__line {
+    stroke-dashoffset: 0;
+  }
+  :global(html:not(.js)) .profile__area,
+  :global(html:not(.js)) .profile__stop {
+    opacity: 1;
+    transform: none;
+  }
+  @media (max-width: 640px) {
+    .profile svg { min-width: 720px; }
+    .profile__label { font-size: 26px; }
+    .profile__sub { font-size: 17px; }
+    .profile__grid text, .profile__km { font-size: 16px; }
+  }
+</style>
+
+<script>
+  document.documentElement.classList.add('js');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  document.querySelectorAll<HTMLElement>('[data-profile]').forEach((el) => {
+    if (reduce || !('IntersectionObserver' in window)) {
+      el.classList.add('is-drawn');
+      return;
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting) {
+            el.classList.add('is-drawn');
+            io.disconnect();
+          }
+        });
+      },
+      { threshold: 0.35 },
+    );
+    io.observe(el);
+  });
+</script>

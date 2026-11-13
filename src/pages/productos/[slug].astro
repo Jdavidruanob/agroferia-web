@@ -1,0 +1,589 @@
+---
+import Base from '../../layouts/Base.astro';
+import Icon from '../../components/Icon.astro';
+import ProductGlyph from '../../components/ProductGlyph.astro';
+import ProductCard from '../../components/ProductCard.astro';
+import { categoriaPorKey, productos, productosDe, type Producto } from '../../data/productos';
+
+export function getStaticPaths() {
+  return productos.map((p) => ({ params: { slug: p.slug }, props: { producto: p } }));
+}
+
+interface Props {
+  producto: Producto;
+}
+
+const { producto: p } = Astro.props;
+const cat = categoriaPorKey[p.categorias[0]];
+const pa = p.categorias.includes('pal-arranque');
+const relacionados = productosDe(cat.key)
+  .filter((x) => x.slug !== p.slug)
+  .slice(0, 4);
+
+const puntos = pa
+  ? [
+      {
+        icono: 'store',
+        titulo: 'Punto de venta Pal’ Arranque',
+        texto: 'Centro de Acopio de Agroferia, corregimiento La Feria. Fines de semana desde la mañana (horario por confirmar).',
+      },
+    ]
+  : [
+      {
+        icono: 'store',
+        titulo: 'Centro de Acopio, La Feria',
+        texto: 'Punto de venta directo en el corregimiento La Feria, a 12 km de Pradera.',
+      },
+      {
+        icono: 'sprout',
+        titulo: 'Mercado campesino Pradera Viva',
+        texto: 'Venta directa en la cabecera municipal de Pradera.',
+      },
+      {
+        icono: 'users',
+        titulo: 'Ferias y mercados del Valle',
+        texto: 'Festival del Queso y mercados en Cali, Palmira y Buga.',
+      },
+    ];
+---
+
+<Base title={p.nombre} description={`${p.nombre}: ${p.resumen} Ingredientes e información nutricional.`} theme={pa ? 'pal-arranque' : undefined}>
+  <!-- ============ HERO DE PRODUCTO ============ -->
+  <section class:list={['container', 'phero', { 'phero--pa': pa }]} style={`--cat:${cat.color}`} aria-labelledby="p-title">
+    <div class="phero__copy">
+      <nav class="crumbs" aria-label="Ruta de navegación">
+        <a href="/productos">Productos</a>
+        <span aria-hidden="true">/</span>
+        <a href={pa ? '/pal-arranque' : `/productos#${cat.key}`}>{cat.nombre}</a>
+      </nav>
+      <h1 id="p-title">{p.nombre}</h1>
+      <p class="phero__desc">{p.descripcion}</p>
+      <ul class="phero__chips">
+        <li><Icon name="package" size={16} /> {p.presentacion}</li>
+        {p.ruta && <li><Icon name="bike" size={16} /> {p.ruta.momento}</li>}
+        {p.ruta && <li><Icon name={p.ruta.consumo === 'Para llevar' ? 'pocket' : 'store'} size={16} /> {p.ruta.consumo}</li>}
+      </ul>
+    </div>
+    <div class="phero__visual">
+      <!-- PENDIENTE: foto del producto -->
+      <ProductGlyph name={p.glyph} size={220} class="phero__glyph" />
+      {pa && <span class="phero__badge" aria-hidden="true">Pal' Arranque</span>}
+    </div>
+  </section>
+
+  <!-- ============ CARACTERÍSTICAS ============ -->
+  <section class="container feats" aria-labelledby="f-title">
+    <h2 id="f-title">Características y beneficios</h2>
+    <ul class="feats__list">
+      {
+        p.caracteristicas.map((c) => (
+          <li>
+            <span class="feats__icon">
+              <Icon name={c.icono} size={24} />
+            </span>
+            <div>
+              <h3>{c.titulo}</h3>
+              <p>{c.texto}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <!-- ============ FICHA NUTRICIONAL ============ -->
+  <section class="container ficha" style={`--cat:${cat.color}`} aria-labelledby="n-title">
+    <aside class="ficha__card">
+      <p class="ficha__name">{p.nombre}</p>
+      <div class="ficha__media">
+        <ProductGlyph name={p.glyph} size={120} />
+      </div>
+      <dl class="ficha__meta">
+        <div><dt>Presentación</dt><dd>{p.presentacion}</dd></div>
+        <div><dt>Porción</dt><dd>{p.porcion}</dd></div>
+      </dl>
+      <a class="btn ficha__cta" href="#donde">
+        Dónde encontrarlo
+        <span class="btn__arrow"><Icon name="arrow-right" size={18} /></span>
+      </a>
+    </aside>
+
+    <div class="ficha__body">
+      <h2 id="n-title">Información nutricional</h2>
+      <p class="ficha__intro">
+        Contenido energético y nutrientes de interés por {p.base} de producto y por porción ({p.porcion}), para que elijas según
+        lo que necesitas antes, durante o después de tu actividad.
+      </p>
+
+      <dl class="ficha__info">
+        <div><dt>Ingredientes</dt><dd>{p.ingredientes}</dd></div>
+        <div><dt>Alérgenos</dt><dd>{p.alergenos}</dd></div>
+        <div><dt>Conservación</dt><dd>{p.conservacion}</dd></div>
+      </dl>
+
+      <p class="placeholder-note">
+        <Icon name="info" size={16} />
+        Valores de referencia temporales. Se reemplazarán por los datos de la etiqueta oficial.
+      </p>
+
+      <div class="table-wrap">
+        <table class="ntable">
+          <caption class="visually-hidden">Información nutricional de {p.nombre}</caption>
+          <thead>
+            <tr>
+              <th scope="col">Descripción</th>
+              <th scope="col">Por {p.base}</th>
+              <th scope="col">Por porción<span> ({p.porcion})</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            {
+              p.nutricion.map((r) => (
+                <tr class:list={{ strong: r.destacado }}>
+                  <th scope="row">{r.nutriente}</th>
+                  <td>{r.por100}</td>
+                  <td>{r.porPorcion}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+
+      {
+        p.ruta && (
+          <div class="enruta">
+            <Icon name="route" size={24} />
+            <div>
+              <h3>En la ruta</h3>
+              <p>
+                <strong>{p.ruta.momento}.</strong> {p.ruta.nota}
+              </p>
+              <a href="/pal-arranque#ruta">Ver la descripción de la ruta</a>
+            </div>
+          </div>
+        )
+      }
+    </div>
+  </section>
+
+  <!-- ============ DÓNDE ============ -->
+  <section id="donde" class="container donde" aria-labelledby="d-title">
+    <h2 id="d-title">Dónde encontrarlo</h2>
+    <ul class="donde__list">
+      {
+        puntos.map((x) => (
+          <li>
+            <Icon name={x.icono as 'store'} size={24} />
+            <div>
+              <h3>{x.titulo}</h3>
+              <p>{x.texto}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  {
+    relacionados.length > 0 && (
+      <section class="container rel" aria-labelledby="r-title">
+        <h2 id="r-title">{pa ? "Más de Pal' Arranque" : `Más en ${cat.nombre}`}</h2>
+        <ul class="rel__grid">
+          {relacionados.map((r) => (
+            <li>
+              <ProductCard producto={r} />
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+</Base>
+
+<style>
+  /* ---------- Hero ---------- */
+  .phero {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    min-height: 460px;
+    border-radius: var(--r-frame);
+    overflow: hidden;
+    background: var(--cat);
+    color: var(--ink-on-dark);
+  }
+  .phero__copy {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 18px;
+    padding: clamp(32px, 5vw, 64px);
+  }
+  .crumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 0.9rem;
+    color: rgb(255 255 255 / 0.78);
+  }
+  .crumbs a {
+    color: inherit;
+  }
+  .crumbs a:hover {
+    color: #fff;
+  }
+  .phero h1 {
+    color: #fff;
+    font-size: clamp(2.1rem, 4vw, 3.4rem);
+  }
+  .phero__desc {
+    max-width: 52ch;
+    color: rgb(255 255 255 / 0.86);
+    font-size: 1.08rem;
+  }
+  .phero__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 6px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .phero__chips li {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.12);
+    color: #fff;
+    font-size: 0.9rem;
+  }
+  .phero__visual {
+    position: relative;
+    display: grid;
+    place-items: center;
+    margin: 20px;
+    border-radius: 20px;
+    background: rgb(255 255 255 / 0.08);
+    color: #fff;
+  }
+  .phero__visual :global(.phero__glyph) {
+    width: min(220px, 60%);
+    height: auto;
+  }
+  .phero--pa .phero__visual {
+    color: var(--sun);
+  }
+  .phero--pa .phero__chips li {
+    background: rgb(235 213 104 / 0.14);
+    color: var(--sun);
+  }
+  .phero__badge {
+    position: absolute;
+    top: 18px;
+    right: 18px;
+    padding: 4px 12px;
+    border-radius: 6px;
+    background: var(--sun);
+    color: var(--green-deep);
+    font-family: var(--font-sport);
+    font-weight: 800;
+    font-size: 1rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  @media (max-width: 860px) {
+    .phero {
+      grid-template-columns: 1fr;
+    }
+    .phero__visual {
+      order: -1;
+      aspect-ratio: 16 / 9;
+      margin: 12px 12px 0;
+    }
+    .phero__visual :global(.phero__glyph) {
+      width: 130px;
+    }
+  }
+
+  /* ---------- Características ---------- */
+  .feats {
+    padding: clamp(56px, 7vw, 88px) 0 clamp(32px, 4vw, 48px);
+  }
+  .feats h2 {
+    text-align: center;
+    font-size: clamp(1.7rem, 2.6vw, 2.2rem);
+  }
+  .feats__list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px 56px;
+    max-width: 1000px;
+    margin: 40px auto 0;
+    padding: 0;
+    list-style: none;
+  }
+  .feats__list li {
+    display: grid;
+    grid-template-columns: 60px 1fr;
+    gap: 18px;
+    align-items: center;
+  }
+  .feats__icon {
+    display: grid;
+    place-items: center;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: #fff;
+    color: var(--green);
+    box-shadow: var(--shadow-card);
+  }
+  .feats h3 {
+    font-size: 1.05rem;
+  }
+  .feats p {
+    color: var(--ink-2);
+  }
+  @media (max-width: 700px) {
+    .feats__list {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ---------- Ficha ---------- */
+  .ficha {
+    display: grid;
+    grid-template-columns: 340px 1fr;
+    gap: clamp(24px, 4vw, 48px);
+    align-items: start;
+    padding: clamp(32px, 4vw, 48px) 0;
+  }
+  .ficha__card {
+    position: sticky;
+    top: 110px;
+    display: grid;
+    gap: 16px;
+    padding: 20px;
+    border-radius: 20px;
+    background: #fff;
+    box-shadow: var(--shadow-card);
+  }
+  .ficha__name {
+    font-weight: 600;
+    font-size: 1.08rem;
+  }
+  .ficha__media {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 5 / 4;
+    border-radius: 14px;
+    background: var(--panel);
+    color: var(--cat, var(--green));
+  }
+  :global(.theme-pal-arranque) .ficha__media {
+    background: var(--green-deep);
+    color: var(--sun);
+  }
+  .ficha__meta {
+    display: grid;
+    gap: 0;
+    margin: 0;
+    font-size: 0.93rem;
+  }
+  .ficha__meta div {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 9px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .ficha__meta dt {
+    color: var(--ink-2);
+  }
+  .ficha__meta dd {
+    margin: 0;
+    text-align: right;
+    font-weight: 500;
+  }
+  .ficha__cta {
+    justify-content: space-between;
+  }
+
+  .ficha__body h2 {
+    font-size: clamp(1.7rem, 2.6vw, 2.2rem);
+  }
+  .ficha__intro {
+    margin-top: 12px;
+    color: var(--ink-2);
+    max-width: 70ch;
+  }
+  .ficha__info {
+    display: grid;
+    gap: 10px;
+    margin: 22px 0 18px;
+  }
+  .ficha__info div {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 16px;
+  }
+  .ficha__info dt {
+    font-weight: 600;
+  }
+  .ficha__info dd {
+    margin: 0;
+    color: var(--ink-2);
+  }
+  @media (max-width: 560px) {
+    .ficha__info div {
+      grid-template-columns: 1fr;
+      gap: 2px;
+    }
+  }
+
+  .table-wrap {
+    margin-top: 14px;
+    border-radius: 16px;
+    background: #fff;
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+  }
+  .ntable {
+    width: 100%;
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+    font-size: 0.95rem;
+  }
+  .ntable thead th {
+    padding: 16px 18px;
+    background: var(--panel);
+    color: var(--ink);
+    font-weight: 700;
+    text-align: center;
+  }
+  .ntable thead th:first-child,
+  .ntable tbody th {
+    text-align: left;
+  }
+  .ntable tbody th,
+  .ntable td {
+    padding: 14px 18px;
+    border-top: 1px solid var(--line);
+    color: var(--ink-2);
+    font-weight: 400;
+  }
+  .ntable td {
+    text-align: center;
+  }
+  .ntable tr.strong th,
+  .ntable tr.strong td {
+    color: var(--ink);
+    font-weight: 700;
+  }
+  @media (max-width: 560px) {
+    .ntable thead th span {
+      display: none;
+    }
+    .ntable thead th,
+    .ntable tbody th,
+    .ntable td {
+      padding: 12px 10px;
+    }
+  }
+
+  .enruta {
+    display: grid;
+    grid-template-columns: 24px 1fr;
+    gap: 16px;
+    margin-top: 28px;
+    padding: 22px 24px;
+    border-radius: 16px;
+    background: var(--green-deep);
+    color: var(--ink-on-dark-2);
+  }
+  .enruta > :global(svg) {
+    color: var(--sun);
+  }
+  .enruta h3 {
+    color: var(--sun);
+    font-family: var(--font-sport);
+    font-size: 1.4rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+  .enruta p {
+    margin: 8px 0 10px;
+  }
+  .enruta strong {
+    color: #fff;
+  }
+  .enruta a {
+    color: var(--sun);
+    font-weight: 600;
+  }
+
+  @media (max-width: 900px) {
+    .ficha {
+      grid-template-columns: 1fr;
+    }
+    .ficha__card {
+      position: static;
+      max-width: 420px;
+    }
+  }
+
+  /* ---------- Dónde ---------- */
+  .donde {
+    padding: clamp(40px, 6vw, 72px) clamp(24px, 4vw, 48px);
+    margin-top: clamp(24px, 4vw, 48px);
+    border-radius: var(--r-frame);
+    background: #fff;
+  }
+  .donde h2 {
+    font-size: clamp(1.7rem, 2.6vw, 2.2rem);
+  }
+  .donde__list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 28px 40px;
+    margin: 28px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .donde__list li {
+    display: grid;
+    grid-template-columns: 24px 1fr;
+    gap: 14px;
+  }
+  .donde__list li > :global(svg) {
+    color: var(--green);
+    margin-top: 2px;
+  }
+  .donde h3 {
+    font-size: 1.05rem;
+  }
+  .donde p {
+    margin-top: 4px;
+    color: var(--ink-2);
+  }
+
+  /* ---------- Relacionados ---------- */
+  .rel {
+    padding-top: clamp(56px, 7vw, 88px);
+  }
+  .rel h2 {
+    font-size: clamp(1.7rem, 2.6vw, 2.2rem);
+  }
+  .rel__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 20px;
+    margin: 28px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+</style>

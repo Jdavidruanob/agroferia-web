@@ -1,0 +1,29 @@
+---
+import { glyphs, type GlyphName } from './icons';
+/**
+ * Íconos de producto (64×64). Ocupan el lugar de la foto del empaque
+ * mientras llegan las fotografías reales. Mismo trazo para todos.
+ */
+
+interface Props {
+  name: GlyphName;
+  size?: number;
+  class?: string;
+}
+
+const { name, size = 96, class: className } = Astro.props;
+---
+
+<svg
+  class={className}
+  width={size}
+  height={size}
+  viewBox="0 0 64 64"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="2"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-hidden="true"
+  set:html={glyphs[name]}
+/>

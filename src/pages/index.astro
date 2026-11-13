@@ -1,0 +1,676 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import ProductGlyph from '../components/ProductGlyph.astro';
+import ProductCard from '../components/ProductCard.astro';
+import { categorias, productos, productosDe, productoUrl } from '../data/productos';
+
+import montanas from '../assets/fotos/montanas-la-feria.png';
+import ganado from '../assets/fotos/ganado-silvopastoril.png';
+import mural from '../assets/fotos/mural-acopio.png';
+import ciclistas from '../assets/fotos/ciclistas-acopio.jpeg';
+import asamblea from '../assets/fotos/asamblea-campo.png';
+
+const destacados = [
+  'leche-fresca',
+  'yogurt-natural',
+  'yogurt-griego',
+  'queso-campesino',
+  'bebida-lactea-proteina',
+  'quesillo',
+  'snack-queso-bocadillo',
+  'cuchareable',
+].map((s) => productos.find((p) => p.slug === s)!);
+
+const pasos = [
+  {
+    icono: 'sprout',
+    titulo: 'En la finca',
+    texto: '17 familias ordeñan cada mañana en fincas de ladera, con pasto, sombra de árboles nativos y agua de montaña.',
+  },
+  {
+    icono: 'snowflake',
+    titulo: 'Acopio en frío',
+    texto: 'La leche llega al centro de acopio de La Feria y se guarda en un tanque de 2.000 litros que se mantiene frío con energía solar.',
+  },
+  {
+    icono: 'hand',
+    titulo: 'Transformación',
+    texto: 'Parte de la leche se vuelve queso campesino, quesillo, siete cueros y otros productos, con recetas de la región.',
+  },
+  {
+    icono: 'scale',
+    titulo: 'Venta directa',
+    texto: 'Sin intermediarios. Lo que se gana se reparte entre las familias y sus fondos de educación, salud y crédito.',
+  },
+] as const;
+
+const paProductos = productosDe('pal-arranque');
+---
+
+<Base title="Inicio">
+  <!-- ============ HERO ============ -->
+  <section class="container hero" aria-labelledby="hero-title">
+    <div class="hero__copy">
+      <h1 id="hero-title">Lácteos de montaña, hechos por 30 familias campesinas</h1>
+      <p class="hero__lead">
+        Somos Agroferia, la Asociación Agropecuaria La Feria. Producimos leche, quesos y alimentos lácteos en las montañas
+        de Pradera, cuidando el agua, el suelo y a nuestra gente.
+      </p>
+      <div class="hero__actions">
+        <a class="btn btn--light" href="/productos">
+          Conoce nuestros productos
+          <span class="btn__arrow"><Icon name="arrow-right" size={18} /></span>
+        </a>
+        <a class="hero__link" href="/pal-arranque">
+          <Icon name="bike" size={20} />
+          Pal' Arranque para ciclistas
+        </a>
+      </div>
+      <p class="hero__place">
+        <Icon name="map-pin" size={16} />
+        La Feria · Pradera, Valle del Cauca · 1.600 a 2.200 m s. n. m.
+      </p>
+    </div>
+    <div class="hero__media">
+      <Image
+        src={montanas}
+        alt="Montañas y cultivos del corregimiento La Feria, en Pradera"
+        widths={[480, 700]}
+        sizes="(max-width: 860px) 100vw, 560px"
+        loading="eager"
+        fetchpriority="high"
+      />
+    </div>
+  </section>
+
+  <!-- ============ PRODUCTOS ============ -->
+  <section class="section" aria-labelledby="productos-title">
+    <div class="container">
+      <div class="section-head">
+        <h2 id="productos-title">Productos para cada momento del día</h2>
+        <p>
+          Leche, yogures, quesos y snacks hechos con la leche de La Feria. Cada producto tiene su información nutricional y
+          sus ingredientes a la vista.
+        </p>
+      </div>
+
+      <div class="showcase">
+        <div class="showcase__photo">
+          <Image src={ganado} alt="Vacas en un potrero con cerca de madera en La Feria" widths={[480, 960]} sizes="(max-width: 860px) 100vw, 480px" />
+        </div>
+        <div class="showcase__rail">
+          <div class="showcase__track" data-track tabindex="0" aria-label="Productos destacados">
+            {
+              destacados.map((p) => (
+                <div class="showcase__item">
+                  <ProductCard producto={p} />
+                </div>
+              ))
+            }
+          </div>
+        </div>
+        <div class="showcase__controls">
+          <button class="round-btn" type="button" data-prev aria-label="Productos anteriores">
+            <Icon name="arrow-left" size={20} />
+          </button>
+          <button class="round-btn round-btn--solid" type="button" data-next aria-label="Más productos">
+            <Icon name="arrow-right" size={20} />
+          </button>
+        </div>
+      </div>
+
+      <nav class="cats" aria-label="Categorías">
+        {
+          categorias.map((c) => (
+            <a class="cats__link" href={c.key === 'pal-arranque' ? '/pal-arranque' : `/productos#${c.key}`}>
+              {c.nombre}
+              <span>{productosDe(c.key).length}</span>
+            </a>
+          ))
+        }
+      </nav>
+    </div>
+  </section>
+
+  <!-- ============ ORIGEN ============ -->
+  <section class="section origen" aria-labelledby="origen-title">
+    <div class="container origen__grid">
+      <figure class="origen__photo">
+        <Image src={mural} alt="Mural del centro de acopio de Agroferia con un campesino, vacas y el logo de la asociación" widths={[480, 960]} sizes="(max-width: 860px) 100vw, 520px" />
+        <figcaption>Centro de acopio de Agroferia, en La Feria.</figcaption>
+      </figure>
+      <div class="origen__copy">
+        <h2 id="origen-title">Sabes de dónde viene lo que consumes</h2>
+        <p class="lead">
+          Nuestra leche no pasa por cruderos ni bodegas lejanas. Este es el camino completo, y lo puedes recorrer en persona.
+        </p>
+        <ol class="steps">
+          {
+            pasos.map((s) => (
+              <li class="step">
+                <span class="step__icon">
+                  <Icon name={s.icono} size={22} />
+                </span>
+                <div>
+                  <h3>{s.titulo}</h3>
+                  <p>{s.texto}</p>
+                </div>
+              </li>
+            ))
+          }
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PAL' ARRANQUE ============ -->
+  <section class="container pa" aria-labelledby="pa-title">
+    <div class="pa__copy">
+      <!-- PENDIENTE: reemplazar por el logo de Pal' Arranque cuando esté listo -->
+      <p class="pa__mark" aria-hidden="true">Pal'<br />Arranque</p>
+      <h2 id="pa-title" class="pa__title">La parada de tu rodada en La Feria</h2>
+      <p class="pa__text">
+        Un programa de Agroferia para ciclistas de montaña: una ruta que sale de La Feria y sube hasta los 2.262 m, un lugar
+        para el tercer tiempo y cinco productos lácteos pensados para pedalear.
+      </p>
+      <a class="btn btn--sun" href="/pal-arranque">
+        Conoce Pal' Arranque
+        <span class="btn__arrow"><Icon name="arrow-right" size={18} /></span>
+      </a>
+    </div>
+    <div class="pa__media">
+      <Image src={ciclistas} alt="Grupo de ciclistas frente al mural del centro de acopio de Agroferia" widths={[480, 897]} sizes="(max-width: 860px) 100vw, 560px" />
+    </div>
+    <ul class="pa__products">
+      {
+        paProductos.map((p) => (
+          <li>
+            <a href={productoUrl(p)}>
+              <ProductGlyph name={p.glyph} size={40} />
+              <span>{p.nombre}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <!-- ============ NOSOTROS ============ -->
+  <section class="section" aria-labelledby="nos-title">
+    <div class="container nos">
+      <div class="nos__media">
+        <Image src={asamblea} alt="Reunión de asociados de Agroferia al aire libre, frente a una casa de madera" widths={[560, 1100]} sizes="(max-width: 860px) 100vw, 600px" />
+      </div>
+      <div class="nos__copy">
+        <h2 id="nos-title">“Uno para todos y todos para uno”</h2>
+        <p class="lead">
+          Agroferia es una asociación campesina sin ánimo de lucro. Las decisiones se toman en asamblea y las ganancias vuelven
+          a las familias, a sus fincas y a la educación de sus hijos.
+        </p>
+        <dl class="facts">
+          <div>
+            <dt><Icon name="scale" size={20} /> Precio justo</dt>
+            <dd>Venta directa y pago puntual, sin intermediarios informales.</dd>
+          </div>
+          <div>
+            <dt><Icon name="sprout" size={20} /> Cero agrotóxicos</dt>
+            <dd>El invernadero se abona con compost y biopreparados del propio ganado.</dd>
+          </div>
+          <div>
+            <dt><Icon name="users" size={20} /> Liderada por mujeres</dt>
+            <dd>La presidencia, la representación legal y el invernadero están en manos de las socias.</dd>
+          </div>
+        </dl>
+        <a class="btn" href="/nosotros">
+          Conoce nuestra historia
+          <span class="btn__arrow"><Icon name="arrow-right" size={18} /></span>
+        </a>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* ---------- Hero ---------- */
+  .hero {
+    display: grid;
+    grid-template-columns: 1.08fr 1fr;
+    min-height: min(640px, calc(100svh - 120px));
+    border-radius: var(--r-frame);
+    overflow: hidden;
+    background: var(--green-deep);
+  }
+  .hero__copy {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 24px;
+    padding: clamp(36px, 6vw, 72px);
+    color: var(--ink-on-dark);
+  }
+  .hero h1 {
+    color: #fff;
+    max-width: 14ch;
+  }
+  .hero__lead {
+    max-width: 46ch;
+    color: var(--ink-on-dark-2);
+    font-size: clamp(1.05rem, 1.35vw, 1.18rem);
+  }
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 14px 26px;
+    margin-top: 6px;
+  }
+  .hero__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--sun);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .hero__link:hover {
+    text-decoration: underline;
+  }
+  .hero__place {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: auto;
+    padding-top: 18px;
+    border-top: 1px solid rgb(255 255 255 / 0.14);
+    color: var(--ink-on-dark-2);
+    font-size: 0.9rem;
+  }
+  .hero__media {
+    position: relative;
+  }
+  .hero__media img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  @media (max-width: 860px) {
+    .hero {
+      grid-template-columns: 1fr;
+    }
+    .hero__media {
+      order: -1;
+      aspect-ratio: 16 / 10;
+    }
+  }
+
+  /* ---------- Vitrina de productos ---------- */
+  .showcase {
+    position: relative;
+    display: grid;
+    grid-template-columns: 38% 1fr;
+    border-radius: var(--r-frame);
+    overflow: hidden;
+    background: var(--panel);
+  }
+  .showcase__photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .showcase__rail {
+    position: relative;
+    min-width: 0;
+    margin-left: -9%;
+    padding: 36px 0 84px;
+  }
+  .showcase__track {
+    display: flex;
+    gap: 16px;
+    padding: 4px 32px 16px 4px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scroll-padding-left: 4px;
+    scrollbar-width: none;
+  }
+  .showcase__track::-webkit-scrollbar {
+    display: none;
+  }
+  .showcase__item {
+    flex: 0 0 236px;
+    scroll-snap-align: start;
+  }
+  .showcase__controls {
+    position: absolute;
+    right: 28px;
+    bottom: 24px;
+    display: flex;
+    gap: 10px;
+  }
+  .round-btn {
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    border: 0;
+    border-radius: 50%;
+    background: #fff;
+    color: var(--ink);
+    box-shadow: var(--shadow-card);
+    cursor: pointer;
+    transition: background-color 0.2s ease, opacity 0.2s ease;
+  }
+  .round-btn--solid {
+    background: var(--green);
+    color: #fff;
+  }
+  .round-btn:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+  @media (max-width: 860px) {
+    .showcase {
+      grid-template-columns: 1fr;
+    }
+    .showcase__photo {
+      aspect-ratio: 16 / 7;
+    }
+    .showcase__rail {
+      margin: -48px 0 0;
+      padding: 0 0 80px;
+    }
+    .showcase__track {
+      padding-left: 16px;
+      scroll-padding-left: 16px;
+    }
+    .showcase__item {
+      flex-basis: 210px;
+    }
+  }
+
+  .cats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 28px;
+  }
+  .cats__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px 10px 18px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    color: var(--ink);
+    font-weight: 500;
+    text-decoration: none;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+  }
+  .cats__link span {
+    display: grid;
+    place-items: center;
+    min-width: 26px;
+    height: 26px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: var(--panel);
+    color: var(--ink-2);
+    font-size: 0.82rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .cats__link:hover {
+    background: #fff;
+    border-color: var(--green);
+  }
+
+  /* ---------- Origen ---------- */
+  .origen {
+    padding-top: 0;
+  }
+  .origen__grid {
+    display: grid;
+    grid-template-columns: 0.95fr 1fr;
+    gap: clamp(32px, 6vw, 80px);
+    align-items: start;
+  }
+  .origen__photo {
+    position: sticky;
+    top: 110px;
+    margin: 0;
+  }
+  .origen__photo img {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    object-position: 70% 50%;
+    border-radius: var(--r-frame);
+  }
+  .origen__photo figcaption {
+    margin-top: 12px;
+    color: var(--ink-2);
+    font-size: 0.9rem;
+  }
+  .origen__copy .lead {
+    margin-top: 18px;
+  }
+  .steps {
+    position: relative;
+    display: grid;
+    gap: 34px;
+    margin: 44px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .steps::before {
+    content: '';
+    position: absolute;
+    left: 23px;
+    top: 24px;
+    bottom: 24px;
+    width: 2px;
+    background: linear-gradient(var(--field), var(--earth));
+    border-radius: 2px;
+  }
+  .step {
+    position: relative;
+    display: grid;
+    grid-template-columns: 48px 1fr;
+    gap: 20px;
+  }
+  .step__icon {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #fff;
+    color: var(--green);
+    box-shadow: 0 0 0 6px var(--paper), var(--shadow-card);
+  }
+  .step h3 {
+    margin: 4px 0 6px;
+    font-size: 1.15rem;
+  }
+  .step p {
+    color: var(--ink-2);
+    max-width: 52ch;
+  }
+  @media (max-width: 860px) {
+    .origen__grid {
+      grid-template-columns: 1fr;
+    }
+    .origen__photo {
+      position: static;
+    }
+    .origen__photo img {
+      aspect-ratio: 4 / 3;
+    }
+  }
+
+  /* ---------- Pal' Arranque ---------- */
+  .pa {
+    display: grid;
+    grid-template-columns: 1fr 1.05fr;
+    gap: clamp(28px, 4vw, 56px);
+    padding: clamp(32px, 5vw, 64px);
+    border-radius: var(--r-frame);
+    background: var(--green-deep);
+    color: var(--ink-on-dark);
+  }
+  .pa__mark {
+    color: var(--sun);
+    font-family: var(--font-sport);
+    font-weight: 800;
+    font-size: clamp(3.4rem, 7vw, 5.6rem);
+    line-height: 0.86;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+  }
+  .pa__title {
+    margin-top: 26px;
+    color: #fff;
+    font-size: clamp(1.6rem, 2.6vw, 2.2rem);
+  }
+  .pa__text {
+    margin: 14px 0 28px;
+    max-width: 46ch;
+    color: var(--ink-on-dark-2);
+    font-size: 1.08rem;
+  }
+  .pa__media img {
+    width: 100%;
+    height: 100%;
+    min-height: 320px;
+    object-fit: cover;
+    border-radius: 18px;
+  }
+  .pa__products {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid rgb(235 213 104 / 0.25);
+  }
+  .pa__products li + li {
+    border-left: 1px solid rgb(235 213 104 / 0.25);
+  }
+  .pa__products a {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    height: 100%;
+    padding: 22px 18px 4px;
+    color: var(--ink-on-dark);
+    font-weight: 500;
+    font-size: 0.95rem;
+    line-height: 1.3;
+    text-decoration: none;
+  }
+  .pa__products a :global(svg) {
+    flex: none;
+    color: var(--sun);
+    transition: transform 0.4s var(--ease-out);
+  }
+  .pa__products a:hover {
+    color: #fff;
+  }
+  .pa__products a:hover :global(svg) {
+    transform: translateY(-3px);
+  }
+  @media (max-width: 960px) {
+    .pa__products {
+      grid-template-columns: 1fr 1fr;
+    }
+    .pa__products li + li {
+      border-left: 0;
+    }
+    .pa__products li {
+      border-bottom: 1px solid rgb(235 213 104 / 0.25);
+    }
+    .pa__products a {
+      padding: 16px 4px;
+    }
+  }
+  @media (max-width: 860px) {
+    .pa {
+      grid-template-columns: 1fr;
+    }
+    .pa__media img {
+      min-height: 0;
+      aspect-ratio: 4 / 3;
+    }
+  }
+  @media (max-width: 480px) {
+    .pa__products {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ---------- Nosotros ---------- */
+  .nos {
+    display: grid;
+    grid-template-columns: 1.05fr 1fr;
+    gap: clamp(32px, 6vw, 80px);
+    align-items: center;
+  }
+  .nos__media img {
+    width: 100%;
+    aspect-ratio: 5 / 4;
+    object-fit: cover;
+    border-radius: var(--r-frame);
+  }
+  .nos__copy .lead {
+    margin-top: 18px;
+  }
+  .facts {
+    display: grid;
+    gap: 0;
+    margin: 30px 0 34px;
+  }
+  .facts div {
+    padding: 16px 0;
+    border-top: 1px solid var(--line);
+  }
+  .facts div:last-child {
+    border-bottom: 1px solid var(--line);
+  }
+  .facts dt {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--green);
+    font-weight: 700;
+  }
+  .facts dd {
+    margin: 4px 0 0 30px;
+    color: var(--ink-2);
+  }
+  @media (max-width: 860px) {
+    .nos {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  const track = document.querySelector<HTMLElement>('[data-track]');
+  const prev = document.querySelector<HTMLButtonElement>('[data-prev]');
+  const next = document.querySelector<HTMLButtonElement>('[data-next]');
+  if (track && prev && next) {
+    const step = () => (track.querySelector<HTMLElement>('.showcase__item')?.offsetWidth ?? 236) + 16;
+    const update = () => {
+      prev.disabled = track.scrollLeft < 8;
+      next.disabled = track.scrollLeft + track.clientWidth > track.scrollWidth - 8;
+    };
+    prev.addEventListener('click', () => track.scrollBy({ left: -step(), behavior: 'smooth' }));
+    next.addEventListener('click', () => track.scrollBy({ left: step(), behavior: 'smooth' }));
+    track.addEventListener('scroll', update, { passive: true });
+    update();
+  }
+</script>

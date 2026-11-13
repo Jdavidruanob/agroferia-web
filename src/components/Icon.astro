@@ -1,0 +1,33 @@
+---
+import { uiIcons, type IconName } from './icons';
+/**
+ * Iconos de interfaz (24×24, trazo 1.75). Dibujados a mano en un solo estilo
+ * para no depender de una librería externa.
+ */
+
+interface Props {
+  name: IconName;
+  size?: number;
+  class?: string;
+  strokeWidth?: number;
+  label?: string;
+}
+
+const { name, size = 20, class: className, strokeWidth = 1.75, label } = Astro.props;
+---
+
+<svg
+  class={className}
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width={strokeWidth}
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  role={label ? 'img' : undefined}
+  aria-label={label}
+  aria-hidden={label ? undefined : 'true'}
+  set:html={uiIcons[name]}
+/>

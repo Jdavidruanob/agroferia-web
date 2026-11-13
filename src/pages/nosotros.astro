@@ -1,0 +1,690 @@
+---
+import { Image } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+
+import mural from '../assets/fotos/mural-acopio.png';
+import rio from '../assets/fotos/rio-bolo.png';
+import frailejones from '../assets/fotos/frailejones.png';
+import ganado from '../assets/fotos/ganado-ladera.png';
+
+const impacto = [
+  {
+    icono: 'scale',
+    titulo: 'Precio justo',
+    texto:
+      'Vendemos la leche directamente, con pago quincenal puntual y bonificaciones por calidad. Así dejamos atrás a los intermediarios informales que pagaban lo que querían.',
+  },
+  {
+    icono: 'sprout',
+    titulo: 'Cero agrotóxicos',
+    texto:
+      'En el invernadero agroecológico cultivamos hortalizas con compost y biopreparados hechos con el estiércol de nuestro propio ganado. Las fincas asociadas están en transición a la agroecología.',
+  },
+  {
+    icono: 'users',
+    titulo: 'Liderada por mujeres',
+    texto:
+      'La presidencia y la representación legal están a cargo de socias. El comité de mujeres maneja el invernadero y genera ingresos propios para sus familias.',
+  },
+  {
+    icono: 'sun',
+    titulo: 'Energía solar',
+    texto:
+      'El tanque de frío del centro de acopio funciona con paneles fotovoltaicos. Este proyecto recibió el premio de Gobernanza Energética en el marco de la COP16 (2024).',
+  },
+] as const;
+
+const valores = [
+  ['Positivismo', 'Vemos en las crisis una oportunidad para aprender como asociación.'],
+  ['Igualdad', 'Los mismos derechos, voz y beneficios sin importar género, edad o etnia.'],
+  ['Tolerancia', 'Escuchamos al otro y valoramos opiniones distintas.'],
+  ['Sinceridad', 'Decimos lo que pensamos, con claridad y respeto.'],
+  ['Responsabilidad', 'Cumplimos lo que asumimos, en lo personal y en lo colectivo.'],
+  ['Solidaridad', 'Somos una sola familia campesina: “uno para todos y todos para uno”.'],
+];
+
+const aliados = [
+  'Alquería',
+  'SENA',
+  'IMCA',
+  'AGROSAVIA',
+  'Conservamos SAS',
+  'ProPacífico',
+  'Fundación Sura',
+  'Fundación Davivienda',
+  'Programa TERSAA',
+  'Cámara de Comercio de Palmira',
+];
+---
+
+<Base
+  title="Nosotros"
+  description="Agroferia, Asociación Agropecuaria La Feria: 30 familias campesinas de Pradera, Valle del Cauca, que producen lácteos con precio justo, agroecología y liderazgo de mujeres."
+>
+  <!-- ============ HERO ============ -->
+  <section class="container intro" aria-labelledby="nos-h1">
+    <div class="intro__text">
+      <h1 id="nos-h1">Somos 30 familias campesinas de La Feria</h1>
+      <p class="lead">
+        Agroferia es la Asociación Agropecuaria La Feria, una organización comunitaria sin ánimo de lucro en la zona rural de
+        Pradera, Valle del Cauca. Producimos leche en nuestras fincas, la acopiamos en frío cada día y la vendemos
+        directamente.
+      </p>
+    </div>
+    <figure class="intro__photo">
+      <Image
+        src={mural}
+        alt="Mural del centro de acopio de Agroferia: un campesino con sombrero, vacas, un caballo, peces y el logo de la asociación"
+        widths={[640, 960]}
+        sizes="(max-width: 860px) 100vw, 1180px"
+        loading="eager"
+      />
+      <figcaption>El centro de acopio de Agroferia, en el corregimiento La Feria.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ============ HISTORIA ============ -->
+  <section id="historia" class="section" aria-labelledby="hist-title">
+    <div class="container hist">
+      <h2 id="hist-title">Nuestra historia</h2>
+      <div class="hist__body">
+        <p>
+          Agroferia nació como una asociación de productores rurales del corregimiento La Feria, para organizarnos y vender lo
+          que produce el campo en mejores condiciones. Hoy reúne a 30 familias; 17 de ellas entregan leche todos los días al
+          centro de acopio.
+        </p>
+        <p>
+          Desde hace seis años vendemos la leche en frío a Alquería, nuestro aliado comercial. Con lo que aprendimos empezamos
+          a transformar parte de ella en quesos especiales, como provoleta y finas hierbas, y en 2022 hicimos el Festival del
+          Queso con el SENA.
+        </p>
+        <p>
+          Lo que ganamos no se queda en manos de dueños ni inversionistas: vuelve a las familias, al centro de acopio y a los
+          proyectos de la comunidad.
+        </p>
+      </div>
+      <blockquote class="hist__quote">
+        <p>Llevar lo mejor del campo a cada hogar, con lácteos naturales, frescos y nutritivos que generen bienestar para todos.</p>
+        <footer>Nuestro propósito</footer>
+      </blockquote>
+    </div>
+  </section>
+
+  <!-- ============ AMOR Y ABUNDANCIA ============ -->
+  <section class="container filo" aria-labelledby="filo-title">
+    <h2 id="filo-title" class="filo__title">Amor y abundancia</h2>
+    <div class="filo__cols">
+      <div>
+        <h3>Amor</h3>
+        <p>
+          Es el cuidado mutuo de todos los días. El bienestar no es de una familia sola ni se acumula: se comparte entre todas
+          las del corregimiento.
+        </p>
+      </div>
+      <div>
+        <h3>Abundancia</h3>
+        <p>
+          Es usar con conciencia lo que da el campo y diversificar lo que sembramos, para que los frutos lleguen a los hogares y
+          a los saberes de los asociados.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ IMPACTO ============ -->
+  <section id="impacto" class="section" aria-labelledby="imp-title">
+    <div class="container">
+      <div class="section-head">
+        <h2 id="imp-title">Lo que cambia cuando compras directo</h2>
+        <p>Cada producto de Agroferia sostiene una forma de trabajar el campo que cuida a las personas y a la tierra.</p>
+      </div>
+      <ul class="impact">
+        {
+          impacto.map((i) => (
+            <li>
+              <span class="impact__icon">
+                <Icon name={i.icono} size={26} />
+              </span>
+              <h3>{i.titulo}</h3>
+              <p>{i.texto}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ TERRITORIO ============ -->
+  <section id="territorio" class="container terr" aria-labelledby="terr-title">
+    <div class="terr__photos">
+      <Image class="terr__main" src={rio} alt="Agua del río Bolo corriendo entre piedras y vegetación" widths={[480, 800]} sizes="(max-width: 860px) 100vw, 560px" />
+      <Image class="terr__small" src={frailejones} alt="Frailejones en el páramo de las partes altas de la cuenca" widths={[300, 540]} sizes="(max-width: 860px) 50vw, 260px" />
+      <Image class="terr__small" src={ganado} alt="Ganado pastando en una ladera verde de La Feria" widths={[300, 386]} sizes="(max-width: 860px) 50vw, 260px" />
+    </div>
+    <div class="terr__copy">
+      <h2 id="terr-title">Un territorio rodeado de agua</h2>
+      <p class="lead">
+        La Feria está en la vertiente occidental de la Cordillera Central, en la subcuenca del río Bolo Azul. Mientras la parte
+        plana de Pradera está cubierta de caña, nuestras fincas están en la montaña, con clima fresco y agua limpia todo el año.
+      </p>
+      <dl class="terr__facts">
+        <div><dt>Ubicación</dt><dd>Corregimiento La Feria, a 12 km de Pradera, Valle del Cauca</dd></div>
+        <div><dt>Altitud de las fincas</dt><dd>1.600 a 2.200 m s. n. m.</dd></div>
+        <div><dt>Agua</dt><dd>Ríos Bolo y Bolo Azul, quebradas La Cristalina y La Bocana</dd></div>
+        <div><dt>Bosque</dt><dd>64 % de la cuenca conserva cobertura boscosa</dd></div>
+        <div><dt>Ganadería</dt><dd>99 % de las fincas asociadas con sistemas silvopastoriles</dd></div>
+        <div><dt>Vecinos</dt><dd>Corredor hacia el Parque Nacional Natural Las Hermosas</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- ============ ORGANIZACIÓN ============ -->
+  <section id="como-nos-organizamos" class="section" aria-labelledby="org-title">
+    <div class="container">
+      <div class="section-head">
+        <h2 id="org-title">Cómo nos organizamos</h2>
+        <p>Decidimos en asamblea y repartimos el trabajo en comités. Una parte de las utilidades vuelve a las familias a través de tres fondos.</p>
+      </div>
+
+      <div class="org">
+        <div class="org__col">
+          <h3>Gobierno</h3>
+          <ul>
+            <li><strong>Asamblea general.</strong> Las 30 familias asociadas. Es el máximo órgano de decisión.</li>
+            <li><strong>Junta directiva.</strong> Cinco cargos: presidenta, vicepresidenta, secretaría, tesorera y vocal.</li>
+            <li><strong>Presidenta:</strong> Claudia Jimena Paredes.</li>
+            <li><strong>Representante legal:</strong> Martha Cecilia Jiménez.</li>
+          </ul>
+        </div>
+        <div class="org__col">
+          <h3>Comités</h3>
+          <ul>
+            <li><strong>Comité de trabajo.</strong> Compra insumos y productos para el almacén.</li>
+            <li><strong>Comité de crédito.</strong> Administra el fondo rotatorio.</li>
+            <li><strong>Comité agroecológico de mujeres.</strong> Lidera el invernadero y su producción.</li>
+          </ul>
+        </div>
+        <div class="org__col org__col--funds">
+          <h3>Fondos</h3>
+          <ul>
+            <li><span class="fund">20 %</span><span><strong>Fondo educativo.</strong> Materiales escolares y salidas pedagógicas.</span></li>
+            <li><span class="fund">20 %</span><span><strong>Fondo solidario.</strong> Apoyo en salud o calamidad de los asociados.</span></li>
+            <li><span class="fund">1 %<small>interés</small></span><span><strong>Fondo rotatorio.</strong> Créditos de $500.000 a $7.000.000 al 1 % de interés para mejorar las fincas.</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ VALORES + ALIADOS ============ -->
+  <section class="container valores" aria-labelledby="val-title">
+    <div>
+      <h2 id="val-title">Nuestros valores</h2>
+      <dl class="vals">
+        {
+          valores.map(([v, d]) => (
+            <div>
+              <dt>{v}</dt>
+              <dd>{d}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+    <div class="aliados">
+      <h2 class="aliados__title">Con quién trabajamos</h2>
+      <p>Aliados comerciales, de formación y de transición energética que han acompañado a la asociación.</p>
+      <ul>
+        {aliados.map((a) => <li>{a}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <!-- ============ VISÍTANOS ============ -->
+  <section id="visitanos" class="container visit" aria-labelledby="vis-title">
+    <div class="visit__copy">
+      <h2 id="vis-title">Visítanos en La Feria</h2>
+      <p>
+        El punto de venta está en el Centro de Acopio de Agroferia, en el corregimiento La Feria, a 12 km de la cabecera de
+        Pradera, Valle del Cauca.
+      </p>
+      <ul class="visit__list">
+        <li><Icon name="map-pin" size={20} /> Centro de Acopio, corregimiento La Feria, Pradera</li>
+        <!-- PENDIENTE: horarios, WhatsApp y correo reales -->
+        <li><Icon name="clock" size={20} /> Horario: por confirmar</li>
+        <li><Icon name="message" size={20} /> WhatsApp: por definir</li>
+      </ul>
+      <a class="btn btn--light" href="https://www.google.com/maps/search/?api=1&query=Corregimiento+La+Feria+Pradera+Valle+del+Cauca" target="_blank" rel="noopener">
+        Abrir en Google Maps
+        <span class="btn__arrow"><Icon name="arrow-right" size={18} /></span>
+      </a>
+    </div>
+    <div class="visit__map">
+      <iframe
+        title="Mapa del corregimiento La Feria, Pradera"
+        src="https://www.google.com/maps?q=Corregimiento+La+Feria,+Pradera,+Valle+del+Cauca&z=12&output=embed"
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"></iframe>
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* ---------- Intro ---------- */
+  .intro {
+    padding-top: clamp(48px, 7vw, 96px);
+  }
+  .intro__text {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px 56px;
+    align-items: end;
+  }
+  .intro__text h1 {
+    max-width: 16ch;
+  }
+  .intro__photo {
+    margin: clamp(32px, 5vw, 56px) 0 0;
+  }
+  .intro__photo img {
+    width: 100%;
+    aspect-ratio: 16 / 7;
+    object-fit: cover;
+    object-position: 50% 45%;
+    border-radius: var(--r-frame);
+  }
+  .intro__photo figcaption {
+    margin-top: 12px;
+    color: var(--ink-2);
+    font-size: 0.9rem;
+  }
+  @media (max-width: 860px) {
+    .intro__text {
+      grid-template-columns: 1fr;
+    }
+    .intro__photo img {
+      aspect-ratio: 4 / 3;
+    }
+  }
+
+  /* ---------- Historia ---------- */
+  .hist {
+    display: grid;
+    grid-template-columns: 0.8fr 1.2fr;
+    gap: 28px clamp(32px, 6vw, 88px);
+  }
+  .hist__body {
+    display: grid;
+    gap: 18px;
+    color: var(--ink-2);
+    font-size: 1.1rem;
+    max-width: 62ch;
+  }
+  .hist__quote {
+    grid-column: 2;
+    margin: 24px 0 0;
+    padding-top: 28px;
+    border-top: 2px solid var(--green);
+  }
+  .hist__quote p {
+    color: var(--green);
+    font-family: var(--font-display);
+    font-size: clamp(1.4rem, 2.3vw, 1.9rem);
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  .hist__quote footer {
+    margin-top: 12px;
+    color: var(--ink-2);
+    font-size: 0.92rem;
+  }
+  @media (max-width: 860px) {
+    .hist {
+      grid-template-columns: 1fr;
+    }
+    .hist__quote {
+      grid-column: 1;
+    }
+  }
+
+  /* ---------- Filosofía ---------- */
+  .filo {
+    padding: clamp(48px, 7vw, 96px) clamp(28px, 6vw, 80px);
+    border-radius: var(--r-frame);
+    background: var(--green-deep);
+    color: var(--ink-on-dark-2);
+  }
+  .filo__title {
+    color: var(--sun);
+    font-size: clamp(2.8rem, 7.5vw, 6rem);
+    line-height: 1;
+  }
+  .filo__cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px 56px;
+    margin-top: clamp(28px, 4vw, 48px);
+    max-width: 920px;
+  }
+  .filo h3 {
+    color: #fff;
+    font-size: 1.2rem;
+  }
+  .filo p {
+    margin-top: 8px;
+    font-size: 1.06rem;
+  }
+  @media (max-width: 700px) {
+    .filo__cols {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ---------- Impacto ---------- */
+  .impact {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 1px solid var(--line);
+  }
+  .impact li {
+    padding: 28px 24px 8px 0;
+  }
+  .impact li + li {
+    padding-left: 24px;
+    border-left: 1px solid var(--line);
+  }
+  .impact__icon {
+    display: grid;
+    place-items: center;
+    width: 54px;
+    height: 54px;
+    margin-bottom: 18px;
+    border-radius: 50%;
+    background: var(--green);
+    color: #fff;
+  }
+  .impact h3 {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+  }
+  .impact p {
+    margin-top: 10px;
+    color: var(--ink-2);
+    font-size: 0.98rem;
+  }
+  @media (max-width: 960px) {
+    .impact {
+      grid-template-columns: 1fr 1fr;
+    }
+    .impact li:nth-child(3) {
+      padding-left: 0;
+      border-left: 0;
+    }
+    .impact li:nth-child(n + 3) {
+      border-top: 1px solid var(--line);
+    }
+  }
+  @media (max-width: 560px) {
+    .impact {
+      grid-template-columns: 1fr;
+    }
+    .impact li:nth-child(n) {
+      padding: 24px 0 20px;
+      border-left: 0;
+    }
+    .impact li + li {
+      border-top: 1px solid var(--line);
+    }
+  }
+
+  /* ---------- Territorio ---------- */
+  .terr {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(32px, 6vw, 80px);
+    align-items: center;
+  }
+  .terr__photos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .terr__photos :global(img) {
+    width: 100%;
+    object-fit: cover;
+    border-radius: 18px;
+  }
+  .terr__photos :global(.terr__main) {
+    grid-column: 1 / -1;
+    aspect-ratio: 16 / 9;
+    border-radius: var(--r-frame);
+  }
+  .terr__photos :global(.terr__small) {
+    aspect-ratio: 1;
+  }
+  .terr__copy .lead {
+    margin-top: 18px;
+  }
+  .terr__facts {
+    margin: 28px 0 0;
+  }
+  .terr__facts div {
+    display: grid;
+    grid-template-columns: 170px 1fr;
+    gap: 16px;
+    padding: 12px 0;
+    border-top: 1px solid var(--line);
+  }
+  .terr__facts dt {
+    font-weight: 600;
+  }
+  .terr__facts dd {
+    margin: 0;
+    color: var(--ink-2);
+  }
+  @media (max-width: 860px) {
+    .terr {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 480px) {
+    .terr__facts div {
+      grid-template-columns: 1fr;
+      gap: 2px;
+    }
+  }
+
+  /* ---------- Organización ---------- */
+  .org {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .org__col {
+    padding: 28px;
+    border-radius: 20px;
+    background: #fff;
+    box-shadow: var(--shadow-card);
+  }
+  .org__col h3 {
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--line);
+    color: var(--green);
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+  }
+  .org__col ul {
+    display: grid;
+    gap: 14px;
+    margin: 18px 0 0;
+    padding: 0;
+    list-style: none;
+    color: var(--ink-2);
+    font-size: 0.98rem;
+  }
+  .org__col strong {
+    color: var(--ink);
+  }
+  .org__col--funds {
+    background: var(--earth);
+    color: #f1e9da;
+  }
+  .org__col--funds h3 {
+    color: #fff;
+    border-color: rgb(255 255 255 / 0.2);
+  }
+  .org__col--funds ul {
+    color: #e6dccb;
+  }
+  .org__col--funds strong {
+    color: #fff;
+  }
+  .org__col--funds li {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    gap: 12px;
+    align-items: baseline;
+  }
+  .fund small {
+    display: block;
+    color: #e6dccb;
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    font-weight: 500;
+  }
+  .fund {
+    color: var(--sun);
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  @media (max-width: 900px) {
+    .org {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ---------- Valores y aliados ---------- */
+  .valores {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: clamp(32px, 6vw, 80px);
+    padding-bottom: clamp(56px, 8vw, 104px);
+  }
+  .vals {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px 32px;
+    margin: 28px 0 0;
+  }
+  .vals dt {
+    color: var(--green);
+    font-weight: 700;
+    font-size: 1.08rem;
+  }
+  .vals dd {
+    margin: 4px 0 0;
+    color: var(--ink-2);
+    font-size: 0.97rem;
+  }
+  .aliados {
+    padding: 32px;
+    border-radius: 22px;
+    background: var(--panel);
+  }
+  .aliados__title {
+    font-size: clamp(1.5rem, 2.2vw, 1.9rem);
+  }
+  .aliados p {
+    margin-top: 10px;
+    color: var(--ink-2);
+  }
+  .aliados ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 22px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .aliados li {
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: #fff;
+    color: var(--ink);
+    font-weight: 600;
+    font-size: 0.92rem;
+  }
+  @media (max-width: 860px) {
+    .valores {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 480px) {
+    .vals {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ---------- Visítanos ---------- */
+  .visit {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    border-radius: var(--r-frame);
+    overflow: hidden;
+    background: var(--green);
+    color: var(--ink-on-dark-2);
+    scroll-margin-top: 110px;
+  }
+  .visit__copy {
+    display: grid;
+    align-content: center;
+    gap: 18px;
+    padding: clamp(32px, 5vw, 64px);
+  }
+  .visit h2 {
+    color: #fff;
+  }
+  .visit__list {
+    display: grid;
+    gap: 10px;
+    margin: 0 0 10px;
+    padding: 0;
+    list-style: none;
+  }
+  .visit__list li {
+    display: grid;
+    grid-template-columns: 20px 1fr;
+    gap: 12px;
+    color: #fff;
+  }
+  .visit__list :global(svg) {
+    color: var(--sun);
+    margin-top: 3px;
+  }
+  .visit .btn {
+    justify-self: start;
+  }
+  .visit__map {
+    min-height: 380px;
+    background: var(--panel);
+  }
+  .visit__map iframe {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: 380px;
+    border: 0;
+  }
+  @media (max-width: 860px) {
+    .visit {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

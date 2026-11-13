@@ -1,0 +1,13 @@
+node_modules
+dist
+.astro
+.impeccable/review
+
+# Material original del cliente (no se necesita para compilar; las fotos usadas están en src/assets)
+*.pdf
+/logo.jpeg
+/logo-removebg-preview.png
+/productos.jpeg
+/Screenshot From *.png
+/WhatsApp Image *.jpeg
+/wikiloc-ruta-original.jpeg

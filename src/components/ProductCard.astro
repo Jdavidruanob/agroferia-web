@@ -1,0 +1,128 @@
+---
+import ProductGlyph from './ProductGlyph.astro';
+import Icon from './Icon.astro';
+import { categoriaPorKey, productoUrl, type Producto } from '../data/productos';
+
+interface Props {
+  producto: Producto;
+}
+
+const { producto: p } = Astro.props;
+const cat = categoriaPorKey[p.categorias[0]];
+const pa = p.categorias.includes('pal-arranque');
+---
+
+<a class:list={['pcard', { 'pcard--pa': pa }]} href={productoUrl(p)} style={`--cat:${cat.color}`}>
+  <div class="pcard__head">
+    <h3 class="pcard__name">{p.nombre}</h3>
+    <span class="tag">{pa ? "Pal' Arranque" : cat.nombre}</span>
+  </div>
+  <div class="pcard__media">
+    <!-- PENDIENTE: foto del empaque. Mientras tanto, ícono del producto. -->
+    <ProductGlyph name={p.glyph} size={92} />
+    <span class="pcard__format">{p.presentacion.split(',')[0]}</span>
+  </div>
+  <span class="pcard__more">
+    Ver más
+    <span class="pcard__arrow"><Icon name="arrow-right" size={16} /></span>
+  </span>
+</a>
+
+<style>
+  .pcard {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    height: 100%;
+    padding: 18px;
+    border-radius: var(--r-card);
+    background: var(--surface);
+    color: var(--ink);
+    text-decoration: none;
+    box-shadow: var(--shadow-card);
+    transition: box-shadow 0.3s ease, transform 0.4s var(--ease-out);
+  }
+  .pcard:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 16px 34px -16px rgb(9 55 35 / 0.32);
+  }
+  .pcard__head {
+    display: grid;
+    gap: 8px;
+    justify-items: start;
+    min-height: 4.6em;
+  }
+  .pcard__name {
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+  .pcard__media {
+    position: relative;
+    display: grid;
+    place-items: center;
+    aspect-ratio: 5 / 4;
+    border-radius: 12px;
+    background: var(--panel);
+    color: var(--cat);
+    overflow: hidden;
+  }
+  .pcard__media :global(svg) {
+    transition: transform 0.5s var(--ease-out);
+  }
+  .pcard:hover .pcard__media :global(svg) {
+    transform: scale(1.06) rotate(-3deg);
+  }
+  .pcard__format {
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+    padding: 2px 8px;
+    border-radius: 6px;
+    background: rgb(255 255 255 / 0.8);
+    color: var(--ink-2);
+    font-size: 0.78rem;
+  }
+  .pcard__more {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: auto;
+    padding: 5px 5px 5px 18px;
+    border-radius: 999px;
+    background: var(--green);
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+  .pcard__arrow {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #fff;
+    color: var(--green);
+    transition: transform 0.35s var(--ease-out);
+  }
+  .pcard:hover .pcard__arrow {
+    transform: translateX(3px);
+  }
+
+  /* Pal' Arranque: la ficha toma el mundo de la submarca */
+  .pcard--pa .pcard__media {
+    background: var(--green-deep);
+    color: var(--sun);
+  }
+  .pcard--pa .pcard__format {
+    background: rgb(9 55 35 / 0.75);
+    color: var(--ink-on-dark);
+  }
+  .pcard--pa .tag {
+    background: var(--green-deep);
+    color: var(--sun);
+    font-family: var(--font-sport);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+</style>
