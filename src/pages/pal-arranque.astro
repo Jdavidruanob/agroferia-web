@@ -4,6 +4,9 @@ import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
 import ProductGlyph from '../components/ProductGlyph.astro';
 import RouteProfile from '../components/RouteProfile.astro';
+import PalArranqueLogo from '../components/PalArranqueLogo.astro';
+import ciclistaArte from '../assets/marca/pal-arranque-ciclista.png';
+import etiqueta from '../assets/marca/pal-arranque-etiqueta.png';
 import { productosDe, productoUrl, type Producto } from '../data/productos';
 
 import ciclistas from '../assets/fotos/ciclistas-acopio.jpeg';
@@ -70,8 +73,7 @@ const pilares = [
       fetchpriority="high"
     />
     <div class="hero__copy">
-      <!-- PENDIENTE: reemplazar el wordmark tipográfico por el logo oficial de Pal' Arranque -->
-      <h1 id="pa-h1" class="wordmark">Pal'<br />Arranque</h1>
+      <h1 id="pa-h1" class="wordmark"><PalArranqueLogo width={560} loading="eager" /></h1>
       <p class="hero__by">Un programa de Agroferia</p>
       <p class="hero__tag">Energía de montaña para tu rodada.</p>
       <p class="hero__text">
@@ -119,7 +121,13 @@ const pilares = [
 
   <!-- ============ PRODUCTOS ============ -->
   <section id="productos" class="container prods" aria-labelledby="prod-title">
-    <div class="section-head">
+    <div class="section-head prods__head">
+      <Image
+        class="prods__label"
+        src={etiqueta}
+        alt="Etiqueta del sachet Pal' Arranque: letras amarillas y una vaca con casco montando bicicleta sobre fondo azul"
+        width={234}
+      />
       <h2 id="prod-title">Cinco productos para pedalear</h2>
       <p>
         Proteína para recuperar, carbohidrato para seguir y algo salado para el camino. Todos hechos con leche de La Feria,
@@ -249,6 +257,7 @@ const pilares = [
 
   <!-- ============ CIERRE ============ -->
   <section class="container close" aria-labelledby="close-title">
+    <Image class="close__art" src={ciclistaArte} alt="" width={200} />
     <h2 id="close-title">Trae a tu club hasta La Feria</h2>
     <p>Cuéntanos cuándo suben y cuántos son. Preparamos la parada para que nadie llegue a esperar.</p>
     <!-- PENDIENTE: enlace de WhatsApp real de Agroferia -->
@@ -268,7 +277,7 @@ const pilares = [
     min-height: min(680px, calc(100svh - 110px));
     border-radius: var(--r-frame);
     overflow: hidden;
-    background: var(--green-deep);
+    background: var(--blue);
     isolation: isolate;
   }
   .hero :global(.hero__bg) {
@@ -286,26 +295,21 @@ const pilares = [
     inset: 0;
     z-index: -1;
     background:
-      linear-gradient(90deg, rgb(9 55 35 / 0.96) 0%, rgb(9 55 35 / 0.86) 38%, rgb(9 55 35 / 0.2) 75%),
-      linear-gradient(0deg, rgb(9 55 35 / 0.7), transparent 45%);
+      linear-gradient(90deg, rgb(16 74 155 / 0.96) 0%, rgb(16 74 155 / 0.86) 38%, rgb(16 74 155 / 0.2) 75%),
+      linear-gradient(0deg, rgb(16 74 155 / 0.7), transparent 45%);
   }
   .hero__copy {
-    max-width: 560px;
+    max-width: 620px;
     padding: clamp(32px, 5vw, 64px);
     color: var(--ink-on-dark);
   }
   .wordmark {
-    color: var(--sun);
-    font-family: var(--font-sport);
-    font-weight: 800;
-    font-size: clamp(4.2rem, 11vw, 7.6rem);
-    line-height: 0.84;
-    letter-spacing: -0.01em;
-    text-transform: uppercase;
+    margin-left: -8px;
+    line-height: 0;
   }
   .hero__by {
     margin-top: 14px;
-    color: var(--ink-on-dark-2);
+    color: var(--ink-on-blue-2);
     font-size: 0.95rem;
   }
   .hero__tag {
@@ -319,7 +323,7 @@ const pilares = [
   .hero__text {
     margin-top: 12px;
     max-width: 46ch;
-    color: var(--ink-on-dark-2);
+    color: var(--ink-on-blue-2);
     font-size: 1.06rem;
   }
   .hero__actions {
@@ -346,7 +350,7 @@ const pilares = [
       padding-top: 46vw;
     }
     .hero::after {
-      background: linear-gradient(0deg, rgb(9 55 35 / 1) 45%, rgb(9 55 35 / 0.25) 100%);
+      background: linear-gradient(0deg, rgb(16 74 155 / 1) 45%, rgb(16 74 155 / 0.25) 100%);
     }
   }
 
@@ -386,11 +390,11 @@ const pilares = [
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    background: var(--green-deep);
+    background: var(--blue);
     color: var(--sun);
   }
   .pillars h3 {
-    color: var(--green);
+    color: var(--blue);
     font-family: var(--font-sport);
     font-size: 1.55rem;
     font-weight: 700;
@@ -435,7 +439,7 @@ const pilares = [
     border-bottom: 1px solid var(--line);
   }
   .group__head > :global(svg) {
-    color: var(--green);
+    color: var(--blue);
     margin-top: 4px;
   }
   .group__head h3 {
@@ -475,7 +479,7 @@ const pilares = [
     width: 92px;
     height: 92px;
     border-radius: 14px;
-    background: var(--green-deep);
+    background: var(--blue);
     color: var(--sun);
   }
   .prow__media :global(svg) {
@@ -508,7 +512,7 @@ const pilares = [
     font-variant-numeric: tabular-nums;
   }
   .prow__stats b {
-    color: var(--green);
+    color: var(--blue);
   }
   .prow__arrow {
     display: grid;
@@ -517,13 +521,32 @@ const pilares = [
     height: 40px;
     border-radius: 50%;
     background: var(--paper);
-    color: var(--green);
+    color: var(--blue);
     transition: background-color 0.2s ease, color 0.2s ease, transform 0.35s var(--ease-out);
   }
   .prow:hover .prow__arrow {
-    background: var(--green);
+    background: var(--blue);
     color: #fff;
     transform: translateX(3px);
+  }
+  .prods__head {
+    grid-template-columns: 150px minmax(0, 1fr) minmax(0, 1.1fr);
+    align-items: center;
+  }
+  .prods__head :global(.prods__label) {
+    width: 150px;
+    height: auto;
+    transform: rotate(-4deg);
+    filter: drop-shadow(0 12px 18px rgb(16 74 155 / 0.28));
+  }
+  @media (max-width: 800px) {
+    .prods__head {
+      grid-template-columns: 110px 1fr;
+    }
+    .prods__head :global(.prods__label) {
+      width: 110px;
+      grid-row: span 2;
+    }
   }
   .prods__note {
     margin-top: 18px;
@@ -558,8 +581,8 @@ const pilares = [
   .ruta {
     padding: clamp(36px, 5vw, 64px);
     border-radius: var(--r-frame);
-    background: var(--green-deep);
-    color: var(--ink-on-dark-2);
+    background: var(--blue);
+    color: var(--ink-on-blue-2);
   }
   .ruta__head {
     display: grid;
@@ -589,14 +612,14 @@ const pilares = [
     display: grid;
     grid-template-columns: repeat(6, 1fr);
     margin: 32px 0 0;
-    border-top: 1px solid rgb(235 213 104 / 0.25);
+    border-top: 1px solid rgb(249 194 0 / 0.25);
   }
   .ruta__facts div {
     padding: 18px 16px 0 0;
   }
   .ruta__facts div + div {
     padding-left: 16px;
-    border-left: 1px solid rgb(235 213 104 / 0.25);
+    border-left: 1px solid rgb(249 194 0 / 0.25);
   }
   .ruta__facts dt {
     font-size: 0.85rem;
@@ -662,7 +685,7 @@ const pilares = [
     .ruta__facts div:nth-child(n) {
       padding: 14px 0;
       border-left: 0;
-      border-bottom: 1px solid rgb(235 213 104 / 0.18);
+      border-bottom: 1px solid rgb(249 194 0 / 0.18);
     }
   }
 
@@ -697,7 +720,7 @@ const pilares = [
   }
   .tt__list :global(svg) {
     margin-top: 3px;
-    color: var(--green);
+    color: var(--blue);
   }
   @media (max-width: 860px) {
     .tt {
@@ -712,9 +735,14 @@ const pilares = [
     gap: 16px;
     padding: clamp(48px, 6vw, 80px) var(--gutter);
     border-radius: var(--r-frame);
-    background: var(--green);
+    background: var(--blue);
     color: var(--ink-on-dark);
     text-align: center;
+  }
+  .close :global(.close__art) {
+    width: 150px;
+    height: auto;
+    margin-bottom: 4px;
   }
   .close h2 {
     color: #fff;
@@ -728,6 +756,6 @@ const pilares = [
   .close p {
     max-width: 48ch;
     margin-bottom: 12px;
-    color: var(--ink-on-dark-2);
+    color: var(--ink-on-blue-2);
   }
 </style>

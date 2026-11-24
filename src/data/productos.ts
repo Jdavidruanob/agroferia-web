@@ -13,7 +13,7 @@ export interface Categoria {
   key: CategoriaKey;
   nombre: string;
   descripcion: string;
-  /** Color sólido del panel de detalle (siempre de la paleta del logo). */
+  /** Color sólido del panel de detalle: verde Tradicional o azul Pal' Arranque. */
   color: string;
 }
 
@@ -23,31 +23,31 @@ export const categorias: Categoria[] = [
     key: 'leches',
     nombre: 'Leches',
     descripcion: 'Leche de montaña, ordeñada en las fincas de La Feria y acopiada en frío el mismo día.',
-    color: '#13699a',
+    color: '#076332',
   },
   {
     key: 'bebidas',
     nombre: 'Bebidas y alimentos lácteos',
     descripcion: 'Yogures, bebidas y quesos hechos con la leche de las 30 familias asociadas.',
-    color: '#0e5f36',
+    color: '#076332',
   },
   {
     key: 'snacks',
     nombre: 'Snacks',
     descripcion: 'Queso campesino con lo dulce de siempre, en porciones para llevar.',
-    color: '#5f4210',
+    color: '#076332',
   },
   {
     key: 'pal-arranque',
     nombre: "Pal' Arranque",
     descripcion: 'La línea para ciclistas: energía de origen para antes, durante y después de la rodada.',
-    color: '#093723',
+    color: '#104a9b',
   },
   {
     key: 'postres',
     nombre: 'Postres',
     descripcion: 'Algo dulce para cerrar la comida o el día, con fruta de temporada.',
-    color: '#2b6f37',
+    color: '#076332',
   },
 ];
 
@@ -557,6 +557,11 @@ export const categoriaPorKey = Object.fromEntries(categorias.map((c) => [c.key, 
 
 export function productosDe(key: CategoriaKey) {
   return productos.filter((p) => p.categorias.includes(key));
+}
+
+/** Todo lo que no es Pal' Arranque pertenece a la línea Tradicional. */
+export function esTradicional(p: Producto) {
+  return !p.categorias.includes('pal-arranque');
 }
 
 export function productoUrl(p: Producto) {

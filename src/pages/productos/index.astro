@@ -2,6 +2,8 @@
 import Base from '../../layouts/Base.astro';
 import Icon from '../../components/Icon.astro';
 import ProductCard from '../../components/ProductCard.astro';
+import PalArranqueLetras from '../../components/PalArranqueLetras.astro';
+import BadgeTradicional from '../../components/BadgeTradicional.astro';
 import { categorias, productosDe } from '../../data/productos';
 ---
 
@@ -35,7 +37,16 @@ import { categorias, productosDe } from '../../data/productos';
           <div class="container">
             <div class="cat__head">
               <div>
-                <h2 id={`t-${c.key}`}>{c.nombre}</h2>
+                {pa ? (
+                  <h2 id={`t-${c.key}`} class="cat__brand">
+                    <PalArranqueLetras width={260} />
+                  </h2>
+                ) : (
+                  <div class="cat__title">
+                    <h2 id={`t-${c.key}`}>{c.nombre}</h2>
+                    <BadgeTradicional size={26} />
+                  </div>
+                )}
                 <p>{c.descripcion}</p>
               </div>
               {pa && (
@@ -101,8 +112,8 @@ import { categorias, productosDe } from '../../data/productos';
     border-color: var(--green);
   }
   .catnav__link--pa {
-    border-color: var(--green-deep);
-    background: var(--green-deep);
+    border-color: var(--blue);
+    background: var(--blue);
     color: var(--sun);
     font-family: var(--font-sport);
     font-weight: 700;
@@ -110,7 +121,7 @@ import { categorias, productosDe } from '../../data/productos';
     text-transform: uppercase;
   }
   .catnav__link--pa:hover {
-    background: var(--green);
+    background: var(--blue-hover);
   }
 
   .cat {
@@ -150,7 +161,7 @@ import { categorias, productosDe } from '../../data/productos';
     width: min(100% - 2 * var(--gutter) + 0px, calc(var(--container) + 64px));
     padding-inline: 0;
     border-radius: var(--r-frame);
-    background: var(--green-deep);
+    background: var(--blue);
     border-top: 0 !important;
   }
   .cat--pa + .cat {
@@ -159,16 +170,17 @@ import { categorias, productosDe } from '../../data/productos';
   .cat--pa .container {
     width: min(100% - 2 * var(--gutter), var(--container));
   }
-  .cat--pa h2 {
-    color: var(--sun);
-    font-family: var(--font-sport);
-    font-size: clamp(2.2rem, 4vw, 3.2rem);
-    font-weight: 800;
-    letter-spacing: 0;
-    text-transform: uppercase;
+  .cat__title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 16px;
+  }
+  .cat__brand {
+    line-height: 0;
   }
   .cat--pa .cat__head p {
-    color: var(--ink-on-dark-2);
+    color: var(--ink-on-blue-2);
   }
 
   @media (max-width: 860px) {

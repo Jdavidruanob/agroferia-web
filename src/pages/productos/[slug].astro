@@ -3,6 +3,8 @@ import Base from '../../layouts/Base.astro';
 import Icon from '../../components/Icon.astro';
 import ProductGlyph from '../../components/ProductGlyph.astro';
 import ProductCard from '../../components/ProductCard.astro';
+import PalArranqueLetras from '../../components/PalArranqueLetras.astro';
+import BadgeTradicional from '../../components/BadgeTradicional.astro';
 import { categoriaPorKey, productos, productosDe, type Producto } from '../../data/productos';
 
 export function getStaticPaths() {
@@ -67,7 +69,7 @@ const puntos = pa
     <div class="phero__visual">
       <!-- PENDIENTE: foto del producto -->
       <ProductGlyph name={p.glyph} size={220} class="phero__glyph" />
-      {pa && <span class="phero__badge" aria-hidden="true">Pal' Arranque</span>}
+      {pa ? <PalArranqueLetras class="phero__badge" width={140} /> : <BadgeTradicional class="phero__badge" size={40} />}
     </div>
   </section>
 
@@ -97,6 +99,7 @@ const puntos = pa
       <p class="ficha__name">{p.nombre}</p>
       <div class="ficha__media">
         <ProductGlyph name={p.glyph} size={120} />
+        {!pa && <BadgeTradicional class="ficha__badge" size={24} />}
       </div>
       <dl class="ficha__meta">
         <div><dt>Presentación</dt><dd>{p.presentacion}</dd></div>
@@ -272,26 +275,22 @@ const puntos = pa
     width: min(220px, 60%);
     height: auto;
   }
+  /* Tradicional: el panel toma el verde de su etiqueta */
+  .phero:not(.phero--pa) .phero__visual {
+    background: var(--green-field);
+    color: var(--green-field-ink);
+  }
   .phero--pa .phero__visual {
     color: var(--sun);
   }
   .phero--pa .phero__chips li {
-    background: rgb(235 213 104 / 0.14);
+    background: rgb(249 194 0 / 0.16);
     color: var(--sun);
   }
-  .phero__badge {
+  .phero__visual :global(.phero__badge) {
     position: absolute;
     top: 18px;
     right: 18px;
-    padding: 4px 12px;
-    border-radius: 6px;
-    background: var(--sun);
-    color: var(--green-deep);
-    font-family: var(--font-sport);
-    font-weight: 800;
-    font-size: 1rem;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
   }
   @media (max-width: 860px) {
     .phero {
@@ -382,8 +381,16 @@ const puntos = pa
     background: var(--panel);
     color: var(--cat, var(--green));
   }
+  .ficha__media {
+    position: relative;
+  }
+  .ficha__media :global(.ficha__badge) {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+  }
   :global(.theme-pal-arranque) .ficha__media {
-    background: var(--green-deep);
+    background: var(--blue);
     color: var(--sun);
   }
   .ficha__meta {
@@ -500,8 +507,8 @@ const puntos = pa
     margin-top: 28px;
     padding: 22px 24px;
     border-radius: 16px;
-    background: var(--green-deep);
-    color: var(--ink-on-dark-2);
+    background: var(--blue);
+    color: var(--ink-on-blue-2);
   }
   .enruta > :global(svg) {
     color: var(--sun);

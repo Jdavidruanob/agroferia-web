@@ -4,6 +4,8 @@ import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
 import ProductGlyph from '../components/ProductGlyph.astro';
 import ProductCard from '../components/ProductCard.astro';
+import PalArranqueLogo from '../components/PalArranqueLogo.astro';
+import tractor from '../assets/marca/tradicional-tractor.png';
 import { categorias, productos, productosDe, productoUrl } from '../data/productos';
 
 import montanas from '../assets/fotos/montanas-la-feria.png';
@@ -72,6 +74,7 @@ const paProductos = productosDe('pal-arranque');
         <Icon name="map-pin" size={16} />
         La Feria · Pradera, Valle del Cauca · 1.600 a 2.200 m s. n. m.
       </p>
+      <Image class="hero__tractor" src={tractor} alt="" width={215} height={150} loading="eager" />
     </div>
     <div class="hero__media">
       <Image
@@ -168,8 +171,7 @@ const paProductos = productosDe('pal-arranque');
   <!-- ============ PAL' ARRANQUE ============ -->
   <section class="container pa" aria-labelledby="pa-title">
     <div class="pa__copy">
-      <!-- PENDIENTE: reemplazar por el logo de Pal' Arranque cuando esté listo -->
-      <p class="pa__mark" aria-hidden="true">Pal'<br />Arranque</p>
+      <PalArranqueLogo class="pa__mark" width={500} />
       <h2 id="pa-title" class="pa__title">La parada de tu rodada en La Feria</h2>
       <p class="pa__text">
         Un programa de Agroferia para ciclistas de montaña: una ruta que sale de La Feria y sube hasta los 2.262 m, un lugar
@@ -240,23 +242,24 @@ const paProductos = productosDe('pal-arranque');
     min-height: min(640px, calc(100svh - 120px));
     border-radius: var(--r-frame);
     overflow: hidden;
-    background: var(--green-deep);
+    background: var(--green-field);
   }
   .hero__copy {
+    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: center;
     gap: 24px;
     padding: clamp(36px, 6vw, 72px);
-    color: var(--ink-on-dark);
+    color: var(--green-field-ink);
   }
   .hero h1 {
-    color: #fff;
+    color: var(--green-field-ink);
     max-width: 14ch;
   }
   .hero__lead {
     max-width: 46ch;
-    color: var(--ink-on-dark-2);
+    color: var(--green-field-ink);
     font-size: clamp(1.05rem, 1.35vw, 1.18rem);
   }
   .hero__actions {
@@ -270,7 +273,7 @@ const paProductos = productosDe('pal-arranque');
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    color: var(--sun);
+    color: var(--green-field-ink);
     font-weight: 600;
     text-decoration: none;
   }
@@ -283,9 +286,29 @@ const paProductos = productosDe('pal-arranque');
     gap: 8px;
     margin-top: auto;
     padding-top: 18px;
-    border-top: 1px solid rgb(255 255 255 / 0.14);
-    color: var(--ink-on-dark-2);
+    padding-right: 190px;
+    border-top: 1px solid rgb(5 51 26 / 0.22);
+    color: var(--green-field-ink);
     font-size: 0.9rem;
+  }
+  .hero__copy :global(.hero__tractor) {
+    position: absolute;
+    right: clamp(20px, 3vw, 40px);
+    bottom: 18px;
+    width: 170px;
+    height: auto;
+    pointer-events: none;
+  }
+  @media (max-width: 520px) {
+    .hero__place {
+      padding-right: 0;
+    }
+    .hero__copy :global(.hero__tractor) {
+      position: static;
+      align-self: flex-end;
+      width: 150px;
+      margin: -8px -8px -12px 0;
+    }
   }
   .hero__media {
     position: relative;
@@ -517,17 +540,12 @@ const paProductos = productosDe('pal-arranque');
     gap: clamp(28px, 4vw, 56px);
     padding: clamp(32px, 5vw, 64px);
     border-radius: var(--r-frame);
-    background: var(--green-deep);
-    color: var(--ink-on-dark);
+    background: var(--blue);
+    color: #fff;
   }
-  .pa__mark {
-    color: var(--sun);
-    font-family: var(--font-sport);
-    font-weight: 800;
-    font-size: clamp(3.4rem, 7vw, 5.6rem);
-    line-height: 0.86;
-    letter-spacing: -0.01em;
-    text-transform: uppercase;
+  .pa__copy :global(.pa__mark) {
+    display: block;
+    margin-left: -10px;
   }
   .pa__title {
     margin-top: 26px;
@@ -537,7 +555,7 @@ const paProductos = productosDe('pal-arranque');
   .pa__text {
     margin: 14px 0 28px;
     max-width: 46ch;
-    color: var(--ink-on-dark-2);
+    color: var(--ink-on-blue-2);
     font-size: 1.08rem;
   }
   .pa__media img {
@@ -555,10 +573,10 @@ const paProductos = productosDe('pal-arranque');
     margin: 0;
     padding: 0;
     list-style: none;
-    border-top: 1px solid rgb(235 213 104 / 0.25);
+    border-top: 1px solid rgb(249 194 0 / 0.3);
   }
   .pa__products li + li {
-    border-left: 1px solid rgb(235 213 104 / 0.25);
+    border-left: 1px solid rgb(249 194 0 / 0.3);
   }
   .pa__products a {
     display: flex;
@@ -591,7 +609,7 @@ const paProductos = productosDe('pal-arranque');
       border-left: 0;
     }
     .pa__products li {
-      border-bottom: 1px solid rgb(235 213 104 / 0.25);
+      border-bottom: 1px solid rgb(249 194 0 / 0.3);
     }
     .pa__products a {
       padding: 16px 4px;

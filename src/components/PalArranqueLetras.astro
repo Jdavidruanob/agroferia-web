@@ -1,0 +1,22 @@
+---
+/** Nombre "Pal' Arranque" con la tipografía oficial de su etiqueta. Usar sobre fondo azul (--blue). */
+import { Image } from 'astro:assets';
+import letras from '../assets/marca/pal-arranque-letras.png';
+
+interface Props {
+  /** Ancho visible en px. */
+  width?: number;
+  class?: string;
+  loading?: 'eager' | 'lazy';
+}
+const { width = 320, class: className, loading = 'lazy' } = Astro.props;
+---
+
+<Image
+  src={letras}
+  alt="Pal' Arranque"
+  width={Math.min(width * 2, 380)}
+  class={className}
+  style={`width:${width}px;max-width:100%;height:auto`}
+  loading={loading}
+/>

@@ -1,6 +1,7 @@
 ---
 import ProductGlyph from './ProductGlyph.astro';
 import Icon from './Icon.astro';
+import BadgeTradicional from './BadgeTradicional.astro';
 import { categoriaPorKey, productoUrl, type Producto } from '../data/productos';
 
 interface Props {
@@ -20,6 +21,7 @@ const pa = p.categorias.includes('pal-arranque');
   <div class="pcard__media">
     <!-- PENDIENTE: foto del empaque. Mientras tanto, ícono del producto. -->
     <ProductGlyph name={p.glyph} size={92} />
+    {!pa && <BadgeTradicional class="pcard__badge" size={24} />}
     <span class="pcard__format">{p.presentacion.split(',')[0]}</span>
   </div>
   <span class="pcard__more">
@@ -72,6 +74,11 @@ const pa = p.categorias.includes('pal-arranque');
   .pcard:hover .pcard__media :global(svg) {
     transform: scale(1.06) rotate(-3deg);
   }
+  .pcard__media :global(.pcard__badge) {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+  }
   .pcard__format {
     position: absolute;
     left: 10px;
@@ -110,15 +117,21 @@ const pa = p.categorias.includes('pal-arranque');
 
   /* Pal' Arranque: la ficha toma el mundo de la submarca */
   .pcard--pa .pcard__media {
-    background: var(--green-deep);
+    background: var(--blue);
     color: var(--sun);
   }
   .pcard--pa .pcard__format {
-    background: rgb(9 55 35 / 0.75);
-    color: var(--ink-on-dark);
+    background: rgb(10 46 99 / 0.8);
+    color: #fff;
+  }
+  .pcard--pa .pcard__more {
+    background: var(--blue);
+  }
+  .pcard--pa .pcard__arrow {
+    color: var(--blue);
   }
   .pcard--pa .tag {
-    background: var(--green-deep);
+    background: var(--blue);
     color: var(--sun);
     font-family: var(--font-sport);
     font-weight: 700;

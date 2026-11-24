@@ -1,21 +1,30 @@
 /* ==========================================================================
    AGROFERIA — sistema base
-   Colores tomados del logo (logo-removebg-preview.png):
-   cinta y hojas → verde bosque, suelo → tierra, paisaje → azul cielo,
-   surcos → verde pasto, franja inferior → amarillo sol.
+   Identidad de líneas (etiquetas de la diseñadora, nov. 2026):
+   · Línea Tradicional → verde de su etiqueta (#49AF4C fondo, #076332 trazo).
+   · Línea Pal' Arranque → azul de su etiqueta (#104A9B).
+   · Amarillo común a ambas etiquetas (#F9C200).
+   El logo de Agroferia aporta la tierra (#5F4210).
    Regla: nada de pasteles, neón ni fluorescentes.
    ========================================================================== */
 
 :root {
-  /* Marca */
-  --green: #0e5f36;        /* cinta / hojas del logo */
-  --green-hover: #0b4f2d;
-  --green-deep: #093723;   /* fondos oscuros */
-  --field: #2b8f3d;        /* surcos del logo */
+  /* Línea Tradicional */
+  --green: #076332;        /* trazo de la etiqueta Tradicional: botones, texto, bloques oscuros */
+  --green-hover: #054d27;
+  --green-deep: #076332;   /* fondos oscuros de la marca (mismo verde de la etiqueta) */
+  --green-field: #49af4c;  /* fondo de la etiqueta Tradicional; texto encima siempre --green-field-ink */
+  --green-field-ink: #05331a;
+  --field: #49af4c;
+
+  /* Línea Pal' Arranque */
+  --blue: #104a9b;         /* fondo de la etiqueta Pal' Arranque */
+  --blue-hover: #0c3a7a;
+  --ink-on-blue-2: #d3dcef;
+
+  /* Comunes */
+  --sun: #f9c200;          /* amarillo de ambas etiquetas, solo sobre verde oscuro o azul */
   --earth: #5f4210;        /* suelo del logo */
-  --sky: #2199d3;          /* cielo del logo */
-  --sky-ink: #13699a;      /* cielo con contraste para texto */
-  --sun: #ebd568;          /* franja amarilla del logo, solo sobre fondos oscuros */
 
   /* Neutros */
   --paper: #f6f4ec;
@@ -117,7 +126,7 @@ a {
 }
 
 :focus-visible {
-  outline: 2.5px solid var(--sky-ink);
+  outline: 2.5px solid var(--blue);
   outline-offset: 3px;
   border-radius: 6px;
 }
@@ -199,8 +208,8 @@ a {
 .btn--light { --btn-bg: #fff; --btn-fg: var(--ink); --arrow-bg: var(--green); --arrow-fg: #fff; }
 .btn--light:hover { --btn-bg: #fff; box-shadow: var(--shadow-float); }
 
-.btn--sun { --btn-bg: var(--sun); --btn-fg: var(--green-deep); --arrow-bg: var(--green-deep); --arrow-fg: var(--sun); }
-.btn--sun:hover { --btn-bg: #f2df82; }
+.btn--sun { --btn-bg: var(--sun); --btn-fg: var(--blue); --arrow-bg: var(--blue); --arrow-fg: var(--sun); }
+.btn--sun:hover { --btn-bg: #ffd22e; }
 
 .btn--ghost {
   --btn-bg: transparent;
@@ -236,4 +245,18 @@ a {
   gap: 8px;
   font-size: 0.85rem;
   color: var(--earth);
+}
+
+/* Distintivo de línea Tradicional: cinta verde con las letras de la etiqueta */
+.badge-tradicional {
+  display: inline-grid;
+  place-items: center;
+  padding: 4px 16px 5px;
+  background: var(--green-field);
+  clip-path: polygon(0 0, 100% 0, calc(100% - 7px) 25%, 100% 50%, calc(100% - 7px) 75%, 100% 100%, 0 100%, 7px 75%, 0 50%, 7px 25%);
+}
+.badge-tradicional img {
+  display: block;
+  width: auto;
+  height: 15px;
 }

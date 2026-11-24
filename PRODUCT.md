@@ -52,10 +52,12 @@ Dairy and agroecological food produced by 30 campesino families of the La Feria 
 
 ## Brand Commitments
 
-- Name: AGROFERIA / Asociación Agropecuaria – La Feria. Logo: `logo-removebg-preview.png` (transparent), `logo.jpeg`.
-- Palette must be taken from the logo. Primary dark green (ribbon/leaves), secondary earth brown (soil), accent sky blue (landscape), cream/white backgrounds. **No pastel, neon or fluorescent colours.** Clean, professional, low "AI slop".
+- Name: AGROFERIA / Asociación Agropecuaria – La Feria. Logo: `logo-removebg-preview.png` (transparent), `logo.jpeg`. The Agroferia logo stays top-left in the navbar.
+- Two product lines with labels made by the client's designer (Nov 2026, source files `PAL' ARRANQUE.png`, `TRADICIONAL.png`):
+  - **Tradicional** (all non-cyclist products): green label `#49AF4C` with dark green linework `#076332`, yellow `#F9C200` lettering, cow-on-tractor illustration. Every Tradicional product card/detail shows the "TRADICIONAL" badge.
+  - **Pal' Arranque** (cyclists): blue label `#104A9B`, yellow `#F9C200` lettering, cow-on-bike illustration. The name as a title always uses the label lettering.
+- Site greens come from the Tradicional label, the yellow from both labels, the Pal' Arranque world is blue. **No pastel, neon or fluorescent colours.** Clean, professional, low "AI slop".
 - Philosophy: "Amor y Abundancia". Motto of solidarity: "uno para todos y todos para uno" — always shown in quotation marks.
-- Pal' Arranque is a sub-brand: same base colours, more energy, sport and route.
 
 ## Evidence on Hand
 

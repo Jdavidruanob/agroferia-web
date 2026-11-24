@@ -1,0 +1,23 @@
+---
+/** Logo completo de Pal' Arranque (letras, estela de leche y vaca en bici). Usar sobre fondo azul (--blue). */
+import { Image } from 'astro:assets';
+import logo from '../assets/marca/pal-arranque-logo.png';
+
+interface Props {
+  /** Ancho máximo visible en px; se encoge con su contenedor. */
+  width?: number;
+  class?: string;
+  loading?: 'eager' | 'lazy';
+}
+const { width = 480, class: className, loading = 'lazy' } = Astro.props;
+---
+
+<Image
+  src={logo}
+  alt="Pal' Arranque"
+  widths={[400, 594]}
+  sizes={`(max-width: 600px) 90vw, ${width}px`}
+  class={className}
+  style={`width:100%;max-width:${width}px;height:auto`}
+  loading={loading}
+/>

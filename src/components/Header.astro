@@ -2,6 +2,7 @@
 import { Image } from 'astro:assets';
 import logo from '../assets/marca/logo-agroferia.png';
 import Icon from './Icon.astro';
+import PalArranqueLetras from './PalArranqueLetras.astro';
 import { categorias, productosDe, productoUrl } from '../data/productos';
 
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
@@ -42,9 +43,15 @@ const links = [
                   <div class="mega__grid">
                     {categorias.map((c) => (
                       <div class:list={['mega__col', { 'mega__col--pa': c.key === 'pal-arranque' }]}>
-                        <a class="mega__title" href={c.key === 'pal-arranque' ? '/pal-arranque' : `/productos#${c.key}`}>
-                          {c.nombre}
-                        </a>
+                        {c.key === 'pal-arranque' ? (
+                          <a class="mega__title mega__title--pa" href="/pal-arranque">
+                            <PalArranqueLetras width={118} />
+                          </a>
+                        ) : (
+                          <a class="mega__title" href={`/productos#${c.key}`}>
+                            {c.nombre}
+                          </a>
+                        )}
                         <ul>
                           {productosDe(c.key).map((p) => (
                             <li>
@@ -70,9 +77,15 @@ const links = [
               </li>
             ) : (
               <li class="nav__item">
-                <a class="nav__link" href={l.href} aria-current={is(l.href) ? 'page' : undefined}>
-                  {l.label}
-                </a>
+                {l.href === '/pal-arranque' ? (
+                  <a class="nav__link nav__link--pa" href={l.href} aria-current={is(l.href) ? 'page' : undefined}>
+                    <PalArranqueLetras width={74} loading="eager" />
+                  </a>
+                ) : (
+                  <a class="nav__link" href={l.href} aria-current={is(l.href) ? 'page' : undefined}>
+                    {l.label}
+                  </a>
+                )}
               </li>
             ),
           )
@@ -118,7 +131,11 @@ const links = [
           </div>
         </details>
       </li>
-      <li><a href="/pal-arranque" aria-current={is('/pal-arranque') ? 'page' : undefined}>Pal' Arranque</a></li>
+      <li>
+        <a href="/pal-arranque" aria-current={is('/pal-arranque') ? 'page' : undefined}>
+          <span class="mobile__pa"><PalArranqueLetras width={96} /></span>
+        </a>
+      </li>
       <li><a href="/nosotros" aria-current={is('/nosotros') ? 'page' : undefined}>Nosotros</a></li>
     </ul>
     <a class="btn" href="/nosotros#visitanos">
@@ -212,6 +229,24 @@ const links = [
     margin-left: -2.5px;
     border-radius: 50%;
     background: var(--field);
+  }
+  /* Pal' Arranque: píldora azul con sus letras, para marcar que es otra línea */
+  .nav__link.nav__link--pa {
+    margin: 0 4px;
+    padding: 5px 14px 6px;
+    background: var(--blue);
+    line-height: 0;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.3s var(--ease-out);
+  }
+  .nav__link.nav__link--pa:hover {
+    background: var(--blue-hover);
+    transform: translateY(-1px);
+  }
+  .nav__link.nav__link--pa[aria-current='page'] {
+    box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--sun);
+  }
+  .nav__link.nav__link--pa[aria-current='page']::after {
+    display: none;
   }
   .nav__item--mega .nav__link[aria-current='page']::after {
     margin-left: -10px;
@@ -313,19 +348,15 @@ const links = [
     margin: -14px -14px;
     padding: 14px;
     border-radius: 14px;
-    background: var(--green-deep);
+    background: var(--blue);
   }
   .mega__col--pa .mega__title {
-    color: var(--sun);
-    border-color: rgb(235 213 104 / 0.3);
-    font-family: var(--font-sport);
-    font-size: 1.2rem;
-    font-weight: 700;
-    letter-spacing: 0.02em;
-    text-transform: uppercase;
+    padding-bottom: 8px;
+    margin-bottom: 10px;
+    border-color: rgb(249 194 0 / 0.35);
   }
   .mega__col--pa li a {
-    color: var(--ink-on-dark-2);
+    color: var(--ink-on-blue-2);
   }
   .mega__col--pa li a:hover {
     color: #fff;
@@ -451,6 +482,16 @@ const links = [
     }
     .mobile__list a[aria-current='page'] {
       color: var(--green);
+    }
+    .mobile__pa {
+      display: inline-block;
+      padding: 6px 16px 7px;
+      border-radius: 999px;
+      background: var(--blue);
+      line-height: 0;
+    }
+    .mobile__list a[aria-current='page'] .mobile__pa {
+      box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--sun);
     }
     .mobile__cats {
       display: grid;
