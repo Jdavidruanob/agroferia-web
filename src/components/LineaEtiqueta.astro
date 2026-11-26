@@ -24,13 +24,13 @@ const src = pa ? letrasPA : letrasTR;
 const ancho = Math.round((alto * src.width) / src.height);
 
 // Cinta: recorte triangulado en los lados izquierdo y derecho, calculado en px según el tamaño.
-const padX = Math.round(alto * 0.75);
-const padY = Math.round(alto * 0.4);
+const padX = Math.round(alto * 0.5);
+const padY = Math.round(alto * 0.2);
 const W = ancho + padX * 2;
 const H = alto + padY * 2;
-const dientes = Math.max(4, Math.round(H / (alto * 0.5)));
+const dientes = Math.max(4, Math.round(H / (alto * 0.36)));
 const th = H / dientes;
-const d = Math.round(alto * 0.22 * 10) / 10;
+const d = Math.round(alto * 0.16 * 10) / 10;
 const f = (n: number) => Math.round(n * 10) / 10;
 const pts: string[] = [`${d}px 0`, `${f(W - d)}px 0`];
 for (let i = 0; i < dientes; i++) pts.push(`${f(W)}px ${f(i * th + th / 2)}px`, `${f(W - d)}px ${f((i + 1) * th)}px`);
