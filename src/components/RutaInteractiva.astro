@@ -1,0 +1,704 @@
+---
+/**
+ * Mapa del recorrido Pal' Arranque: 8 puntos sobre un camino ilustrado.
+ * El personaje ciclista avanza entre puntos (clic en la banderita o
+ * botones Anterior / Siguiente). Al llegar al punto 8 (punto de acopio)
+ * aparece el cartel de premio.
+ *
+ * ⚠️ Nombres, kilómetros y altitudes de las paradas son de referencia:
+ * ajustar con el trazado oficial de Wikiloc.
+ */
+import { Image } from 'astro:assets';
+import Icon from './Icon.astro';
+import ciclista from '../assets/marca/personaje-pal-arranque.png';
+
+type Tipo = 'inicio' | 'natural' | 'turistico' | 'meta';
+const puntos: { x: number; y: number; tipo: Tipo; nombre: string; km: string; alt: string; texto: string }[] = [
+  { x: 90, y: 505, tipo: 'inicio', nombre: 'Salida · Parque de La Feria', km: '0 km', alt: '1.568 m', texto: 'Punto de encuentro del grupo. Revisión de bicis, hidratación y salida entre las 5 y las 6 de la mañana.' },
+  { x: 255, y: 452, tipo: 'natural', nombre: 'Puente del río Bolo Azul', km: '1,5 km', alt: '1.650 m', texto: 'Primer cruce de agua. El río nace en la alta cordillera y alimenta las fincas de la vereda.' },
+  { x: 400, y: 378, tipo: 'natural', nombre: 'Quebrada La Cristalina', km: '3,2 km', alt: '1.800 m', texto: 'Agua limpia de montaña entre árboles nativos. Buen lugar para tomar aire antes de la subida fuerte.' },
+  { x: 285, y: 262, tipo: 'turistico', nombre: 'Mirador del cañón', km: '4,6 km', alt: '2.050 m', texto: 'Vista abierta del cañón del Bolo Azul y, en días despejados, del valle de Pradera.' },
+  { x: 460, y: 186, tipo: 'natural', nombre: 'Bosque de niebla', km: '5,9 km', alt: '2.170 m', texto: 'Tramo con balso, chagual y laureles. Punto para avistar aves y colibríes.' },
+  { x: 640, y: 104, tipo: 'turistico', nombre: 'Alto de Bolo Negro', km: '6,9 km', alt: '2.262 m', texto: 'El punto más alto del recorrido. Desde aquí empieza el regreso hacia La Feria.' },
+  { x: 795, y: 250, tipo: 'natural', nombre: 'Quebrada La Bocana', km: '10,5 km', alt: '1.920 m', texto: 'Bajada hacia el corregimiento. Última parada para hidratarse y reagrupar al pelotón.' },
+  { x: 905, y: 470, tipo: 'meta', nombre: 'Punto de acopio Agroferia', km: '13,95 km', alt: '1.568 m', texto: 'La meta: el Centro de Acopio de Agroferia. Aquí te espera el tercer tiempo con batidos, cuchareables y el premio de la ruta.' },
+];
+
+const tipoLabel: Record<Tipo, string> = {
+  inicio: 'Punto de partida',
+  natural: 'Punto natural',
+  turistico: 'Punto turístico',
+  meta: 'Meta · Punto de acopio',
+};
+
+// Curva suave (Catmull-Rom → Bézier) que pasa por los 8 puntos.
+const f = (n: number) => n.toFixed(1);
+const segmentos: string[] = [];
+for (let i = 0; i < puntos.length - 1; i++) {
+  const p0 = puntos[i - 1] ?? puntos[i];
+  const p1 = puntos[i];
+  const p2 = puntos[i + 1];
+  const p3 = puntos[i + 2] ?? p2;
+  const c1 = { x: p1.x + (p2.x - p0.x) / 6, y: p1.y + (p2.y - p0.y) / 6 };
+  const c2 = { x: p2.x - (p3.x - p1.x) / 6, y: p2.y - (p3.y - p1.y) / 6 };
+  segmentos.push(`C${f(c1.x)} ${f(c1.y)} ${f(c2.x)} ${f(c2.y)} ${f(p2.x)} ${f(p2.y)}`);
+}
+const inicio = `M${puntos[0].x} ${puntos[0].y}`;
+const d = `${inicio} ${segmentos.join(' ')}`;
+const datos = JSON.stringify({ inicio, segmentos, puntos: puntos.map((p) => ({ ...p, tipoLabel: tipoLabel[p.tipo] })) });
+const W = 1000;
+const H = 600;
+---
+
+<section id="mapa" class="container mapa" aria-labelledby="mapa-title" data-mapa>
+  <div class="mapa__head">
+    <h2 id="mapa-title">Mapa del recorrido</h2>
+    <p>
+      Ocho puntos desde la salida hasta el punto de acopio de Agroferia. Toca una banderita o usa los botones para avanzar con
+      el ciclista; al llegar a la meta te espera un premio.
+    </p>
+  </div>
+
+  <div class="mapa__layout">
+    <div class="mapa__canvas" style={`aspect-ratio:${W} / ${H}`}>
+      <svg class="mapa__svg" viewBox={`0 0 ${W} ${H}`} aria-hidden="true" focusable="false">
+        <!-- Paisaje: montañas y río (formas geométricas, sin ilustración) -->
+        <polygon class="m1" points="0,600 0,330 120,250 230,300 360,160 470,235 600,70 720,190 830,130 1000,250 1000,600" />
+        <polygon class="m2" points="0,600 0,440 150,370 300,430 430,330 560,400 700,300 850,380 1000,320 1000,600" />
+        <path class="rio" d="M0 565 C200 525 320 595 520 548 S850 525 1000 572" />
+        <!-- Camino -->
+        <path class="camino-borde" d={d} />
+        <path class="camino" d={d} />
+        <path class="camino-hecho" d={d} data-progreso />
+      </svg>
+
+      <!-- PENDIENTE: las banderitas (puntos 2 a 7) son SVG dibujados; para usar la ilustración propia,
+           reemplazar <svg class="bandera"> por <img class="bandera" src="/ruta/banderita.svg" alt="" /> -->
+      {
+        puntos.map((p, i) => (
+          <button
+            type="button"
+            class:list={['punto', `punto--${p.tipo}`]}
+            style={`left:${(p.x / W) * 100}%;top:${(p.y / H) * 100}%`}
+            data-punto={i}
+            data-state={i === 0 ? 'current' : 'pending'}
+            aria-label={`Punto ${i + 1}: ${p.nombre}`}
+          >
+            {p.tipo === 'inicio' ? (
+              <span class="punto__marca punto__marca--inicio">
+                <Icon name="flag" size={18} />
+              </span>
+            ) : p.tipo === 'meta' ? (
+              <span class="punto__marca punto__marca--meta">
+                <Icon name="store" size={22} />
+              </span>
+            ) : (
+              <svg class="bandera" viewBox="0 0 40 52" aria-hidden="true">
+                <path class="bandera__asta" d="M8 50V4" />
+                <path class="bandera__tela" d="M9 5h25l-6 9 6 9H9z" />
+                <text x="19.5" y="18" text-anchor="middle">{i + 1}</text>
+              </svg>
+            )}
+            <span class="punto__tip">{p.nombre}</span>
+          </button>
+        ))
+      }
+
+      <span class="mapa__rotulo mapa__rotulo--inicio" style={`left:${(puntos[0].x / W) * 100}%;top:${(puntos[0].y / H) * 100}%`}>Salida</span>
+      <span class="mapa__rotulo mapa__rotulo--meta" style={`left:${(puntos[7].x / W) * 100}%;top:${(puntos[7].y / H) * 100}%`}>Meta</span>
+
+      <!-- PENDIENTE (opcional): reemplazar por la ilustración final del ciclista -->
+      <Image
+        class="mapa__ciclista"
+        src={ciclista}
+        alt=""
+        widths={[200, 360]}
+        sizes="140px"
+        data-ciclista
+        style={`left:${(puntos[0].x / W) * 100}%;top:${(puntos[0].y / H) * 100}%`}
+      />
+      <div class="mapa__confeti" data-confeti aria-hidden="true"></div>
+    </div>
+
+    <div class="mapa__panel">
+      <div class="progreso" role="group" aria-label="Avance del recorrido">
+        <p class="progreso__txt"><span data-num>1</span> de 8</p>
+        <ol class="progreso__dots">
+          {puntos.map((_, i) => <li data-dot={i} class:list={{ 'is-on': i === 0 }} />)}
+        </ol>
+      </div>
+
+      <div class="info" aria-live="polite" data-info>
+        <span class:list={['info__tipo', `info__tipo--${puntos[0].tipo}`]} data-tipo>{tipoLabel[puntos[0].tipo]}</span>
+        <h3 data-nombre>{puntos[0].nombre}</h3>
+        <p class="info__datos"><span data-km>{puntos[0].km}</span> · <span data-alt>{puntos[0].alt}</span> s. n. m.</p>
+        <p data-texto>{puntos[0].texto}</p>
+      </div>
+
+      <div class="premio" data-premio hidden>
+        <span class="premio__icono"><Icon name="trophy" size={30} /></span>
+        <p class="premio__kicker">¡Ruta completada!</p>
+        <h3>Eres ganador de un premio</h3>
+        <p>
+          Llegaste al punto de acopio de Agroferia. Muestra esta pantalla en el punto de venta y reclama tu regalo de Pal'
+          Arranque.
+        </p>
+        <!-- PENDIENTE: definir el premio y sus condiciones con Agroferia -->
+        <p class="premio__nota"><Icon name="gift" size={16} /> Premio y condiciones por definir.</p>
+      </div>
+
+      <div class="controles">
+        <button type="button" class="ctrl" data-prev disabled>
+          <Icon name="arrow-left" size={18} />
+          Anterior
+        </button>
+        <button type="button" class="ctrl ctrl--next" data-next>
+          Siguiente
+          <Icon name="arrow-right" size={18} />
+        </button>
+      </div>
+      <button type="button" class="reiniciar" data-reset hidden>
+        <Icon name="route" size={16} />
+        Recorrer de nuevo
+      </button>
+    </div>
+  </div>
+
+  <p class="placeholder-note mapa__nota">
+    <Icon name="info" size={16} />
+    Nombres, kilómetros y altitudes de las paradas son de referencia; se ajustarán con el trazado oficial.
+  </p>
+
+  <script type="application/json" data-ruta set:html={datos} />
+</section>
+
+<style>
+  .mapa {
+    padding: clamp(56px, 8vw, 100px) 0 clamp(40px, 6vw, 72px);
+    scroll-margin-top: 100px;
+  }
+  .mapa__head {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+    gap: 16px 48px;
+    align-items: end;
+    margin-bottom: 28px;
+  }
+  .mapa__head h2 {
+    color: var(--blue);
+  }
+  .mapa__head p {
+    color: var(--ink-2);
+    max-width: 56ch;
+  }
+
+  .mapa__layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.9fr) minmax(280px, 1fr);
+    gap: 20px;
+    align-items: start;
+  }
+
+  /* ---------- Lienzo ---------- */
+  .mapa__canvas {
+    position: relative;
+    width: 100%;
+    border-radius: var(--r-frame);
+    background: var(--blue-soft);
+    overflow: hidden;
+  }
+  .mapa__svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .m1 { fill: #d5e1f2; }
+  .m2 { fill: #c3d4ec; }
+  .rio { fill: none; stroke: #aec6e8; stroke-width: 14; stroke-linecap: round; }
+  .camino-borde { fill: none; stroke: #fff; stroke-width: 18; stroke-linecap: round; stroke-linejoin: round; }
+  .camino { fill: none; stroke: #7f9fd0; stroke-width: 5; stroke-dasharray: 2 13; stroke-linecap: round; }
+  .camino-hecho { fill: none; stroke: var(--blue); stroke-width: 7; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* ---------- Puntos ---------- */
+  .punto {
+    position: absolute;
+    z-index: 3;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    margin: -22px 0 0 -22px;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+  }
+  .bandera {
+    width: 40px;
+    height: 52px;
+    transform: translate(10px, -22px);
+    transform-origin: 8px 50px;
+    transition: transform 0.35s var(--ease-out);
+  }
+  .bandera__asta { stroke: var(--ink); stroke-width: 2.5; stroke-linecap: round; }
+  .bandera__tela { fill: #fff; stroke: var(--blue); stroke-width: 2; stroke-linejoin: round; transition: fill 0.3s ease; }
+  .bandera text { fill: var(--blue); font: 800 12px var(--font-body); transition: fill 0.3s ease; }
+  .punto[data-state='done'] .bandera__tela,
+  .punto[data-state='current'] .bandera__tela { fill: var(--blue); }
+  .punto[data-state='done'] .bandera text,
+  .punto[data-state='current'] .bandera text { fill: #fff; }
+  .punto:hover .bandera,
+  .punto:focus-visible .bandera,
+  .punto[data-state='current'] .bandera {
+    transform: translate(10px, -22px) scale(1.18);
+  }
+
+  .punto__marca {
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    box-shadow: 0 0 0 4px #fff, 0 6px 14px -4px rgb(17 24 39 / 0.4);
+  }
+  .punto__marca--inicio {
+    width: 34px;
+    height: 34px;
+    background: var(--blue);
+    color: #fff;
+  }
+  .punto__marca--meta {
+    width: 46px;
+    height: 46px;
+    background: var(--orange);
+    color: var(--on-orange);
+    transition: transform 0.35s var(--ease-out);
+  }
+  .punto--meta[data-state='current'] .punto__marca--meta {
+    transform: scale(1.15);
+    animation: latido 1.4s ease-in-out infinite;
+  }
+  @keyframes latido {
+    0%, 100% { box-shadow: 0 0 0 4px #fff, 0 0 0 8px rgb(242 174 48 / 0.5); }
+    50% { box-shadow: 0 0 0 4px #fff, 0 0 0 16px rgb(242 174 48 / 0); }
+  }
+
+  .punto__tip {
+    position: absolute;
+    bottom: calc(100% + 30px);
+    left: 50%;
+    padding: 6px 10px;
+    border-radius: 8px;
+    background: var(--ink);
+    color: #fff;
+    font-size: 0.78rem;
+    font-weight: 600;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transform: translate(-50%, 4px);
+    transition: opacity 0.2s ease, transform 0.25s var(--ease-out);
+  }
+  .punto:hover .punto__tip,
+  .punto:focus-visible .punto__tip {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  .punto--meta .punto__tip,
+  .punto--inicio .punto__tip {
+    bottom: calc(100% + 8px);
+  }
+
+  .mapa__rotulo {
+    position: absolute;
+    z-index: 2;
+    padding: 3px 10px;
+    border-radius: 999px;
+    font: 800 0.8rem/1.2 var(--font-sport);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    transform: translate(-50%, 26px);
+    pointer-events: none;
+  }
+  .mapa__rotulo--inicio {
+    background: var(--blue);
+    color: #fff;
+  }
+  .mapa__rotulo--meta {
+    background: var(--orange);
+    color: var(--on-orange);
+    transform: translate(-50%, 32px);
+  }
+
+  .mapa :global(.mapa__ciclista) {
+    position: absolute;
+    z-index: 4;
+    width: 14%;
+    height: auto;
+    pointer-events: none;
+    transform: translate(-50%, -88%);
+    filter: drop-shadow(0 8px 10px rgb(17 24 39 / 0.25));
+  }
+  .mapa :global(.mapa__ciclista.is-left) {
+    transform: translate(-50%, -88%) scaleX(-1);
+  }
+
+  /* ---------- Panel ---------- */
+  .mapa__panel {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding: 24px;
+    border-radius: var(--r-frame);
+    background: var(--blue);
+    color: var(--ink-on-blue-2);
+  }
+  .progreso {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .progreso__txt {
+    color: #fff;
+    font: 800 1.5rem/1 var(--font-sport);
+    font-variant-numeric: tabular-nums;
+  }
+  .progreso__dots {
+    display: flex;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .progreso__dots li {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgb(255 255 255 / 0.28);
+    transition: background-color 0.3s ease, transform 0.3s var(--ease-out);
+  }
+  .progreso__dots li.is-on {
+    background: #fff;
+  }
+  .progreso__dots li:last-child.is-on {
+    background: var(--orange);
+    transform: scale(1.3);
+  }
+
+  .info {
+    display: grid;
+    gap: 8px;
+    align-content: start;
+  }
+  .info__tipo {
+    justify-self: start;
+    padding: 3px 10px;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.15);
+    color: #fff;
+    font-size: 0.78rem;
+    font-weight: 700;
+  }
+  .info__tipo--meta {
+    background: var(--orange);
+    color: var(--on-orange);
+  }
+  .info h3 {
+    color: #fff;
+    font-family: var(--font-display);
+    font-size: 1.45rem;
+    line-height: 1.15;
+  }
+  .info__datos {
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.92rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .premio {
+    position: relative;
+    display: grid;
+    gap: 6px;
+    padding: 20px;
+    border-radius: 18px;
+    background: var(--orange);
+    color: var(--on-orange-ink);
+    animation: premio-in 0.6s var(--ease-out);
+  }
+  @keyframes premio-in {
+    from { opacity: 0; transform: translateY(10px) scale(0.96); }
+    to { opacity: 1; transform: none; }
+  }
+  .premio__icono {
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    margin-bottom: 4px;
+    border-radius: 50%;
+    background: var(--blue);
+    color: #fff;
+  }
+  .premio__kicker {
+    color: var(--on-orange);
+    font: 800 1.15rem/1 var(--font-sport);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .premio h3 {
+    color: var(--on-orange);
+    font-family: var(--font-display);
+    font-size: 1.4rem;
+    line-height: 1.15;
+  }
+  .premio__nota {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+    font-size: 0.82rem;
+    font-weight: 600;
+  }
+
+  .controles {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: auto;
+  }
+  .ctrl {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 48px;
+    border: 1.5px solid rgb(255 255 255 / 0.5);
+    border-radius: 999px;
+    background: transparent;
+    color: #fff;
+    font: 700 0.95rem/1 var(--font-body);
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+  }
+  .ctrl:hover:not(:disabled) {
+    border-color: #fff;
+    background: rgb(255 255 255 / 0.1);
+  }
+  .ctrl--next {
+    border-color: #fff;
+    background: #fff;
+    color: var(--blue);
+  }
+  .ctrl--next:hover:not(:disabled) {
+    background: #fff;
+    box-shadow: 0 8px 18px -10px rgb(0 0 0 / 0.5);
+  }
+  .ctrl:disabled {
+    opacity: 0.4;
+    cursor: default;
+  }
+  .reiniciar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px;
+    border: 0;
+    background: none;
+    color: #fff;
+    font: 700 0.92rem/1 var(--font-body);
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+    cursor: pointer;
+  }
+
+  .mapa__nota {
+    margin-top: 16px;
+  }
+
+  /* ---------- Confeti ---------- */
+  .mapa__confeti {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .mapa__confeti :global(i) {
+    position: absolute;
+    top: -12px;
+    width: 9px;
+    height: 14px;
+    border-radius: 2px;
+    animation: caer var(--t, 1.8s) cubic-bezier(0.2, 0.6, 0.4, 1) var(--d, 0s) forwards;
+  }
+  @keyframes caer {
+    from { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+    to { transform: translate(var(--x, 0px), 640px) rotate(var(--r, 360deg)); opacity: 0; }
+  }
+
+  @media (max-width: 900px) {
+    .mapa__head {
+      grid-template-columns: 1fr;
+    }
+    .mapa__layout {
+      grid-template-columns: 1fr;
+    }
+  }
+  @media (max-width: 560px) {
+    .punto {
+      width: 36px;
+      height: 36px;
+      margin: -18px 0 0 -18px;
+    }
+    .bandera {
+      width: 28px;
+      height: 36px;
+      transform: translate(7px, -16px);
+    }
+    .punto:hover .bandera,
+    .punto:focus-visible .bandera,
+    .punto[data-state='current'] .bandera {
+      transform: translate(7px, -16px) scale(1.15);
+    }
+    .punto__marca--inicio { width: 26px; height: 26px; }
+    .punto__marca--meta { width: 34px; height: 34px; }
+    .punto__tip { display: none; }
+    .mapa__rotulo { font-size: 0.62rem; transform: translate(-30%, 12px); }
+    .mapa__rotulo--meta { transform: translate(-70%, 18px); }
+    .mapa :global(.mapa__ciclista) { width: 17%; }
+  }
+</style>
+
+<script>
+  type Punto = { x: number; y: number; tipo: string; tipoLabel: string; nombre: string; km: string; alt: string; texto: string };
+
+  document.querySelectorAll<HTMLElement>('[data-mapa]').forEach((root) => {
+    const data = JSON.parse(root.querySelector('[data-ruta]')!.textContent!) as {
+      inicio: string;
+      segmentos: string[];
+      puntos: Punto[];
+    };
+    const W = 1000;
+    const H = 600;
+    const ns = 'http://www.w3.org/2000/svg';
+    const svg = root.querySelector('svg')!;
+    const progreso = root.querySelector<SVGPathElement>('[data-progreso]')!;
+    const ciclista = root.querySelector<HTMLImageElement>('[data-ciclista]')!;
+    const botones = [...root.querySelectorAll<HTMLButtonElement>('[data-punto]')];
+    const dots = [...root.querySelectorAll<HTMLElement>('[data-dot]')];
+    const prev = root.querySelector<HTMLButtonElement>('[data-prev]')!;
+    const next = root.querySelector<HTMLButtonElement>('[data-next]')!;
+    const reset = root.querySelector<HTMLButtonElement>('[data-reset]')!;
+    const premio = root.querySelector<HTMLElement>('[data-premio]')!;
+    const info = root.querySelector<HTMLElement>('[data-info]')!;
+    const confeti = root.querySelector<HTMLElement>('[data-confeti]')!;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Longitud acumulada del camino en cada punto.
+    const total = progreso.getTotalLength();
+    const largos = data.puntos.map((_, i) => {
+      if (i === 0) return 0;
+      const tmp = document.createElementNS(ns, 'path');
+      tmp.setAttribute('d', `${data.inicio} ${data.segmentos.slice(0, i).join(' ')}`);
+      svg.appendChild(tmp);
+      const l = tmp.getTotalLength();
+      tmp.remove();
+      return l;
+    });
+    progreso.style.strokeDasharray = `${total}`;
+
+    let actual = 0;
+    let largoActual = 0;
+    let anim = 0;
+
+    const pintar = (l: number) => {
+      const p = progreso.getPointAtLength(l);
+      ciclista.style.left = `${(p.x / W) * 100}%`;
+      ciclista.style.top = `${(p.y / H) * 100}%`;
+      progreso.style.strokeDashoffset = `${total - l}`;
+    };
+
+    const actualizar = () => {
+      const p = data.puntos[actual];
+      botones.forEach((b, i) => (b.dataset.state = i < actual ? 'done' : i === actual ? 'current' : 'pending'));
+      dots.forEach((d, i) => d.classList.toggle('is-on', i <= actual));
+      root.querySelector('[data-num]')!.textContent = String(actual + 1);
+      const tipo = root.querySelector<HTMLElement>('[data-tipo]')!;
+      tipo.textContent = p.tipoLabel;
+      tipo.className = `info__tipo info__tipo--${p.tipo}`;
+      root.querySelector('[data-nombre]')!.textContent = p.nombre;
+      root.querySelector('[data-km]')!.textContent = p.km;
+      root.querySelector('[data-alt]')!.textContent = p.alt;
+      root.querySelector('[data-texto]')!.textContent = p.texto;
+      prev.disabled = actual === 0;
+      next.disabled = actual === data.puntos.length - 1;
+      const meta = actual === data.puntos.length - 1;
+      premio.hidden = !meta;
+      info.hidden = meta;
+      reset.hidden = !meta;
+      if (meta) celebrar();
+    };
+
+    const celebrar = () => {
+      if (reduce) return;
+      confeti.replaceChildren();
+      const colores = ['#114a9b', '#f2ae30', '#7f9fd0', '#ffffff'];
+      for (let i = 0; i < 46; i++) {
+        const c = document.createElement('i');
+        c.style.left = `${55 + Math.random() * 45}%`;
+        c.style.background = colores[i % colores.length];
+        c.style.setProperty('--x', `${(Math.random() - 0.5) * 220}px`);
+        c.style.setProperty('--r', `${(Math.random() - 0.5) * 900}deg`);
+        c.style.setProperty('--d', `${Math.random() * 0.5}s`);
+        c.style.setProperty('--t', `${1.4 + Math.random() * 1.2}s`);
+        confeti.appendChild(c);
+      }
+    };
+
+    const ir = (destino: number) => {
+      destino = Math.max(0, Math.min(data.puntos.length - 1, destino));
+      if (destino === actual && !anim) return;
+      cancelAnimationFrame(anim);
+      const desde = largoActual;
+      const hasta = largos[destino];
+      const dur = reduce ? 0 : Math.min(2400, Math.max(500, Math.abs(hasta - desde) * 1.6));
+      const t0 = performance.now();
+      actual = destino;
+      if (!premio.hidden) {
+        premio.hidden = true;
+        info.hidden = false;
+      }
+      const paso = (t: number) => {
+        const k = dur === 0 ? 1 : Math.min(1, (t - t0) / dur);
+        const e = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+        const l = desde + (hasta - desde) * e;
+        const adelante = progreso.getPointAtLength(Math.min(total, Math.max(0, l + (hasta >= desde ? 2 : -2))));
+        const aqui = progreso.getPointAtLength(l);
+        ciclista.classList.toggle('is-left', adelante.x < aqui.x - 0.05);
+        largoActual = l;
+        pintar(l);
+        if (k < 1) anim = requestAnimationFrame(paso);
+        else {
+          anim = 0;
+          actualizar();
+        }
+      };
+      anim = requestAnimationFrame(paso);
+    };
+
+    botones.forEach((b, i) => b.addEventListener('click', () => ir(i)));
+    prev.addEventListener('click', () => ir(actual - 1));
+    next.addEventListener('click', () => ir(actual + 1));
+    reset.addEventListener('click', () => ir(0));
+    root.addEventListener('keydown', (e) => {
+      if ((e.target as HTMLElement).closest('input, textarea')) return;
+      if (e.key === 'ArrowRight') ir(actual + 1);
+      if (e.key === 'ArrowLeft') ir(actual - 1);
+    });
+
+    pintar(0);
+    actualizar();
+  });
+</script>

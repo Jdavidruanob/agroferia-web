@@ -27,18 +27,10 @@ Dairy and agroecological food produced by 30 campesino families of the La Feria 
 
 - Navigation has exactly four sections: **Inicio, Productos, Pal' Arranque, Nosotros**.
 - Productos follows Alquería's mega-menu pattern (columns of categories with product lists). Reference: https://www.alqueria.com.co/ and `Screenshot From 2026-11-13 00-29-48.png`.
-- Product categories (from the client notebook, `productos.jpeg`):
-  - Leches: Leche normal, Leche fresca.
-  - Bebidas y alimentos lácteos: Yogurt natural (vasos, litro), Yogurt griego (siempre debajo del natural), Cuchareable, Sachet, Bebida láctea con proteína, Queso campesino, Queso crema, Quesillo, Queso siete cueros.
-  - Snacks: Snack de queso con bocadillo, Snack de queso con arequipe.
-  - Postres: Cuchareable.
-  - Pal' Arranque: the 5 cyclist products + "Descripción de ruta".
-- Pal' Arranque products (5):
-  1. Batido proteico tipo smoothie (leche o yogurt natural, frutas de temporada, miel) — to carry ("Para el bolsillo").
-  2. Cuchareable de yogurt griego (mermelada de fruta de temporada, granola, miel) — consumed at the point of sale.
-  3. Yogurt de fruta de temporada (served in a cup) — consumed at the point of sale.
-  4. Sachet de yogurt griego y fruta de temporada. Always named "Sachet", never "Doypack".
-  5. Snacks de queso con bocadillo / con arequipe. Always named "Snacks de queso", never "Bastones de queso".
+- Portfolio (designer spec, 25 Nov 2026), two lines:
+  - **Pal' Arranque** — Portables: Snack de queso relleno con arequipe o bocadillo; Snack de panelita de leche con quesillo; Doypack de yogur griego con frutas de temporada; Termo plegable (dinámica de puntos). Para consumo en punto físico: Batido tipo smoothie; Cuchareable; Yogur de frutas de temporada (vaso ecológico).
+  - **Agroferia Tradicional** — Queso campesino (1.000 g y 400 g); Quesillo (400 g); Yogur natural de frutas de temporada (botella); Yogur griego artesanal; Postres (yogur griego + mermelada).
+- Pal' Arranque page has an interactive "Mapa del recorrido": 8 points (start, 6 flagged stops, finish at the acopio) with the cyclist character and a prize message at the finish. Stop names are reference values pending the official route.
 - Every product detail page must show nutrition facts and ingredients (sport focus).
 - Point of sale: Centro de Acopio, corregimiento La Feria, 12 km from Pradera.
 - Official cyclist route (Wikiloc, shared by the client): circular from La Feria toward Bolo Negro, 13,95 km, +881 m, altitude 1.568–2.262 m, difficulty "Difícil". Screenshot: `wikiloc-ruta-original.jpeg`. Wikiloc link still pending.
@@ -52,12 +44,14 @@ Dairy and agroecological food produced by 30 campesino families of the La Feria 
 
 ## Brand Commitments
 
-- Name: AGROFERIA / Asociación Agropecuaria – La Feria. Logo: `logo-removebg-preview.png` (transparent), `logo.jpeg`. The Agroferia logo stays top-left in the navbar.
-- Two product lines with labels made by the client's designer (Nov 2026, source files `PAL' ARRANQUE.png`, `TRADICIONAL.png`):
-  - **Tradicional** (all non-cyclist products): green label `#49AF4C` with dark green linework `#076332`, yellow `#F9C200` lettering, cow-on-tractor illustration. Every Tradicional product card/detail shows the "TRADICIONAL" badge.
-  - **Pal' Arranque** (cyclists): blue label `#104A9B`, yellow `#F9C200` lettering, cow-on-bike illustration. The name as a title always uses the label lettering.
-- Site greens come from the Tradicional label, the yellow from both labels, the Pal' Arranque world is blue. **No pastel, neon or fluorescent colours.** Clean, professional, low "AI slop".
-- Philosophy: "Amor y Abundancia". Motto of solidarity: "uno para todos y todos para uno" — always shown in quotation marks.
+- Name: AGROFERIA / Asociación Agropecuaria – La Feria. Logo stays top-left in the navbar.
+- Visual identity (designer spec, 25 Nov 2026; assets from `Recurso 6.pdf`, cut into `src/assets/marca/`):
+  - Base white `#FFFFFF`, dark neutral text. **No greens or yellows in the UI.** No pastel, neon or fluorescent colours.
+  - **Pal' Arranque** line: blue `#114A9B` with white text, cow-on-bike character, official lettering (image).
+  - **Agroferia Tradicional** line: orange `#F2AE30` with blue `#114A9B` titles/labels or near-black small text, cow-on-tractor character.
+  - Colour bands end in a milk-drip edge (goteo).
+  - Every product card shows two badges in the top corners: line badge + "100% Artesanal" / "Producto Artesanal" ("Edición Especial · Ecológico" for the termo).
+- Philosophy: "Amor y Abundancia". Motto of solidarity: "uno para todos y todos para uno" — always in quotation marks.
 
 ## Evidence on Hand
 

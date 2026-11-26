@@ -2,34 +2,19 @@
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
-import ProductGlyph from '../components/ProductGlyph.astro';
 import RouteProfile from '../components/RouteProfile.astro';
 import PalArranqueLogo from '../components/PalArranqueLogo.astro';
-import ciclistaArte from '../assets/marca/pal-arranque-ciclista.png';
+import ciclistaArte from '../assets/marca/personaje-pal-arranque.png';
+import RutaInteractiva from '../components/RutaInteractiva.astro';
+import ProductCard from '../components/ProductCard.astro';
 import etiqueta from '../assets/marca/pal-arranque-etiqueta.png';
-import { productosDe, productoUrl, type Producto } from '../data/productos';
+import { grupos, productosDeGrupo } from '../data/productos';
 
 import ciclistas from '../assets/fotos/ciclistas-acopio.jpeg';
 import muralFeria from '../assets/fotos/mural-la-feria.png';
 import rutaWikiloc from '../assets/fotos/ruta-wikiloc.jpeg';
 
-const linea = productosDe('pal-arranque');
-const grupos = [
-  {
-    titulo: 'Para el bolsillo',
-    texto: 'Los compras en el punto de venta y te acompañan en el resto de la rodada.',
-    icono: 'pocket',
-    items: linea.filter((p) => p.ruta?.consumo === 'Para llevar'),
-  },
-  {
-    titulo: 'En la parada',
-    texto: 'Se sirven en el punto de venta, para comer con el grupo en el tercer tiempo.',
-    icono: 'cup',
-    items: linea.filter((p) => p.ruta?.consumo === 'En el punto de venta'),
-  },
-] as const;
-
-const dato = (p: Producto, nutriente: string) => p.nutricion.find((r) => r.nutriente.startsWith(nutriente))?.porPorcion;
+const gruposPA = grupos.filter((g) => g.linea === 'pal-arranque');
 
 const pilares = [
   {
@@ -81,11 +66,11 @@ const pilares = [
         familias que viven en la ruta.
       </p>
       <div class="hero__actions">
-        <a class="btn btn--sun" href="#ruta">
-          Ver la ruta
+        <a class="btn btn--sun" href="#mapa">
+          Ver el recorrido
           <span class="btn__arrow"><Icon name="route" size={18} /></span>
         </a>
-        <a class="hero__link" href="#productos">Ver los 5 productos <Icon name="arrow-right" size={18} /></a>
+        <a class="hero__link" href="#productos">Ver los 7 productos <Icon name="arrow-right" size={18} /></a>
       </div>
     </div>
   </section>
@@ -125,63 +110,42 @@ const pilares = [
       <Image
         class="prods__label"
         src={etiqueta}
-        alt="Etiqueta del sachet Pal' Arranque: letras amarillas y una vaca con casco montando bicicleta sobre fondo azul"
-        width={234}
+        alt="Etiqueta de empaque Pal' Arranque: letras naranjas y blancas y una vaca con casco montando bicicleta sobre fondo azul"
+        widths={[300, 600]}
+        sizes="200px"
       />
-      <h2 id="prod-title">Cinco productos para pedalear</h2>
+      <h2 id="prod-title">Siete productos para pedalear</h2>
       <p>
-        Proteína para recuperar, carbohidrato para seguir y algo salado para el camino. Todos hechos con leche de La Feria,
-        yogurt griego, fruta de temporada y miel.
+        Cuatro portables para llevar en la rodada y tres para el tercer tiempo en el punto de acopio. Todos artesanales,
+        hechos con leche de La Feria, yogur griego, fruta de temporada y miel.
       </p>
     </div>
 
-    <div class="groups">
-      {
-        grupos.map((g) => (
-          <div class="group">
-            <div class="group__head">
-              <Icon name={g.icono} size={24} />
-              <div>
-                <h3>{g.titulo}</h3>
-                <p>{g.texto}</p>
-              </div>
-            </div>
-            <ul class="plist">
-              {g.items.map((p) => (
-                <li>
-                  <a class="prow" href={productoUrl(p)}>
-                    <span class="prow__media">
-                      <ProductGlyph name={p.glyph} size={64} />
-                    </span>
-                    <span class="prow__body">
-                      <span class="prow__name">{p.nombre}</span>
-                      <span class="prow__sum">{p.resumen}</span>
-                      <span class="prow__stats">
-                        <span>
-                          <b>{dato(p, 'Proteína')}</b> proteína
-                        </span>
-                        <span>
-                          <b>{dato(p, 'Calorías')}</b> kcal
-                        </span>
-                        <span>{p.porcion}</span>
-                      </span>
-                    </span>
-                    <span class="prow__arrow">
-                      <Icon name="arrow-right" size={18} />
-                    </span>
-                  </a>
-                </li>
-              ))}
-            </ul>
+    {
+      gruposPA.map((g) => (
+        <div class="grupo">
+          <div class="grupo__head">
+            <h3>{g.nombre}</h3>
+            <p>{g.descripcion}</p>
           </div>
-        ))
-      }
-    </div>
+          <ul class="pgrid">
+            {productosDeGrupo(g.key).map((p) => (
+              <li>
+                <ProductCard producto={p} />
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))
+    }
     <p class="placeholder-note prods__note">
       <Icon name="info" size={16} />
       Valores nutricionales por porción, de referencia temporal.
     </p>
   </section>
+
+  <!-- ============ MAPA DEL RECORRIDO ============ -->
+  <RutaInteractiva />
 
   <!-- ============ RUTA ============ -->
   <section id="ruta" class="container ruta" aria-labelledby="ruta-title">
@@ -257,7 +221,8 @@ const pilares = [
 
   <!-- ============ CIERRE ============ -->
   <section class="container close" aria-labelledby="close-title">
-    <Image class="close__art" src={ciclistaArte} alt="" width={200} />
+    <!-- Personaje de Pal' Arranque -->
+    <Image class="close__art" src={ciclistaArte} alt="Personaje de Pal' Arranque: vaca con casco y gafas montando bicicleta" widths={[300, 600]} sizes="200px" />
     <h2 id="close-title">Trae a tu club hasta La Feria</h2>
     <p>Cuéntanos cuándo suben y cuántos son. Preparamos la parada para que nadie llegue a esperar.</p>
     <!-- PENDIENTE: enlace de WhatsApp real de Agroferia -->
@@ -342,7 +307,7 @@ const pilares = [
     text-decoration: none;
   }
   .hero__link:hover {
-    color: var(--sun);
+    color: var(--on-blue);
   }
   @media (max-width: 700px) {
     .hero {
@@ -391,7 +356,7 @@ const pilares = [
     height: 48px;
     border-radius: 50%;
     background: var(--blue);
-    color: var(--sun);
+    color: var(--on-blue);
   }
   .pillars h3 {
     color: var(--blue);
@@ -419,134 +384,55 @@ const pilares = [
   .prods {
     padding-bottom: clamp(56px, 8vw, 104px);
   }
-  .groups {
-    display: grid;
-    grid-template-columns: 1.25fr 1fr;
-    gap: 24px;
-  }
-  .group {
-    padding: 24px;
-    border-radius: 22px;
-    background: #fff;
-    box-shadow: var(--shadow-card);
-  }
-  .group__head {
-    display: grid;
-    grid-template-columns: 24px 1fr;
-    gap: 14px;
-    padding-bottom: 18px;
-    margin-bottom: 8px;
-    border-bottom: 1px solid var(--line);
-  }
-  .group__head > :global(svg) {
-    color: var(--blue);
-    margin-top: 4px;
-  }
-  .group__head h3 {
-    font-family: var(--font-sport);
-    font-size: 1.7rem;
-    font-weight: 800;
-    letter-spacing: 0.01em;
-    line-height: 1.05;
-    text-transform: uppercase;
-  }
-  .group__head p {
-    margin-top: 4px;
-    color: var(--ink-2);
-    font-size: 0.97rem;
-  }
-  .plist {
-    display: grid;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-  }
-  .prow {
-    display: grid;
-    grid-template-columns: 92px 1fr 40px;
-    gap: 18px;
-    align-items: center;
-    padding: 14px 0;
-    color: var(--ink);
-    text-decoration: none;
-  }
-  .plist li + li .prow {
-    border-top: 1px solid var(--line);
-  }
-  .prow__media {
-    display: grid;
-    place-items: center;
-    width: 92px;
-    height: 92px;
-    border-radius: 14px;
-    background: var(--blue);
-    color: var(--sun);
-  }
-  .prow__media :global(svg) {
-    transition: transform 0.45s var(--ease-out);
-  }
-  .prow:hover .prow__media :global(svg) {
-    transform: translateY(-3px) rotate(-4deg);
-  }
-  .prow__body {
-    display: grid;
-    gap: 3px;
-    min-width: 0;
-  }
-  .prow__name {
-    font-weight: 700;
-    font-size: 1.08rem;
-    line-height: 1.25;
-  }
-  .prow__sum {
-    color: var(--ink-2);
-    font-size: 0.95rem;
-  }
-  .prow__stats {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 4px 14px;
-    margin-top: 4px;
-    color: var(--ink-2);
-    font-size: 0.86rem;
-    font-variant-numeric: tabular-nums;
-  }
-  .prow__stats b {
-    color: var(--blue);
-  }
-  .prow__arrow {
-    display: grid;
-    place-items: center;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: var(--paper);
-    color: var(--blue);
-    transition: background-color 0.2s ease, color 0.2s ease, transform 0.35s var(--ease-out);
-  }
-  .prow:hover .prow__arrow {
-    background: var(--blue);
-    color: #fff;
-    transform: translateX(3px);
-  }
   .prods__head {
-    grid-template-columns: 150px minmax(0, 1fr) minmax(0, 1.1fr);
+    grid-template-columns: 200px minmax(0, 1fr) minmax(0, 1.1fr);
     align-items: center;
   }
   .prods__head :global(.prods__label) {
-    width: 150px;
+    width: 200px;
     height: auto;
-    transform: rotate(-4deg);
-    filter: drop-shadow(0 12px 18px rgb(16 74 155 / 0.28));
+    transform: rotate(-3deg);
+    filter: drop-shadow(0 12px 18px rgb(17 74 155 / 0.28));
   }
   @media (max-width: 800px) {
     .prods__head {
-      grid-template-columns: 110px 1fr;
+      grid-template-columns: 1fr;
     }
     .prods__head :global(.prods__label) {
-      width: 110px;
-      grid-row: span 2;
+      width: 170px;
     }
+  }
+  .grupo {
+    margin-top: clamp(28px, 4vw, 40px);
+  }
+  .grupo__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 6px 20px;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--blue);
+  }
+  .grupo__head h3 {
+    color: var(--blue);
+    font-family: var(--font-sport);
+    font-size: 1.7rem;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+  .grupo__head p {
+    color: var(--ink-2);
+  }
+  .pgrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
   }
   .prods__note {
     margin-top: 18px;
@@ -592,7 +478,7 @@ const pilares = [
     margin-bottom: 36px;
   }
   .ruta__title {
-    color: var(--sun);
+    color: var(--on-blue);
     font-family: var(--font-sport);
     font-size: clamp(2.6rem, 5vw, 4.2rem);
     font-weight: 800;
@@ -612,14 +498,14 @@ const pilares = [
     display: grid;
     grid-template-columns: repeat(6, 1fr);
     margin: 32px 0 0;
-    border-top: 1px solid rgb(249 194 0 / 0.25);
+    border-top: 1px solid rgb(255 255 255 / 0.25);
   }
   .ruta__facts div {
     padding: 18px 16px 0 0;
   }
   .ruta__facts div + div {
     padding-left: 16px;
-    border-left: 1px solid rgb(249 194 0 / 0.25);
+    border-left: 1px solid rgb(255 255 255 / 0.25);
   }
   .ruta__facts dt {
     font-size: 0.85rem;
@@ -635,7 +521,7 @@ const pilares = [
   }
   .ruta__facts small {
     display: block;
-    color: var(--sun);
+    color: var(--on-blue);
     font-family: var(--font-body);
     font-size: 0.75rem;
     font-weight: 500;
@@ -685,7 +571,7 @@ const pilares = [
     .ruta__facts div:nth-child(n) {
       padding: 14px 0;
       border-left: 0;
-      border-bottom: 1px solid rgb(249 194 0 / 0.18);
+      border-bottom: 1px solid rgb(255 255 255 / 0.18);
     }
   }
 

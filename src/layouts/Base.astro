@@ -31,7 +31,7 @@ const fullTitle = title === 'Inicio' ? 'Agroferia · Lácteos de montaña de La 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#076332" />
+    <meta name="theme-color" content="#114a9b" />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
@@ -40,10 +40,10 @@ const fullTitle = title === 'Inicio' ? 'Agroferia · Lácteos de montaña de La 
   <body class:list={[theme && `theme-${theme}`]}>
     <Fragment set:html={`<!--
 THESIS: Origen a la vista. Cada pantalla ata el producto a La Feria y a sus 30 familias; rechaza la plantilla de "lácteo genérico" con fotos de stock y promesas vacías.
-OWN-WORLD: Gramática Alquería (navbar flotante en píldora, logo en insignia, marcos redondeados de 28px, botón píldora con flecha en círculo, mega-menú por columnas, ficha con tabla nutricional). Dos líneas con las etiquetas de la diseñadora: Tradicional en verde #49af4c (fondo) / #076332 (trazo, botones, bloques) con distintivo de cinta; Pal' Arranque en azul #104a9b con sus letras oficiales en imagen. Amarillo #f9c200 común, solo sobre verde oscuro o azul. Papel #f6f4ec, tierra #5f4210. Bitter para titulares, Figtree para texto, Barlow Condensed solo para subtítulos de Pal' Arranque.
-STORY: El visitante entiende qué es Agroferia, encuentra cualquier producto en dos clics con su información nutricional, descubre Pal' Arranque como la parada de la rodada y conoce a las familias detrás.
-FIRST VIEWPORT: Inicio = marco redondeado partido: verde de la etiqueta Tradicional con titular en verde muy oscuro, dos botones y la vaca en tractor a la izquierda, foto real de las montañas de La Feria a la derecha; navbar flotante encima.
-FORM: Canon de la categoría elegido por el cliente (Alquería como guía explícita); sin tirada de dirección porque el brief la fija. Momento firmado: el perfil de altimetría de la ruta que se dibuja al entrar en pantalla.
+OWN-WORLD: Gramática Alquería (navbar flotante en píldora, logo en insignia, botón píldora con flecha en círculo, mega-menú, ficha con tabla nutricional) sobre base blanca #ffffff. Dos líneas: Pal' Arranque en azul #114a9b con texto blanco, vaca en bici y letras oficiales; Agroferia Tradicional en naranja #f2ae30 con texto azul #114a9b o casi negro, vaca en tractor. Bandas de color con goteo de leche abajo. Sin verdes ni amarillos. Bitter titulares, Figtree texto, Barlow Condensed subtítulos de Pal' Arranque.
+STORY: El visitante entiende qué es Agroferia, distingue las dos líneas por color y personaje, encuentra cualquier producto artesanal con su receta e información nutricional, y recorre el mapa interactivo de la ruta hasta el premio en el punto de acopio.
+FIRST VIEWPORT: Inicio = banda naranja con goteo de leche: titular azul, botón azul y enlace a Pal' Arranque a la izquierda; foto de las montañas de La Feria a la derecha con la vaca en tractor montada sobre su borde.
+FORM: Canon de la categoría elegido por el cliente (Alquería como guía explícita); sin tirada de dirección porque el brief la fija. Momento firmado: el mapa del recorrido, con el ciclista que avanza por 8 puntos hasta el premio en el punto de acopio.
 FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, and DESIGN.md
 -->`} />
     <a class="skip" href="#contenido">Saltar al contenido</a>
@@ -63,7 +63,7 @@ FINISH: unreviewed and undocumented is unfinished; this build ends with the fini
     z-index: 100;
     padding: 10px 16px;
     border-radius: 999px;
-    background: var(--green);
+    background: var(--primary);
     color: #fff;
     font-weight: 600;
   }

@@ -30,6 +30,9 @@ export const uiIcons = {
   check: '<path d="M5 12l5 5 9-10"/>',
   pocket: '<path d="M6 9a6 6 0 0 1 12 0v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2z"/><path d="M9 21v-5h6v5"/><path d="M10 4.5V3h4v1.5"/>',
   hand: '<path d="M7 11V6.5a1.5 1.5 0 0 1 3 0V11"/><path d="M10 10V4.5a1.5 1.5 0 0 1 3 0V10"/><path d="M13 10V5.5a1.5 1.5 0 0 1 3 0V12"/><path d="M16 9.5a1.5 1.5 0 0 1 3 0V14a7 7 0 0 1-7 7h-1a6 6 0 0 1-5-2.7L3.5 15a1.6 1.6 0 0 1 2.6-1.8L7 14.5"/>',
+  flag: '<path d="M5 21V4"/><path d="M5 4h11l-2 4 2 4H5"/>',
+  trophy: '<path d="M8 21h8M12 17v4"/><path d="M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M7 6H4a3 3 0 0 0 3 4M17 6h3a3 3 0 0 1-3 4"/>',
+  gift: '<rect x="3" y="8" width="18" height="5" rx="1"/><path d="M5 13v8h14v-8M12 8v13"/><path d="M12 8C10 4 6 4 6.5 6.5S12 8 12 8zM12 8c2-4 6-4 5.5-1.5S12 8 12 8z"/>',
   sparkle: '<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M6 18l2.5-2.5M15.5 8.5L18 6"/>',
 } as const;
 export type IconName = keyof typeof uiIcons;
@@ -67,6 +70,8 @@ export const glyphs = {
     '<path d="M18 20h28l-4 35a3.5 3.5 0 0 1-3.5 3H25.5a3.5 3.5 0 0 1-3.5-3z"/><path d="M36 20l6-15h6"/><path d="M19.5 31h25"/><circle cx="19" cy="17" r="6"/>',
   bastones:
     '<rect x="8" y="16" width="38" height="10" rx="5" transform="rotate(-18 27 21)"/><rect x="12" y="31" width="38" height="10" rx="5" transform="rotate(-18 31 36)"/><rect x="38" y="44" width="18" height="13" rx="2"/>',
+  termo:
+    '<path d="M27 4h10v5H27z"/><path d="M24 9h16l2 6H22z"/><path d="M22 15h20l-1 7H23z"/><path d="M23 22h18l1 7H22z"/><path d="M22 29h20l-1 7H23z"/><path d="M23 36h18l1 6H22z"/><path d="M22 42h20v12a4 4 0 0 1-4 4H26a4 4 0 0 1-4-4z"/>',
   ruta:
     '<path d="M4 50l12-14 9 7 12-20 9 11 14-16"/><circle cx="37" cy="23" r="3"/><path d="M4 58h56"/>',
 } as const;

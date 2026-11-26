@@ -1,0 +1,88 @@
+---
+/**
+ * Encabezado de bloque por línea: banda de color con goteo de leche abajo
+ * y el personaje de la línea. Pal' Arranque = azul + vaca en bici;
+ * Agroferia Tradicional = naranja + vaca en tractor.
+ */
+import { Image } from 'astro:assets';
+import goteoAzul from '../assets/marca/goteo-azul.png';
+import goteoNaranja from '../assets/marca/goteo-naranja.png';
+import personajePA from '../assets/marca/personaje-pal-arranque.png';
+import personajeTR from '../assets/marca/personaje-tradicional.png';
+
+interface Props {
+  linea: 'pal-arranque' | 'tradicional';
+  class?: string;
+  /** Alto máximo del personaje en px. */
+  personaje?: number;
+}
+const { linea, class: className, personaje = 220 } = Astro.props;
+const pa = linea === 'pal-arranque';
+---
+
+<div class:list={['banda', pa ? 'banda--pa' : 'banda--tr', className]}>
+  <div class="banda__inner">
+    <div class="banda__copy"><slot /></div>
+    <!-- PENDIENTE (opcional): reemplazar por la versión final del personaje de la línea -->
+    <Image
+      class="banda__personaje"
+      src={pa ? personajePA : personajeTR}
+      alt={pa ? "Personaje de Pal' Arranque: vaca con casco y gafas montando bicicleta" : 'Personaje de Agroferia Tradicional: vaca manejando un tractor con un vaso de leche'}
+      widths={[300, 600]}
+      sizes={`${Math.round(personaje * 1.3)}px`}
+      style={`max-height:${personaje}px`}
+    />
+  </div>
+  <Image class="banda__goteo" src={pa ? goteoAzul : goteoNaranja} alt="" widths={[800, 1600]} sizes="(max-width: 1180px) 100vw, 1180px" />
+</div>
+
+<style>
+  .banda {
+    --c: var(--orange);
+    position: relative;
+  }
+  .banda--pa {
+    --c: var(--blue);
+  }
+  .banda__inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 24px 40px;
+    padding: clamp(28px, 4vw, 48px) clamp(24px, 4vw, 56px) 4px;
+    border-radius: var(--r-frame) var(--r-frame) 0 0;
+    background: var(--c);
+  }
+  .banda--pa .banda__inner {
+    color: #fff;
+  }
+  .banda--tr .banda__inner {
+    color: var(--on-orange-ink);
+  }
+  .banda :global(.banda__personaje) {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    justify-self: end;
+    margin-bottom: -40px;
+    position: relative;
+    z-index: 1;
+    filter: drop-shadow(0 10px 16px rgb(0 0 0 / 0.18));
+  }
+  .banda :global(.banda__goteo) {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin-top: -1px;
+  }
+  @media (max-width: 700px) {
+    .banda__inner {
+      grid-template-columns: 1fr;
+    }
+    .banda :global(.banda__personaje) {
+      justify-self: center;
+      max-height: 170px !important;
+      margin-bottom: -24px;
+    }
+  }
+</style>

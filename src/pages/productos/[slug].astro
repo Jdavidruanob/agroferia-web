@@ -1,11 +1,13 @@
 ---
+import { Image } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 import Icon from '../../components/Icon.astro';
 import ProductGlyph from '../../components/ProductGlyph.astro';
 import ProductCard from '../../components/ProductCard.astro';
-import PalArranqueLetras from '../../components/PalArranqueLetras.astro';
-import BadgeTradicional from '../../components/BadgeTradicional.astro';
-import { categoriaPorKey, productos, productosDe, type Producto } from '../../data/productos';
+import BadgesLinea from '../../components/BadgesLinea.astro';
+import { esPalArranque, grupoPorKey, productos, productosDeLinea, type Producto } from '../../data/productos';
+import personajePA from '../../assets/marca/personaje-pal-arranque.png';
+import personajeTR from '../../assets/marca/personaje-tradicional.png';
 
 export function getStaticPaths() {
   return productos.map((p) => ({ params: { slug: p.slug }, props: { producto: p } }));
@@ -16,9 +18,9 @@ interface Props {
 }
 
 const { producto: p } = Astro.props;
-const cat = categoriaPorKey[p.categorias[0]];
-const pa = p.categorias.includes('pal-arranque');
-const relacionados = productosDe(cat.key)
+const pa = esPalArranque(p);
+const grupo = grupoPorKey[p.grupo];
+const relacionados = productosDeLinea(p.linea)
   .filter((x) => x.slug !== p.slug)
   .slice(0, 4);
 
@@ -26,7 +28,7 @@ const puntos = pa
   ? [
       {
         icono: 'store',
-        titulo: 'Punto de venta Pal’ Arranque',
+        titulo: 'Punto de acopio Pal’ Arranque',
         texto: 'Centro de Acopio de Agroferia, corregimiento La Feria. Fines de semana desde la mañana (horario por confirmar).',
       },
     ]
@@ -49,17 +51,21 @@ const puntos = pa
     ];
 ---
 
-<Base title={p.nombre} description={`${p.nombre}: ${p.resumen} Ingredientes e información nutricional.`} theme={pa ? 'pal-arranque' : undefined}>
+<Base
+  title={p.nombre}
+  description={`${p.nombre}: ${p.resumen}`}
+  theme={pa ? 'pal-arranque' : undefined}
+>
   <!-- ============ HERO DE PRODUCTO ============ -->
-  <section class:list={['container', 'phero', { 'phero--pa': pa }]} style={`--cat:${cat.color}`} aria-labelledby="p-title">
+  <section class:list={['container', 'phero', pa ? 'phero--pa' : 'phero--tr']} aria-labelledby="p-title">
     <div class="phero__copy">
       <nav class="crumbs" aria-label="Ruta de navegación">
         <a href="/productos">Productos</a>
         <span aria-hidden="true">/</span>
-        <a href={pa ? '/pal-arranque' : `/productos#${cat.key}`}>{cat.nombre}</a>
+        <a href={`/productos#${pa ? grupo.key : 'tradicional'}`}>{pa ? `Pal' Arranque · ${grupo.nombre}` : grupo.nombre}</a>
       </nav>
       <h1 id="p-title">{p.nombre}</h1>
-      <p class="phero__desc">{p.descripcion}</p>
+      <p class="phero__desc">{p.receta}</p>
       <ul class="phero__chips">
         <li><Icon name="package" size={16} /> {p.presentacion}</li>
         {p.ruta && <li><Icon name="bike" size={16} /> {p.ruta.momento}</li>}
@@ -67,9 +73,19 @@ const puntos = pa
       </ul>
     </div>
     <div class="phero__visual">
-      <!-- PENDIENTE: foto del producto -->
-      <ProductGlyph name={p.glyph} size={220} class="phero__glyph" />
-      {pa ? <PalArranqueLetras class="phero__badge" width={140} /> : <BadgeTradicional class="phero__badge" size={40} />}
+      <!--
+        PENDIENTE: foto del producto. Reemplazar el ícono por:
+        <img src="/productos/SLUG.jpg" alt="NOMBRE DEL PRODUCTO" />
+      -->
+      <ProductGlyph name={p.glyph} size={200} class="phero__glyph" />
+      <BadgesLinea producto={p} class="phero__badges" />
+      <Image
+        class="phero__personaje"
+        src={pa ? personajePA : personajeTR}
+        alt=""
+        widths={[240, 400]}
+        sizes="170px"
+      />
     </div>
   </section>
 
@@ -93,17 +109,16 @@ const puntos = pa
     </ul>
   </section>
 
-  <!-- ============ FICHA NUTRICIONAL ============ -->
-  <section class="container ficha" style={`--cat:${cat.color}`} aria-labelledby="n-title">
+  <!-- ============ FICHA ============ -->
+  <section class:list={['container', 'ficha', pa ? 'ficha--pa' : 'ficha--tr']} aria-labelledby="n-title">
     <aside class="ficha__card">
       <p class="ficha__name">{p.nombre}</p>
       <div class="ficha__media">
         <ProductGlyph name={p.glyph} size={120} />
-        {!pa && <BadgeTradicional class="ficha__badge" size={24} />}
       </div>
       <dl class="ficha__meta">
         <div><dt>Presentación</dt><dd>{p.presentacion}</dd></div>
-        <div><dt>Porción</dt><dd>{p.porcion}</dd></div>
+        {p.nutricion && <div><dt>Porción</dt><dd>{p.nutricion.porcion}</dd></div>}
       </dl>
       <a class="btn ficha__cta" href="#donde">
         Dónde encontrarlo
@@ -112,46 +127,69 @@ const puntos = pa
     </aside>
 
     <div class="ficha__body">
-      <h2 id="n-title">Información nutricional</h2>
-      <p class="ficha__intro">
-        Contenido energético y nutrientes de interés por {p.base} de producto y por porción ({p.porcion}), para que elijas según
-        lo que necesitas antes, durante o después de tu actividad.
-      </p>
-
-      <dl class="ficha__info">
-        <div><dt>Ingredientes</dt><dd>{p.ingredientes}</dd></div>
-        <div><dt>Alérgenos</dt><dd>{p.alergenos}</dd></div>
-        <div><dt>Conservación</dt><dd>{p.conservacion}</dd></div>
-      </dl>
-
-      <p class="placeholder-note">
-        <Icon name="info" size={16} />
-        Valores de referencia temporales. Se reemplazarán por los datos de la etiqueta oficial.
-      </p>
-
-      <div class="table-wrap">
-        <table class="ntable">
-          <caption class="visually-hidden">Información nutricional de {p.nombre}</caption>
-          <thead>
-            <tr>
-              <th scope="col">Descripción</th>
-              <th scope="col">Por {p.base}</th>
-              <th scope="col">Por porción<span> ({p.porcion})</span></th>
-            </tr>
-          </thead>
-          <tbody>
-            {
-              p.nutricion.map((r) => (
-                <tr class:list={{ strong: r.destacado }}>
-                  <th scope="row">{r.nutriente}</th>
-                  <td>{r.por100}</td>
-                  <td>{r.porPorcion}</td>
-                </tr>
-              ))
-            }
-          </tbody>
-        </table>
-      </div>
+      {
+        p.nutricion ? (
+          <>
+            <h2 id="n-title">Información nutricional</h2>
+            <p class="ficha__intro">
+              Contenido energético y nutrientes de interés por {p.nutricion.base} de producto y por porción ({p.nutricion.porcion}),
+              para que elijas según lo que necesitas antes, durante o después de tu actividad.
+            </p>
+            <dl class="ficha__info">
+              <div><dt>Ingredientes</dt><dd>{p.ingredientes}</dd></div>
+              {p.alergenos && <div><dt>Alérgenos</dt><dd>{p.alergenos}</dd></div>}
+              <div><dt>Conservación</dt><dd>{p.conservacion}</dd></div>
+            </dl>
+            <p class="placeholder-note">
+              <Icon name="info" size={16} />
+              Valores de referencia temporales. Se reemplazarán por los datos de la etiqueta oficial.
+            </p>
+            <div class="table-wrap">
+              <table class="ntable">
+                <caption class="visually-hidden">Información nutricional de {p.nombre}</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Descripción</th>
+                    <th scope="col">Por {p.nutricion.base}</th>
+                    <th scope="col">Por porción<span> ({p.nutricion.porcion})</span></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {p.nutricion.filas.map((r) => (
+                    <tr class:list={{ strong: r.destacado }}>
+                      <th scope="row">{r.nutriente}</th>
+                      <td>{r.por100}</td>
+                      <td>{r.porPorcion}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        ) : (
+          p.material && (
+            <>
+              <h2 id="n-title">Material y dinámica de puntos</h2>
+              <dl class="ficha__info">
+                <div><dt>Material</dt><dd>{p.material.material}</dd></div>
+                <div><dt>Capacidad</dt><dd>{p.material.capacidad}</dd></div>
+                <div><dt>Cuidado</dt><dd>{p.conservacion}</dd></div>
+              </dl>
+              <div class="puntos">
+                <Icon name="award" size={26} />
+                <div>
+                  <h3>Así funcionan los puntos</h3>
+                  <p>{p.material.dinamica}</p>
+                </div>
+              </div>
+              <p class="placeholder-note">
+                <Icon name="info" size={16} />
+                Material, capacidad y reglas de puntos por confirmar.
+              </p>
+            </>
+          )
+        )
+      }
 
       {
         p.ruta && (
@@ -162,7 +200,7 @@ const puntos = pa
               <p>
                 <strong>{p.ruta.momento}.</strong> {p.ruta.nota}
               </p>
-              <a href="/pal-arranque#ruta">Ver la descripción de la ruta</a>
+              <a href="/pal-arranque#mapa">Ver el mapa del recorrido</a>
             </div>
           </div>
         )
@@ -191,7 +229,7 @@ const puntos = pa
   {
     relacionados.length > 0 && (
       <section class="container rel" aria-labelledby="r-title">
-        <h2 id="r-title">{pa ? "Más de Pal' Arranque" : `Más en ${cat.nombre}`}</h2>
+        <h2 id="r-title">{pa ? "Más de Pal' Arranque" : 'Más de Agroferia Tradicional'}</h2>
         <ul class="rel__grid">
           {relacionados.map((r) => (
             <li>
@@ -207,13 +245,20 @@ const puntos = pa
 <style>
   /* ---------- Hero ---------- */
   .phero {
+    --c: var(--orange);
     display: grid;
     grid-template-columns: 1.15fr 1fr;
     min-height: 460px;
     border-radius: var(--r-frame);
     overflow: hidden;
-    background: var(--cat);
-    color: var(--ink-on-dark);
+    background: var(--c);
+  }
+  .phero--pa {
+    --c: var(--blue);
+    color: #fff;
+  }
+  .phero--tr {
+    color: var(--on-orange-ink);
   }
   .phero__copy {
     display: flex;
@@ -227,22 +272,28 @@ const puntos = pa
     flex-wrap: wrap;
     gap: 8px;
     font-size: 0.9rem;
-    color: rgb(255 255 255 / 0.78);
   }
   .crumbs a {
     color: inherit;
   }
-  .crumbs a:hover {
-    color: #fff;
+  .phero--pa .crumbs {
+    color: var(--ink-on-blue-2);
   }
   .phero h1 {
+    font-size: clamp(2.1rem, 4vw, 3.3rem);
+  }
+  .phero--pa h1 {
     color: #fff;
-    font-size: clamp(2.1rem, 4vw, 3.4rem);
+  }
+  .phero--tr h1 {
+    color: var(--on-orange);
   }
   .phero__desc {
-    max-width: 52ch;
-    color: rgb(255 255 255 / 0.86);
-    font-size: 1.08rem;
+    max-width: 54ch;
+    font-size: 1.06rem;
+  }
+  .phero--pa .phero__desc {
+    color: var(--ink-on-blue-2);
   }
   .phero__chips {
     display: flex;
@@ -258,9 +309,15 @@ const puntos = pa
     gap: 8px;
     padding: 6px 14px;
     border-radius: 999px;
-    background: rgb(255 255 255 / 0.12);
-    color: #fff;
     font-size: 0.9rem;
+  }
+  .phero--pa .phero__chips li {
+    background: rgb(255 255 255 / 0.14);
+    color: #fff;
+  }
+  .phero--tr .phero__chips li {
+    background: rgb(255 255 255 / 0.55);
+    color: var(--on-orange-ink);
   }
   .phero__visual {
     position: relative;
@@ -268,29 +325,26 @@ const puntos = pa
     place-items: center;
     margin: 20px;
     border-radius: 20px;
-    background: rgb(255 255 255 / 0.08);
-    color: #fff;
+    background: #fff;
+    color: var(--c);
   }
   .phero__visual :global(.phero__glyph) {
-    width: min(220px, 60%);
+    width: min(200px, 50%);
     height: auto;
   }
-  /* Tradicional: el panel toma el verde de su etiqueta */
-  .phero:not(.phero--pa) .phero__visual {
-    background: var(--green-field);
-    color: var(--green-field-ink);
-  }
-  .phero--pa .phero__visual {
-    color: var(--sun);
-  }
-  .phero--pa .phero__chips li {
-    background: rgb(249 194 0 / 0.16);
-    color: var(--sun);
-  }
-  .phero__visual :global(.phero__badge) {
+  .phero__visual :global(.phero__badges) {
     position: absolute;
-    top: 18px;
-    right: 18px;
+    top: 16px;
+    left: 16px;
+    right: 16px;
+  }
+  .phero__visual :global(.phero__personaje) {
+    position: absolute;
+    right: -6px;
+    bottom: -10px;
+    width: 150px;
+    height: auto;
+    filter: drop-shadow(0 8px 14px rgb(0 0 0 / 0.18));
   }
   @media (max-width: 860px) {
     .phero {
@@ -298,11 +352,14 @@ const puntos = pa
     }
     .phero__visual {
       order: -1;
-      aspect-ratio: 16 / 9;
+      aspect-ratio: 16 / 10;
       margin: 12px 12px 0;
     }
     .phero__visual :global(.phero__glyph) {
-      width: 130px;
+      width: 120px;
+    }
+    .phero__visual :global(.phero__personaje) {
+      width: 110px;
     }
   }
 
@@ -335,9 +392,8 @@ const puntos = pa
     width: 60px;
     height: 60px;
     border-radius: 50%;
-    background: #fff;
-    color: var(--green);
-    box-shadow: var(--shadow-card);
+    background: var(--blue-soft);
+    color: var(--blue);
   }
   .feats h3 {
     font-size: 1.05rem;
@@ -353,11 +409,15 @@ const puntos = pa
 
   /* ---------- Ficha ---------- */
   .ficha {
+    --c: var(--orange);
     display: grid;
     grid-template-columns: 340px 1fr;
     gap: clamp(24px, 4vw, 48px);
     align-items: start;
     padding: clamp(32px, 4vw, 48px) 0;
+  }
+  .ficha--pa {
+    --c: var(--blue);
   }
   .ficha__card {
     position: sticky;
@@ -365,12 +425,12 @@ const puntos = pa
     display: grid;
     gap: 16px;
     padding: 20px;
+    border: 1px solid var(--line);
     border-radius: 20px;
     background: #fff;
-    box-shadow: var(--shadow-card);
   }
   .ficha__name {
-    font-weight: 600;
+    font-weight: 700;
     font-size: 1.08rem;
   }
   .ficha__media {
@@ -379,19 +439,7 @@ const puntos = pa
     aspect-ratio: 5 / 4;
     border-radius: 14px;
     background: var(--panel);
-    color: var(--cat, var(--green));
-  }
-  .ficha__media {
-    position: relative;
-  }
-  .ficha__media :global(.ficha__badge) {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-  }
-  :global(.theme-pal-arranque) .ficha__media {
-    background: var(--blue);
-    color: var(--sun);
+    color: var(--c);
   }
   .ficha__meta {
     display: grid;
@@ -452,9 +500,9 @@ const puntos = pa
 
   .table-wrap {
     margin-top: 14px;
+    border: 1px solid var(--line);
     border-radius: 16px;
     background: #fff;
-    box-shadow: var(--shadow-card);
     overflow: hidden;
   }
   .ntable {
@@ -465,10 +513,13 @@ const puntos = pa
   }
   .ntable thead th {
     padding: 16px 18px;
-    background: var(--panel);
-    color: var(--ink);
+    background: var(--c);
+    color: #fff;
     font-weight: 700;
     text-align: center;
+  }
+  .ficha--tr .ntable thead th {
+    color: var(--on-orange);
   }
   .ntable thead th:first-child,
   .ntable tbody th {
@@ -500,6 +551,28 @@ const puntos = pa
     }
   }
 
+  .puntos {
+    display: grid;
+    grid-template-columns: 26px 1fr;
+    gap: 16px;
+    margin: 8px 0 18px;
+    padding: 22px 24px;
+    border-radius: 16px;
+    background: var(--blue-soft);
+    color: var(--ink);
+  }
+  .puntos > :global(svg) {
+    color: var(--blue);
+  }
+  .puntos h3 {
+    color: var(--blue);
+    font-size: 1.1rem;
+  }
+  .puntos p {
+    margin-top: 6px;
+    color: var(--ink-2);
+  }
+
   .enruta {
     display: grid;
     grid-template-columns: 24px 1fr;
@@ -511,10 +584,10 @@ const puntos = pa
     color: var(--ink-on-blue-2);
   }
   .enruta > :global(svg) {
-    color: var(--sun);
+    color: #fff;
   }
   .enruta h3 {
-    color: var(--sun);
+    color: #fff;
     font-family: var(--font-sport);
     font-size: 1.4rem;
     font-weight: 700;
@@ -529,7 +602,7 @@ const puntos = pa
     color: #fff;
   }
   .enruta a {
-    color: var(--sun);
+    color: #fff;
     font-weight: 600;
   }
 
@@ -548,7 +621,7 @@ const puntos = pa
     padding: clamp(40px, 6vw, 72px) clamp(24px, 4vw, 48px);
     margin-top: clamp(24px, 4vw, 48px);
     border-radius: var(--r-frame);
-    background: #fff;
+    background: var(--paper);
   }
   .donde h2 {
     font-size: clamp(1.7rem, 2.6vw, 2.2rem);
@@ -567,7 +640,7 @@ const puntos = pa
     gap: 14px;
   }
   .donde__list li > :global(svg) {
-    color: var(--green);
+    color: var(--blue);
     margin-top: 2px;
   }
   .donde h3 {
@@ -587,7 +660,7 @@ const puntos = pa
   }
   .rel__grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 20px;
     margin: 28px 0 0;
     padding: 0;

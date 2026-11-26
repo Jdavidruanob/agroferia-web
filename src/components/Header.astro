@@ -3,7 +3,9 @@ import { Image } from 'astro:assets';
 import logo from '../assets/marca/logo-agroferia.png';
 import Icon from './Icon.astro';
 import PalArranqueLetras from './PalArranqueLetras.astro';
-import { categorias, productosDe, productoUrl } from '../data/productos';
+import { grupos, productosDeGrupo, productoUrl } from '../data/productos';
+
+const gruposPA = grupos.filter((g) => g.linea === 'pal-arranque');
 
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
 const is = (href: string) => (href === '/' ? path === '/' : path.startsWith(href));
@@ -41,34 +43,39 @@ const links = [
                 </button>
                 <div class="mega" id="mega-productos" data-mega-panel hidden>
                   <div class="mega__grid">
-                    {categorias.map((c) => (
-                      <div class:list={['mega__col', { 'mega__col--pa': c.key === 'pal-arranque' }]}>
-                        {c.key === 'pal-arranque' ? (
-                          <a class="mega__title mega__title--pa" href="/pal-arranque">
-                            <PalArranqueLetras width={118} />
-                          </a>
-                        ) : (
-                          <a class="mega__title" href={`/productos#${c.key}`}>
-                            {c.nombre}
-                          </a>
-                        )}
-                        <ul>
-                          {productosDe(c.key).map((p) => (
-                            <li>
-                              <a href={productoUrl(p)}>{p.nombre}</a>
-                            </li>
-                          ))}
-                          {c.key === 'pal-arranque' && (
-                            <li>
-                              <a class="mega__route" href="/pal-arranque#ruta">
-                                <Icon name="route" size={16} />
-                                Descripción de ruta
-                              </a>
-                            </li>
-                          )}
-                        </ul>
+                    <div class="mega__col mega__col--pa">
+                      <a class="mega__title mega__title--pa" href="/pal-arranque">
+                        <PalArranqueLetras width={118} />
+                      </a>
+                      <div class="mega__subs">
+                        {gruposPA.map((g) => (
+                          <div>
+                            <a class="mega__sub" href={`/productos#${g.key}`}>{g.nombre}</a>
+                            <ul>
+                              {productosDeGrupo(g.key).map((p) => (
+                                <li>
+                                  <a href={productoUrl(p)}>{p.nombre}</a>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        ))}
                       </div>
-                    ))}
+                      <a class="mega__route" href="/pal-arranque#mapa">
+                        <Icon name="route" size={16} />
+                        Mapa del recorrido
+                      </a>
+                    </div>
+                    <div class="mega__col mega__col--tr">
+                      <a class="mega__title mega__title--tr" href="/productos#tradicional">Agroferia Tradicional</a>
+                      <ul>
+                        {productosDeGrupo('tradicional').map((p) => (
+                          <li>
+                            <a href={productoUrl(p)}>{p.nombre}</a>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   </div>
                   <a class="mega__all" href="/productos">
                     Ver todos los productos <Icon name="arrow-right" size={16} />
@@ -114,11 +121,13 @@ const links = [
           <summary>Productos <Icon name="chevron-down" size={18} /></summary>
           <div class="mobile__cats">
             {
-              categorias.map((c) => (
+              grupos.map((g) => (
                 <div>
-                  <p class="mobile__cat">{c.nombre}</p>
+                  <p class:list={['mobile__cat', g.linea === 'pal-arranque' ? 'is-pa' : 'is-tr']}>
+                    {g.linea === 'pal-arranque' ? `Pal' Arranque · ${g.nombre}` : g.nombre}
+                  </p>
                   <ul>
-                    {productosDe(c.key).map((p) => (
+                    {productosDeGrupo(g.key).map((p) => (
                       <li>
                         <a href={productoUrl(p)}>{p.nombre}</a>
                       </li>
@@ -228,7 +237,7 @@ const links = [
     height: 5px;
     margin-left: -2.5px;
     border-radius: 50%;
-    background: var(--field);
+    background: var(--orange);
   }
   /* Pal' Arranque: píldora azul con sus letras, para marcar que es otra línea */
   .nav__link.nav__link--pa {
@@ -243,7 +252,7 @@ const links = [
     transform: translateY(-1px);
   }
   .nav__link.nav__link--pa[aria-current='page'] {
-    box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--sun);
+    box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--on-blue);
   }
   .nav__link.nav__link--pa[aria-current='page']::after {
     display: none;
@@ -265,7 +274,7 @@ const links = [
     min-height: 48px;
     padding: 0 20px 0 16px;
     border-radius: 999px;
-    background: var(--green);
+    background: var(--dark);
     color: #fff;
     font-weight: 600;
     font-size: 0.98rem;
@@ -273,7 +282,7 @@ const links = [
     transition: background-color 0.2s ease;
   }
   .nav__cta:hover {
-    background: var(--green-hover);
+    background: #0b111d;
   }
 
   /* ---------- Mega menú ---------- */
@@ -285,10 +294,10 @@ const links = [
     top: calc(100% + 10px);
     left: 0;
     right: 0;
-    padding: 30px 32px 22px;
+    padding: 14px 14px 18px;
     border-radius: 22px;
     background: #fff;
-    box-shadow: 0 24px 60px -24px rgb(9 55 35 / 0.35), 0 2px 8px -2px rgb(9 55 35 / 0.08);
+    box-shadow: 0 24px 60px -24px rgb(17 24 39 / 0.35), 0 2px 8px -2px rgb(17 24 39 / 0.08);
     transform-origin: top center;
     animation: mega-in 0.32s var(--ease-out);
   }
@@ -306,21 +315,58 @@ const links = [
   }
   .mega__grid {
     display: grid;
-    grid-template-columns: 1fr 1.25fr 1fr 1.2fr 0.9fr;
-    gap: 28px;
+    grid-template-columns: 1.7fr 1fr;
+    gap: 16px;
+  }
+  .mega__col {
+    padding: 22px 24px 20px;
+    border-radius: 16px;
+  }
+  .mega__col--pa {
+    background: var(--blue);
+    color: #fff;
+  }
+  .mega__col--tr {
+    background: var(--orange);
+    color: var(--on-orange-ink);
   }
   .mega__title {
     display: block;
-    padding-bottom: 10px;
+    padding-bottom: 12px;
     margin-bottom: 14px;
-    border-bottom: 1px solid var(--line);
-    color: var(--ink);
-    font-weight: 600;
-    font-size: 1rem;
+    border-bottom: 1px solid currentColor;
     text-decoration: none;
   }
-  .mega__title:hover {
-    color: var(--green);
+  .mega__col--pa .mega__title {
+    border-color: rgb(255 255 255 / 0.3);
+    line-height: 0;
+  }
+  .mega__title--tr {
+    border-color: rgb(17 74 155 / 0.3);
+    color: var(--on-orange);
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+  .mega__subs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+  }
+  .mega__sub {
+    display: block;
+    margin-bottom: 6px;
+    color: #fff;
+    font-family: var(--font-sport);
+    font-size: 1.08rem;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+  .mega__sub:hover {
+    text-decoration: underline;
   }
   .mega__col ul {
     display: grid;
@@ -331,47 +377,46 @@ const links = [
   }
   .mega__col li a {
     display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 6px 0;
-    color: var(--ink-2);
-    font-size: 0.94rem;
+    padding: 5px 0;
+    font-size: 0.93rem;
     line-height: 1.35;
     text-decoration: none;
-    transition: color 0.15s ease;
-  }
-  .mega__col li a:hover {
-    color: var(--green);
-    text-decoration: underline;
-  }
-  .mega__col--pa {
-    margin: -14px -14px;
-    padding: 14px;
-    border-radius: 14px;
-    background: var(--blue);
-  }
-  .mega__col--pa .mega__title {
-    padding-bottom: 8px;
-    margin-bottom: 10px;
-    border-color: rgb(249 194 0 / 0.35);
   }
   .mega__col--pa li a {
     color: var(--ink-on-blue-2);
   }
+  .mega__col--tr li a {
+    color: var(--on-orange-ink);
+  }
+  .mega__col li a:hover {
+    color: inherit;
+    text-decoration: underline;
+  }
   .mega__col--pa li a:hover {
     color: #fff;
   }
-  .mega__col--pa .mega__route {
-    margin-top: 6px;
-    color: var(--sun) !important;
-    font-weight: 600;
+  .mega__route {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 18px;
+    padding: 8px 14px;
+    border-radius: 999px;
+    background: #fff;
+    color: var(--blue);
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-decoration: none;
+  }
+  .mega__route:hover {
+    box-shadow: 0 6px 16px -8px rgb(0 0 0 / 0.5);
   }
   .mega__all {
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    margin-top: 26px;
-    color: var(--green);
+    margin: 16px 0 0 10px;
+    color: var(--primary);
     font-weight: 600;
     font-size: 0.95rem;
     text-decoration: none;
@@ -389,7 +434,7 @@ const links = [
 
   @media (max-width: 960px) {
     .mega__grid {
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: 1fr;
     }
   }
 
@@ -481,7 +526,7 @@ const links = [
       transform: rotate(180deg);
     }
     .mobile__list a[aria-current='page'] {
-      color: var(--green);
+      color: var(--primary);
     }
     .mobile__pa {
       display: inline-block;
@@ -491,7 +536,7 @@ const links = [
       line-height: 0;
     }
     .mobile__list a[aria-current='page'] .mobile__pa {
-      box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--sun);
+      box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--on-blue);
     }
     .mobile__cats {
       display: grid;
@@ -499,10 +544,20 @@ const links = [
       padding: 0 0 20px;
     }
     .mobile__cat {
-      margin-bottom: 4px;
-      color: var(--ink);
-      font-weight: 600;
-      font-size: 0.95rem;
+      display: inline-block;
+      margin-bottom: 6px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.82rem;
+    }
+    .mobile__cat.is-pa {
+      background: var(--blue);
+      color: #fff;
+    }
+    .mobile__cat.is-tr {
+      background: var(--orange);
+      color: var(--on-orange);
     }
     .mobile__cats ul {
       margin: 0;
@@ -516,7 +571,7 @@ const links = [
       text-decoration: none;
     }
     .mobile__all {
-      color: var(--green);
+      color: var(--primary);
       font-weight: 600;
     }
   }

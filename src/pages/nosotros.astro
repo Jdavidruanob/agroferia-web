@@ -2,6 +2,8 @@
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
+import tractor from '../assets/marca/personaje-tradicional.png';
+import goteoNaranja from '../assets/marca/goteo-naranja.png';
 
 import mural from '../assets/fotos/mural-acopio.png';
 import rio from '../assets/fotos/rio-bolo.png';
@@ -112,7 +114,10 @@ const aliados = [
   </section>
 
   <!-- ============ AMOR Y ABUNDANCIA ============ -->
-  <section class="container filo" aria-labelledby="filo-title">
+  <section class="container filo-wrap" aria-labelledby="filo-title">
+  <div class="filo">
+    <!-- Personaje de Agroferia Tradicional -->
+    <Image class="filo__personaje" src={tractor} alt="Personaje de Agroferia Tradicional: vaca manejando un tractor" widths={[300, 600]} sizes="300px" />
     <h2 id="filo-title" class="filo__title">Amor y abundancia</h2>
     <div class="filo__cols">
       <div>
@@ -130,6 +135,8 @@ const aliados = [
         </p>
       </div>
     </div>
+  </div>
+  <Image class="filo__goteo" src={goteoNaranja} alt="" widths={[800, 1600]} sizes="(max-width: 1180px) 100vw, 1180px" />
   </section>
 
   <!-- ============ IMPACTO ============ -->
@@ -325,10 +332,10 @@ const aliados = [
     grid-column: 2;
     margin: 24px 0 0;
     padding-top: 28px;
-    border-top: 2px solid var(--green);
+    border-top: 2px solid var(--primary);
   }
   .hist__quote p {
-    color: var(--green);
+    color: var(--primary);
     font-family: var(--font-display);
     font-size: clamp(1.4rem, 2.3vw, 1.9rem);
     font-weight: 600;
@@ -350,13 +357,37 @@ const aliados = [
 
   /* ---------- Filosofía ---------- */
   .filo {
-    padding: clamp(48px, 7vw, 96px) clamp(28px, 6vw, 80px);
-    border-radius: var(--r-frame);
-    background: var(--green-deep);
-    color: var(--ink-on-dark-2);
+    position: relative;
+    padding: clamp(48px, 7vw, 96px) clamp(28px, 6vw, 80px) 8px;
+    border-radius: var(--r-frame) var(--r-frame) 0 0;
+    background: var(--orange);
+    color: var(--on-orange-ink);
+  }
+  .filo-wrap :global(.filo__goteo) {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin-top: -1px;
+  }
+  .filo :global(.filo__personaje) {
+    position: absolute;
+    right: clamp(16px, 4vw, 56px);
+    top: clamp(24px, 4vw, 48px);
+    width: clamp(160px, 22vw, 290px);
+    height: auto;
+    filter: drop-shadow(0 12px 18px rgb(0 0 0 / 0.18));
+  }
+  @media (max-width: 700px) {
+    .filo :global(.filo__personaje) {
+      position: static;
+      display: block;
+      width: 170px;
+      margin: 0 0 12px auto;
+    }
   }
   .filo__title {
-    color: var(--sun);
+    max-width: 11ch;
+    color: var(--on-orange);
     font-size: clamp(2.8rem, 7.5vw, 6rem);
     line-height: 1;
   }
@@ -368,7 +399,7 @@ const aliados = [
     max-width: 920px;
   }
   .filo h3 {
-    color: #fff;
+    color: var(--on-orange);
     font-size: 1.2rem;
   }
   .filo p {
@@ -405,7 +436,7 @@ const aliados = [
     height: 54px;
     margin-bottom: 18px;
     border-radius: 50%;
-    background: var(--green);
+    background: var(--primary);
     color: #fff;
   }
   .impact h3 {
@@ -514,7 +545,7 @@ const aliados = [
   .org__col h3 {
     padding-bottom: 14px;
     border-bottom: 1px solid var(--line);
-    color: var(--green);
+    color: var(--primary);
     font-family: var(--font-display);
     font-size: 1.35rem;
   }
@@ -531,15 +562,15 @@ const aliados = [
     color: var(--ink);
   }
   .org__col--funds {
-    background: var(--earth);
-    color: #f1e9da;
+    background: var(--primary);
+    color: var(--ink-on-blue-2);
   }
   .org__col--funds h3 {
     color: #fff;
     border-color: rgb(255 255 255 / 0.2);
   }
   .org__col--funds ul {
-    color: #e6dccb;
+    color: var(--ink-on-blue-2);
   }
   .org__col--funds strong {
     color: #fff;
@@ -552,13 +583,13 @@ const aliados = [
   }
   .fund small {
     display: block;
-    color: #e6dccb;
+    color: var(--ink-on-blue-2);
     font-family: var(--font-body);
     font-size: 0.72rem;
     font-weight: 500;
   }
   .fund {
-    color: var(--sun);
+    color: var(--on-blue);
     font-family: var(--font-display);
     font-size: 1.5rem;
     font-weight: 700;
@@ -584,7 +615,7 @@ const aliados = [
     margin: 28px 0 0;
   }
   .vals dt {
-    color: var(--green);
+    color: var(--primary);
     font-weight: 700;
     font-size: 1.08rem;
   }
@@ -638,7 +669,7 @@ const aliados = [
     grid-template-columns: 1fr 1.2fr;
     border-radius: var(--r-frame);
     overflow: hidden;
-    background: var(--green);
+    background: var(--primary);
     color: var(--ink-on-dark-2);
     scroll-margin-top: 110px;
   }
@@ -665,7 +696,7 @@ const aliados = [
     color: #fff;
   }
   .visit__list :global(svg) {
-    color: var(--sun);
+    color: var(--on-blue);
     margin-top: 3px;
   }
   .visit .btn {

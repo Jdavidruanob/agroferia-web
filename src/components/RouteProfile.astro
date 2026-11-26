@@ -78,7 +78,7 @@ const altura = (km: number) => puntos.find((p) => p[0] === km)![1];
     margin: 0;
     overflow-x: auto;
     scrollbar-width: thin;
-    scrollbar-color: var(--sun) transparent;
+    scrollbar-color: var(--on-blue) transparent;
   }
   .profile svg {
     width: 100%;
@@ -96,13 +96,13 @@ const altura = (km: number) => puntos.find((p) => p[0] === km)![1];
     font-variant-numeric: tabular-nums;
   }
   .profile__area {
-    fill: rgb(249 194 0 / 0.1);
+    fill: rgb(255 255 255 / 0.1);
     opacity: 0;
     transition: opacity 1.2s ease 0.6s;
   }
   .profile__line {
     fill: none;
-    stroke: var(--sun);
+    stroke: var(--on-blue);
     stroke-width: 4;
     stroke-linecap: round;
     stroke-linejoin: round;
@@ -117,12 +117,12 @@ const altura = (km: number) => puntos.find((p) => p[0] === km)![1];
     transition-delay: calc(0.4s + var(--i) * 0.55s);
   }
   .profile__stop line {
-    stroke: rgb(249 194 0 / 0.45);
+    stroke: rgb(255 255 255 / 0.45);
     stroke-dasharray: 3 4;
   }
   .profile__stop circle {
     fill: var(--blue);
-    stroke: var(--sun);
+    stroke: var(--on-blue);
     stroke-width: 3;
   }
   .profile__label {

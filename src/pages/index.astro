@@ -5,8 +5,10 @@ import Icon from '../components/Icon.astro';
 import ProductGlyph from '../components/ProductGlyph.astro';
 import ProductCard from '../components/ProductCard.astro';
 import PalArranqueLogo from '../components/PalArranqueLogo.astro';
-import tractor from '../assets/marca/tradicional-tractor.png';
-import { categorias, productos, productosDe, productoUrl } from '../data/productos';
+import tractor from '../assets/marca/personaje-tradicional.png';
+import goteoNaranja from '../assets/marca/goteo-naranja.png';
+import goteoAzul from '../assets/marca/goteo-azul.png';
+import { grupos, productos, productosDeGrupo, productosDeLinea, productoUrl } from '../data/productos';
 
 import montanas from '../assets/fotos/montanas-la-feria.png';
 import ganado from '../assets/fotos/ganado-silvopastoril.png';
@@ -15,14 +17,16 @@ import ciclistas from '../assets/fotos/ciclistas-acopio.jpeg';
 import asamblea from '../assets/fotos/asamblea-campo.png';
 
 const destacados = [
-  'leche-fresca',
-  'yogurt-natural',
-  'yogurt-griego',
   'queso-campesino',
-  'bebida-lactea-proteina',
+  'batido-smoothie',
+  'yogur-natural-frutas',
+  'snack-queso-relleno',
   'quesillo',
-  'snack-queso-bocadillo',
+  'doypack-yogur-griego',
+  'yogur-griego-artesanal',
   'cuchareable',
+  'postres',
+  'termo-plegable',
 ].map((s) => productos.find((p) => p.slug === s)!);
 
 const pasos = [
@@ -48,44 +52,56 @@ const pasos = [
   },
 ] as const;
 
-const paProductos = productosDe('pal-arranque');
+const paProductos = productosDeLinea('pal-arranque');
 ---
 
 <Base title="Inicio">
   <!-- ============ HERO ============ -->
-  <section class="container hero" aria-labelledby="hero-title">
-    <div class="hero__copy">
-      <h1 id="hero-title">Lácteos de montaña, hechos por 30 familias campesinas</h1>
-      <p class="hero__lead">
-        Somos Agroferia, la Asociación Agropecuaria La Feria. Producimos leche, quesos y alimentos lácteos en las montañas
-        de Pradera, cuidando el agua, el suelo y a nuestra gente.
-      </p>
-      <div class="hero__actions">
-        <a class="btn btn--light" href="/productos">
-          Conoce nuestros productos
-          <span class="btn__arrow"><Icon name="arrow-right" size={18} /></span>
-        </a>
-        <a class="hero__link" href="/pal-arranque">
-          <Icon name="bike" size={20} />
-          Pal' Arranque para ciclistas
-        </a>
+  <section class="container hero-wrap" aria-labelledby="hero-title">
+    <div class="hero">
+      <div class="hero__copy">
+        <h1 id="hero-title">Lácteos de montaña, hechos por 30 familias campesinas</h1>
+        <p class="hero__lead">
+          Somos Agroferia, la Asociación Agropecuaria La Feria. Hacemos quesos, yogures y postres artesanales en las montañas
+          de Pradera, cuidando el agua, el suelo y a nuestra gente.
+        </p>
+        <div class="hero__actions">
+          <a class="btn" href="/productos">
+            Conoce nuestros productos
+            <span class="btn__arrow"><Icon name="arrow-right" size={18} /></span>
+          </a>
+          <a class="hero__link" href="/pal-arranque">
+            <Icon name="bike" size={20} />
+            Pal' Arranque para ciclistas
+          </a>
+        </div>
+        <p class="hero__place">
+          <Icon name="map-pin" size={16} />
+          La Feria · Pradera, Valle del Cauca · 1.600 a 2.200 m s. n. m.
+        </p>
       </div>
-      <p class="hero__place">
-        <Icon name="map-pin" size={16} />
-        La Feria · Pradera, Valle del Cauca · 1.600 a 2.200 m s. n. m.
-      </p>
-      <Image class="hero__tractor" src={tractor} alt="" width={215} height={150} loading="eager" />
+      <div class="hero__media">
+        <Image
+          class="hero__photo"
+          src={montanas}
+          alt="Montañas y cultivos del corregimiento La Feria, en Pradera"
+          widths={[480, 700]}
+          sizes="(max-width: 860px) 100vw, 540px"
+          loading="eager"
+          fetchpriority="high"
+        />
+        <!-- Personaje de Agroferia Tradicional -->
+        <Image
+          class="hero__tractor"
+          src={tractor}
+          alt="Personaje de Agroferia Tradicional: vaca manejando un tractor con un vaso de leche"
+          widths={[300, 600]}
+          sizes="240px"
+          loading="eager"
+        />
+      </div>
     </div>
-    <div class="hero__media">
-      <Image
-        src={montanas}
-        alt="Montañas y cultivos del corregimiento La Feria, en Pradera"
-        widths={[480, 700]}
-        sizes="(max-width: 860px) 100vw, 560px"
-        loading="eager"
-        fetchpriority="high"
-      />
-    </div>
+    <Image class="drip" src={goteoNaranja} alt="" widths={[800, 1600]} sizes="(max-width: 1180px) 100vw, 1180px" loading="eager" />
   </section>
 
   <!-- ============ PRODUCTOS ============ -->
@@ -94,8 +110,8 @@ const paProductos = productosDe('pal-arranque');
       <div class="section-head">
         <h2 id="productos-title">Productos para cada momento del día</h2>
         <p>
-          Leche, yogures, quesos y snacks hechos con la leche de La Feria. Cada producto tiene su información nutricional y
-          sus ingredientes a la vista.
+          Dos líneas artesanales: Pal' Arranque para la rodada y Agroferia Tradicional para la mesa de la casa. Cada producto
+          tiene sus ingredientes y su información nutricional a la vista.
         </p>
       </div>
 
@@ -108,7 +124,7 @@ const paProductos = productosDe('pal-arranque');
             {
               destacados.map((p) => (
                 <div class="showcase__item">
-                  <ProductCard producto={p} />
+                  <ProductCard producto={p} compacta />
                 </div>
               ))
             }
@@ -124,12 +140,12 @@ const paProductos = productosDe('pal-arranque');
         </div>
       </div>
 
-      <nav class="cats" aria-label="Categorías">
+      <nav class="cats" aria-label="Líneas de producto">
         {
-          categorias.map((c) => (
-            <a class="cats__link" href={c.key === 'pal-arranque' ? '/pal-arranque' : `/productos#${c.key}`}>
-              {c.nombre}
-              <span>{productosDe(c.key).length}</span>
+          grupos.map((g) => (
+            <a class:list={['cats__link', g.linea === 'pal-arranque' ? 'cats__link--pa' : 'cats__link--tr']} href={`/productos#${g.key}`}>
+              {g.linea === 'pal-arranque' ? `Pal' Arranque · ${g.nombre}` : g.nombre}
+              <span>{productosDeGrupo(g.key).length}</span>
             </a>
           ))
         }
@@ -169,13 +185,14 @@ const paProductos = productosDe('pal-arranque');
   </section>
 
   <!-- ============ PAL' ARRANQUE ============ -->
-  <section class="container pa" aria-labelledby="pa-title">
+  <section class="container pa-wrap" aria-labelledby="pa-title">
+  <div class="pa">
     <div class="pa__copy">
       <PalArranqueLogo class="pa__mark" width={500} />
       <h2 id="pa-title" class="pa__title">La parada de tu rodada en La Feria</h2>
       <p class="pa__text">
         Un programa de Agroferia para ciclistas de montaña: una ruta que sale de La Feria y sube hasta los 2.262 m, un lugar
-        para el tercer tiempo y cinco productos lácteos pensados para pedalear.
+        para el tercer tiempo y siete productos artesanales pensados para pedalear.
       </p>
       <a class="btn btn--sun" href="/pal-arranque">
         Conoce Pal' Arranque
@@ -197,6 +214,8 @@ const paProductos = productosDe('pal-arranque');
         ))
       }
     </ul>
+  </div>
+  <Image class="drip" src={goteoAzul} alt="" widths={[800, 1600]} sizes="(max-width: 1180px) 100vw, 1180px" />
   </section>
 
   <!-- ============ NOSOTROS ============ -->
@@ -235,31 +254,39 @@ const paProductos = productosDe('pal-arranque');
 </Base>
 
 <style>
-  /* ---------- Hero ---------- */
+  /* ---------- Hero (Agroferia Tradicional: naranja + goteo) ---------- */
+  .hero-wrap {
+    position: relative;
+  }
   .hero {
     display: grid;
     grid-template-columns: 1.08fr 1fr;
-    min-height: min(640px, calc(100svh - 120px));
-    border-radius: var(--r-frame);
-    overflow: hidden;
-    background: var(--green-field);
+    gap: 12px;
+    min-height: min(600px, calc(100svh - 160px));
+    padding: 12px 12px 0;
+    border-radius: var(--r-frame) var(--r-frame) 0 0;
+    background: var(--orange);
+  }
+  .hero-wrap :global(.drip) {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin-top: -1px;
   }
   .hero__copy {
-    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: center;
     gap: 24px;
-    padding: clamp(36px, 6vw, 72px);
-    color: var(--green-field-ink);
+    padding: clamp(28px, 5vw, 60px) clamp(20px, 4vw, 48px) 8px;
+    color: var(--on-orange-ink);
   }
   .hero h1 {
-    color: var(--green-field-ink);
+    color: var(--on-orange);
     max-width: 14ch;
   }
   .hero__lead {
     max-width: 46ch;
-    color: var(--green-field-ink);
     font-size: clamp(1.05rem, 1.35vw, 1.18rem);
   }
   .hero__actions {
@@ -273,9 +300,12 @@ const paProductos = productosDe('pal-arranque');
     display: inline-flex;
     align-items: center;
     gap: 10px;
-    color: var(--green-field-ink);
-    font-weight: 600;
+    color: var(--on-orange-ink);
+    font-weight: 700;
     text-decoration: none;
+  }
+  .hero__link :global(svg) {
+    color: var(--blue);
   }
   .hero__link:hover {
     text-decoration: underline;
@@ -286,39 +316,29 @@ const paProductos = productosDe('pal-arranque');
     gap: 8px;
     margin-top: auto;
     padding-top: 18px;
-    padding-right: 190px;
-    border-top: 1px solid rgb(5 51 26 / 0.22);
-    color: var(--green-field-ink);
+    border-top: 1px solid rgb(17 74 155 / 0.25);
     font-size: 0.9rem;
-  }
-  .hero__copy :global(.hero__tractor) {
-    position: absolute;
-    right: clamp(20px, 3vw, 40px);
-    bottom: 18px;
-    width: 170px;
-    height: auto;
-    pointer-events: none;
-  }
-  @media (max-width: 520px) {
-    .hero__place {
-      padding-right: 0;
-    }
-    .hero__copy :global(.hero__tractor) {
-      position: static;
-      align-self: flex-end;
-      width: 150px;
-      margin: -8px -8px -12px 0;
-    }
   }
   .hero__media {
     position: relative;
+    min-height: 320px;
   }
-  .hero__media img {
+  .hero__media :global(.hero__photo) {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
+    border-radius: 20px;
+  }
+  .hero__media :global(.hero__tractor) {
+    position: absolute;
+    left: -56px;
+    bottom: -64px;
+    z-index: 2;
+    width: clamp(170px, 20vw, 250px);
+    height: auto;
+    filter: drop-shadow(0 12px 18px rgb(0 0 0 / 0.2));
   }
   @media (max-width: 860px) {
     .hero {
@@ -326,7 +346,17 @@ const paProductos = productosDe('pal-arranque');
     }
     .hero__media {
       order: -1;
+      min-height: 0;
       aspect-ratio: 16 / 10;
+    }
+    .hero__media :global(.hero__tractor) {
+      left: auto;
+      right: 8px;
+      bottom: -40px;
+      width: 150px;
+    }
+    .hero__copy {
+      padding-top: 40px;
     }
   }
 
@@ -337,7 +367,7 @@ const paProductos = productosDe('pal-arranque');
     grid-template-columns: 38% 1fr;
     border-radius: var(--r-frame);
     overflow: hidden;
-    background: var(--panel);
+    background: var(--blue-soft);
   }
   .showcase__photo img {
     width: 100%;
@@ -363,7 +393,7 @@ const paProductos = productosDe('pal-arranque');
     display: none;
   }
   .showcase__item {
-    flex: 0 0 236px;
+    flex: 0 0 250px;
     scroll-snap-align: start;
   }
   .showcase__controls {
@@ -387,7 +417,7 @@ const paProductos = productosDe('pal-arranque');
     transition: background-color 0.2s ease, opacity 0.2s ease;
   }
   .round-btn--solid {
-    background: var(--green);
+    background: var(--primary);
     color: #fff;
   }
   .round-btn:disabled {
@@ -444,9 +474,25 @@ const paProductos = productosDe('pal-arranque');
     font-size: 0.82rem;
     font-variant-numeric: tabular-nums;
   }
+  .cats__link--pa {
+    border-color: var(--blue);
+    color: var(--blue);
+    font-weight: 600;
+  }
+  .cats__link--tr {
+    border-color: var(--orange);
+    font-weight: 600;
+  }
+  .cats__link--pa span {
+    background: var(--blue);
+    color: #fff;
+  }
+  .cats__link--tr span {
+    background: var(--orange);
+    color: var(--on-orange-ink);
+  }
   .cats__link:hover {
-    background: #fff;
-    border-color: var(--green);
+    background: var(--paper);
   }
 
   /* ---------- Origen ---------- */
@@ -494,7 +540,7 @@ const paProductos = productosDe('pal-arranque');
     top: 24px;
     bottom: 24px;
     width: 2px;
-    background: linear-gradient(var(--field), var(--earth));
+    background: linear-gradient(var(--orange), var(--primary));
     border-radius: 2px;
   }
   .step {
@@ -510,8 +556,8 @@ const paProductos = productosDe('pal-arranque');
     height: 48px;
     border-radius: 50%;
     background: #fff;
-    color: var(--green);
-    box-shadow: 0 0 0 6px var(--paper), var(--shadow-card);
+    color: var(--primary);
+    box-shadow: 0 0 0 6px var(--bg), var(--shadow-card);
   }
   .step h3 {
     margin: 4px 0 6px;
@@ -533,13 +579,19 @@ const paProductos = productosDe('pal-arranque');
     }
   }
 
-  /* ---------- Pal' Arranque ---------- */
+  /* ---------- Pal' Arranque (azul + goteo) ---------- */
+  .pa-wrap :global(.drip) {
+    display: block;
+    width: 100%;
+    height: auto;
+    margin-top: -1px;
+  }
   .pa {
     display: grid;
     grid-template-columns: 1fr 1.05fr;
     gap: clamp(28px, 4vw, 56px);
-    padding: clamp(32px, 5vw, 64px);
-    border-radius: var(--r-frame);
+    padding: clamp(32px, 5vw, 64px) clamp(32px, 5vw, 64px) 8px;
+    border-radius: var(--r-frame) var(--r-frame) 0 0;
     background: var(--blue);
     color: #fff;
   }
@@ -568,15 +620,15 @@ const paProductos = productosDe('pal-arranque');
   .pa__products {
     grid-column: 1 / -1;
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 0;
     margin: 0;
     padding: 0;
     list-style: none;
-    border-top: 1px solid rgb(249 194 0 / 0.3);
+    border-top: 1px solid rgb(255 255 255 / 0.3);
   }
-  .pa__products li + li {
-    border-left: 1px solid rgb(249 194 0 / 0.3);
+  .pa__products li {
+    border-bottom: 1px solid rgb(255 255 255 / 0.2);
   }
   .pa__products a {
     display: flex;
@@ -592,7 +644,7 @@ const paProductos = productosDe('pal-arranque');
   }
   .pa__products a :global(svg) {
     flex: none;
-    color: var(--sun);
+    color: var(--on-blue);
     transition: transform 0.4s var(--ease-out);
   }
   .pa__products a:hover {
@@ -609,7 +661,7 @@ const paProductos = productosDe('pal-arranque');
       border-left: 0;
     }
     .pa__products li {
-      border-bottom: 1px solid rgb(249 194 0 / 0.3);
+      border-bottom: 1px solid rgb(255 255 255 / 0.3);
     }
     .pa__products a {
       padding: 16px 4px;
@@ -662,7 +714,7 @@ const paProductos = productosDe('pal-arranque');
     display: flex;
     align-items: center;
     gap: 10px;
-    color: var(--green);
+    color: var(--primary);
     font-weight: 700;
   }
   .facts dd {
