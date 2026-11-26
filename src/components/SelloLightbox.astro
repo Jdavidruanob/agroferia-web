@@ -1,0 +1,123 @@
+---
+/** Visor del sello artesanal en grande. Se abre con cualquier botón [data-sello-abrir] de la página. */
+import { Image } from 'astro:assets';
+import sello from '../assets/marca/sello-artesanal.png';
+import Icon from './Icon.astro';
+---
+
+<dialog class="sellobox" data-sello-box aria-labelledby="sellobox-title">
+  <button type="button" class="sellobox__x" data-sello-cerrar aria-label="Cerrar">
+    <Icon name="close" size={22} />
+  </button>
+  <figure class="sellobox__fig">
+    <Image class="sellobox__img" src={sello} alt="Sello Producto Lácteo Artesanal de Agroferia" widths={[480, 900]} sizes="(max-width: 600px) 82vw, 480px" />
+    <figcaption>
+      <h2 id="sellobox-title">Producto Lácteo Artesanal</h2>
+      <p>Hecho a mano por las familias de La Feria, con leche de sus fincas y en pequeñas tandas.</p>
+    </figcaption>
+  </figure>
+</dialog>
+
+<style>
+  .sellobox {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    max-height: none;
+    margin: 0;
+    padding: 16px;
+    border: 0;
+    background: transparent;
+    color: #fff;
+  }
+  .sellobox[open] {
+    display: grid;
+    place-items: center;
+  }
+  .sellobox::backdrop {
+    background: rgb(9 14 28 / 0.76);
+    backdrop-filter: blur(3px);
+  }
+  .sellobox[open]::backdrop {
+    animation: sb-fondo 0.3s ease-out;
+  }
+  @keyframes sb-fondo {
+    from { opacity: 0; }
+  }
+  .sellobox__fig {
+    display: grid;
+    justify-items: center;
+    gap: 18px;
+    margin: 0;
+    text-align: center;
+  }
+  .sellobox :global(.sellobox__img) {
+    width: min(82vw, 62dvh, 480px);
+    height: auto;
+    border-radius: 50%;
+    box-shadow: 0 0 0 6px #fff, 0 30px 60px -20px rgb(0 0 0 / 0.6);
+  }
+  .sellobox[open] :global(.sellobox__img) {
+    animation: sb-pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+  @keyframes sb-pop {
+    from { transform: scale(0.2) rotate(-20deg); opacity: 0; }
+  }
+  .sellobox h2 {
+    color: #fff;
+    font-size: clamp(1.3rem, 3vw, 1.7rem);
+  }
+  .sellobox p {
+    max-width: 38ch;
+    margin-top: 6px;
+    color: #dbe4f3;
+  }
+  .sellobox__x {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    border: 0;
+    border-radius: 50%;
+    background: #fff;
+    color: var(--blue);
+    cursor: pointer;
+  }
+  .sellobox :focus-visible {
+    outline: 3px solid var(--orange);
+    outline-offset: 3px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sellobox[open] :global(.sellobox__img) {
+      animation: sb-fondo 0.2s ease-out both;
+    }
+  }
+</style>
+
+<script>
+  const box = document.querySelector<HTMLDialogElement>('[data-sello-box]');
+  if (box && typeof box.showModal === 'function') {
+    let origen: HTMLElement | null = null;
+    const cerrar = () => {
+      box.close();
+      origen?.focus();
+    };
+    document.addEventListener('click', (e) => {
+      const b = (e.target as HTMLElement).closest<HTMLElement>('[data-sello-abrir]');
+      if (!b) return;
+      e.preventDefault();
+      e.stopPropagation();
+      origen = b;
+      box.showModal();
+    });
+    box.querySelector('[data-sello-cerrar]')!.addEventListener('click', cerrar);
+    box.addEventListener('click', (e) => {
+      if (!(e.target as HTMLElement).closest('.sellobox__img, figcaption, .sellobox__x')) cerrar();
+    });
+  }
+</script>

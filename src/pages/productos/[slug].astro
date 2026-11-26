@@ -4,7 +4,8 @@ import Base from '../../layouts/Base.astro';
 import Icon from '../../components/Icon.astro';
 import ProductGlyph from '../../components/ProductGlyph.astro';
 import ProductCard from '../../components/ProductCard.astro';
-import BadgesLinea from '../../components/BadgesLinea.astro';
+import LineaEtiqueta from '../../components/LineaEtiqueta.astro';
+import SelloArtesanal from '../../components/SelloArtesanal.astro';
 import { esPalArranque, grupoPorKey, productos, productosDeLinea, type Producto } from '../../data/productos';
 import personajePA from '../../assets/marca/personaje-pal-arranque.png';
 import personajeTR from '../../assets/marca/personaje-tradicional.png';
@@ -78,14 +79,15 @@ const puntos = pa
         <img src="/productos/SLUG.jpg" alt="NOMBRE DEL PRODUCTO" />
       -->
       <ProductGlyph name={p.glyph} size={200} class="phero__glyph" />
-      <BadgesLinea producto={p} class="phero__badges" />
+      <LineaEtiqueta linea={p.linea} alto={34} cinta class="phero__linea" loading="eager" />
       <Image
         class="phero__personaje"
         src={pa ? personajePA : personajeTR}
         alt=""
         widths={[240, 400]}
-        sizes="170px"
+        sizes="150px"
       />
+      {p.sello !== false && <SelloArtesanal size={96} class="phero__sello" />}
     </div>
   </section>
 
@@ -109,7 +111,7 @@ const puntos = pa
     </ul>
   </section>
 
-  <!-- ============ FICHA ============ -->
+  <!-- ============ FICHA: INGREDIENTES ============ -->
   <section class:list={['container', 'ficha', pa ? 'ficha--pa' : 'ficha--tr']} aria-labelledby="n-title">
     <aside class="ficha__card">
       <p class="ficha__name">{p.nombre}</p>
@@ -118,7 +120,7 @@ const puntos = pa
       </div>
       <dl class="ficha__meta">
         <div><dt>Presentación</dt><dd>{p.presentacion}</dd></div>
-        {p.nutricion && <div><dt>Porción</dt><dd>{p.nutricion.porcion}</dd></div>}
+        <div><dt>Línea</dt><dd>{pa ? "Pal' Arranque" : 'Agroferia Tradicional'}</dd></div>
       </dl>
       <a class="btn ficha__cta" href="#donde">
         Dónde encontrarlo
@@ -128,66 +130,84 @@ const puntos = pa
 
     <div class="ficha__body">
       {
-        p.nutricion ? (
+        p.material ? (
           <>
-            <h2 id="n-title">Información nutricional</h2>
-            <p class="ficha__intro">
-              Contenido energético y nutrientes de interés por {p.nutricion.base} de producto y por porción ({p.nutricion.porcion}),
-              para que elijas según lo que necesitas antes, durante o después de tu actividad.
-            </p>
+            <h2 id="n-title">Material y dinámica de puntos</h2>
             <dl class="ficha__info">
-              <div><dt>Ingredientes</dt><dd>{p.ingredientes}</dd></div>
-              {p.alergenos && <div><dt>Alérgenos</dt><dd>{p.alergenos}</dd></div>}
-              <div><dt>Conservación</dt><dd>{p.conservacion}</dd></div>
+              <div><dt>Material</dt><dd>{p.material.material}</dd></div>
+              <div><dt>Capacidad</dt><dd>{p.material.capacidad}</dd></div>
+              <div><dt>Cuidado</dt><dd>{p.conservacion}</dd></div>
             </dl>
+            <div class="puntos">
+              <Icon name="award" size={26} />
+              <div>
+                <h3>Así funcionan los puntos</h3>
+                <p>{p.material.dinamica}</p>
+              </div>
+            </div>
             <p class="placeholder-note">
               <Icon name="info" size={16} />
-              Valores de referencia temporales. Se reemplazarán por los datos de la etiqueta oficial.
+              Material, capacidad y reglas de puntos por confirmar.
             </p>
-            <div class="table-wrap">
-              <table class="ntable">
-                <caption class="visually-hidden">Información nutricional de {p.nombre}</caption>
-                <thead>
-                  <tr>
-                    <th scope="col">Descripción</th>
-                    <th scope="col">Por {p.nutricion.base}</th>
-                    <th scope="col">Por porción<span> ({p.nutricion.porcion})</span></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {p.nutricion.filas.map((r) => (
-                    <tr class:list={{ strong: r.destacado }}>
-                      <th scope="row">{r.nutriente}</th>
-                      <td>{r.por100}</td>
-                      <td>{r.porPorcion}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
           </>
         ) : (
-          p.material && (
-            <>
-              <h2 id="n-title">Material y dinámica de puntos</h2>
-              <dl class="ficha__info">
-                <div><dt>Material</dt><dd>{p.material.material}</dd></div>
-                <div><dt>Capacidad</dt><dd>{p.material.capacidad}</dd></div>
-                <div><dt>Cuidado</dt><dd>{p.conservacion}</dd></div>
-              </dl>
-              <div class="puntos">
-                <Icon name="award" size={26} />
-                <div>
-                  <h3>Así funcionan los puntos</h3>
-                  <p>{p.material.dinamica}</p>
-                </div>
-              </div>
-              <p class="placeholder-note">
-                <Icon name="info" size={16} />
-                Material, capacidad y reglas de puntos por confirmar.
+          <>
+            <div class="ingr__head">
+              <h2 id="n-title">Ingredientes</h2>
+              {!p.ingredientesConfirmados && (
+                <span class="ingr__estado">
+                  <Icon name="clock" size={16} />
+                  Pendientes por confirmar
+                </span>
+              )}
+            </div>
+            <p class="ingr__intro">
+              Lo que lleva {p.nombre.charAt(0).toLowerCase() + p.nombre.slice(1)}, en el orden de la receta. Sin conservantes
+              ni colorantes: solo lo que se usa en la cocina de La Feria.
+            </p>
+
+            <ol class:list={['ingr__list', { 'is-pendiente': !p.ingredientesConfirmados }]}>
+              {p.ingredientes.map((i, n) => (
+                <li class="ingr__item">
+                  <span class="ingr__num" aria-hidden="true">{n + 1}</span>
+                  <span class="ingr__txt">
+                    <strong>{i.nombre}</strong>
+                    {i.detalle && <span>{i.detalle}</span>}
+                  </span>
+                  {!p.ingredientesConfirmados && <span class="ingr__tag">Por confirmar</span>}
+                </li>
+              ))}
+            </ol>
+
+            {!p.ingredientesConfirmados && (
+              <p class="ingr__aviso">
+                <Icon name="info" size={18} />
+                <span>
+                  <strong>Lista de referencia.</strong> Agroferia está confirmando los ingredientes y la receta de este producto;
+                  la lista puede cambiar.
+                </span>
               </p>
-            </>
-          )
+            )}
+
+            <div class="ingr__extra">
+              {p.alergenos && (
+                <div>
+                  <Icon name="info" size={20} />
+                  <p>
+                    <strong>Alérgenos</strong>
+                    {p.alergenos}
+                  </p>
+                </div>
+              )}
+              <div>
+                <Icon name="snowflake" size={20} />
+                <p>
+                  <strong>Conservación</strong>
+                  {p.conservacion}
+                </p>
+              </div>
+            </div>
+          </>
         )
       }
 
@@ -324,6 +344,7 @@ const puntos = pa
     display: grid;
     place-items: center;
     margin: 20px;
+    padding-top: 64px;
     border-radius: 20px;
     background: #fff;
     color: var(--c);
@@ -332,19 +353,23 @@ const puntos = pa
     width: min(200px, 50%);
     height: auto;
   }
-  .phero__visual :global(.phero__badges) {
+  .phero__visual :global(.phero__linea) {
     position: absolute;
-    top: 16px;
-    left: 16px;
-    right: 16px;
+    top: 18px;
+    left: 18px;
   }
   .phero__visual :global(.phero__personaje) {
     position: absolute;
-    right: -6px;
-    bottom: -10px;
-    width: 150px;
+    left: 10px;
+    bottom: 8px;
+    width: 130px;
     height: auto;
     filter: drop-shadow(0 8px 14px rgb(0 0 0 / 0.18));
+  }
+  .phero__visual :global(.phero__sello) {
+    position: absolute;
+    right: 18px;
+    bottom: 18px;
   }
   @media (max-width: 860px) {
     .phero {
@@ -352,14 +377,26 @@ const puntos = pa
     }
     .phero__visual {
       order: -1;
-      aspect-ratio: 16 / 10;
+      aspect-ratio: 16 / 10.5;
       margin: 12px 12px 0;
+      padding-top: 56px;
     }
     .phero__visual :global(.phero__glyph) {
-      width: 120px;
+      width: 110px;
     }
     .phero__visual :global(.phero__personaje) {
-      width: 110px;
+      width: 96px;
+      left: 6px;
+      bottom: 4px;
+    }
+    .phero__visual :global(.phero__sello) {
+      --s: 68px !important;
+      right: 12px;
+      bottom: 12px;
+    }
+    .phero__visual :global(.phero__linea) {
+      top: 12px;
+      left: 12px;
     }
   }
 
@@ -469,10 +506,133 @@ const puntos = pa
   .ficha__body h2 {
     font-size: clamp(1.7rem, 2.6vw, 2.2rem);
   }
-  .ficha__intro {
+  .ficha__meta dd :global(.etiqueta) {
+    vertical-align: middle;
+  }
+
+  /* ---------- Ingredientes ---------- */
+  .ingr__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 16px;
+  }
+  .ingr__estado {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 13px;
+    border-radius: 999px;
+    background: var(--orange);
+    color: var(--on-orange-ink);
+    font-size: 0.86rem;
+    font-weight: 700;
+  }
+  .ingr__intro {
     margin-top: 12px;
+    max-width: 62ch;
     color: var(--ink-2);
-    max-width: 70ch;
+  }
+  .ingr__list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 12px;
+    margin: 24px 0 0;
+    padding: 0;
+    list-style: none;
+  }
+  .ingr__item {
+    display: grid;
+    grid-template-columns: 40px 1fr auto;
+    align-items: center;
+    gap: 6px 14px;
+    padding: 16px 16px 16px 14px;
+    border: 1.5px solid var(--line);
+    border-radius: 16px;
+    background: #fff;
+  }
+  .is-pendiente .ingr__item {
+    border-style: dashed;
+    border-color: color-mix(in srgb, var(--c) 55%, white);
+  }
+  .ingr__num {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--c);
+    color: #fff;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+  }
+  .ficha--tr .ingr__num {
+    color: var(--on-orange);
+  }
+  .ingr__txt {
+    display: grid;
+    gap: 2px;
+    min-width: 0;
+  }
+  .ingr__txt strong {
+    font-size: 1.04rem;
+    line-height: 1.3;
+  }
+  .ingr__txt span {
+    color: var(--ink-2);
+    font-size: 0.9rem;
+    line-height: 1.4;
+  }
+  .ingr__tag {
+    justify-self: end;
+    padding: 2px 9px;
+    border-radius: 999px;
+    background: var(--paper);
+    color: var(--ink-2);
+    font-size: 0.74rem;
+    font-weight: 700;
+  }
+  .ingr__aviso {
+    display: grid;
+    grid-template-columns: 18px 1fr;
+    gap: 12px;
+    margin-top: 18px;
+    padding: 14px 18px;
+    border-radius: 14px;
+    background: var(--blue-soft);
+    color: var(--ink);
+    font-size: 0.93rem;
+  }
+  .ingr__aviso > :global(svg) {
+    margin-top: 2px;
+    color: var(--blue);
+  }
+  .ingr__extra {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+    margin-top: 18px;
+  }
+  .ingr__extra > div {
+    display: grid;
+    grid-template-columns: 20px 1fr;
+    gap: 12px;
+    padding: 16px 18px;
+    border-radius: 14px;
+    background: var(--paper);
+  }
+  .ingr__extra :global(svg) {
+    margin-top: 2px;
+    color: var(--blue);
+  }
+  .ingr__extra p {
+    color: var(--ink-2);
+    font-size: 0.94rem;
+  }
+  .ingr__extra strong {
+    display: block;
+    margin-bottom: 2px;
+    color: var(--ink);
   }
   .ficha__info {
     display: grid;
@@ -495,59 +655,6 @@ const puntos = pa
     .ficha__info div {
       grid-template-columns: 1fr;
       gap: 2px;
-    }
-  }
-
-  .table-wrap {
-    margin-top: 14px;
-    border: 1px solid var(--line);
-    border-radius: 16px;
-    background: #fff;
-    overflow: hidden;
-  }
-  .ntable {
-    width: 100%;
-    border-collapse: collapse;
-    font-variant-numeric: tabular-nums;
-    font-size: 0.95rem;
-  }
-  .ntable thead th {
-    padding: 16px 18px;
-    background: var(--c);
-    color: #fff;
-    font-weight: 700;
-    text-align: center;
-  }
-  .ficha--tr .ntable thead th {
-    color: var(--on-orange);
-  }
-  .ntable thead th:first-child,
-  .ntable tbody th {
-    text-align: left;
-  }
-  .ntable tbody th,
-  .ntable td {
-    padding: 14px 18px;
-    border-top: 1px solid var(--line);
-    color: var(--ink-2);
-    font-weight: 400;
-  }
-  .ntable td {
-    text-align: center;
-  }
-  .ntable tr.strong th,
-  .ntable tr.strong td {
-    color: var(--ink);
-    font-weight: 700;
-  }
-  @media (max-width: 560px) {
-    .ntable thead th span {
-      display: none;
-    }
-    .ntable thead th,
-    .ntable tbody th,
-    .ntable td {
-      padding: 12px 10px;
     }
   }
 

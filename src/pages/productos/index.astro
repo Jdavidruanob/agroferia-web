@@ -4,6 +4,7 @@ import Icon from '../../components/Icon.astro';
 import ProductCard from '../../components/ProductCard.astro';
 import LineaBanda from '../../components/LineaBanda.astro';
 import PalArranqueLetras from '../../components/PalArranqueLetras.astro';
+import TradicionalLetras from '../../components/TradicionalLetras.astro';
 import { grupos, lineaPorKey, productosDeGrupo } from '../../data/productos';
 
 const gruposPA = grupos.filter((g) => g.linea === 'pal-arranque');
@@ -14,7 +15,7 @@ const gruposPA = grupos.filter((g) => g.linea === 'pal-arranque');
     <h1 id="ph-title">Nuestros productos</h1>
     <p class="lead">
       Dos líneas, hechas a mano con la leche de las 30 familias de La Feria. Entra a cada producto para ver sus ingredientes,
-      cómo conservarlo y su información nutricional.
+      cómo conservarlo y qué lleva.
     </p>
     <nav class="tabs" aria-label="Líneas de producto">
       <a class="tabs__link tabs__link--tr" href="#tradicional">Agroferia Tradicional</a>
@@ -25,7 +26,7 @@ const gruposPA = grupos.filter((g) => g.linea === 'pal-arranque');
   <!-- ===================== AGROFERIA TRADICIONAL ===================== -->
   <section id="tradicional" class="container linea" aria-labelledby="t-tr">
     <LineaBanda linea="tradicional">
-      <h2 id="t-tr" class="linea__title title-tradicional">Agroferia Tradicional</h2>
+      <h2 id="t-tr" class="linea__brand"><TradicionalLetras width={300} alt="Agroferia Tradicional" /></h2>
       <p class="linea__desc">{lineaPorKey.tradicional.descripcion}</p>
     </LineaBanda>
 
@@ -105,8 +106,6 @@ const gruposPA = grupos.filter((g) => g.linea === 'pal-arranque');
   .tabs__link--tr {
     background: var(--orange);
     color: var(--on-orange);
-    font-family: var(--font-tradicional);
-    font-weight: 400;
   }
 
   .linea {
@@ -116,10 +115,6 @@ const gruposPA = grupos.filter((g) => g.linea === 'pal-arranque');
   .linea__brand {
     line-height: 0;
     margin-left: -6px;
-  }
-  .linea__title {
-    color: var(--on-orange);
-    font-size: clamp(2.1rem, 4.4vw, 3.3rem);
   }
   .linea__desc {
     max-width: 52ch;

@@ -90,7 +90,7 @@ components:
 
 ## Overview
 
-Gramática de sitio corporativo de lácteos tomada de Alquería (navbar flotante en píldora con el logo en insignia, botones píldora con flecha en círculo, mega-menú, ficha de producto con tabla nutricional) sobre una **base blanca**. La marca vive en dos líneas que se distinguen por color y personaje (especificación de la diseñadora, 25 nov. 2026, recursos de `Recurso 6.pdf`):
+Gramática de sitio corporativo de lácteos tomada de Alquería (navbar flotante en píldora con el logo en insignia, botones píldora con flecha en círculo, mega-menú, ficha de producto con ingredientes) sobre una **base blanca**. La marca vive en dos líneas que se distinguen por color y personaje (especificación de la diseñadora, 25 nov. 2026, recursos de `Recurso 6.pdf`):
 - **Pal' Arranque**: azul `#114A9B`, texto blanco, vaca en bici, letras oficiales en imagen.
 - **Agroferia Tradicional**: naranja `#F2AE30`, títulos y etiquetas en azul `#114A9B`, texto pequeño casi negro, vaca en tractor.
 
@@ -99,7 +99,7 @@ Los bloques de color terminan en una franja de **goteo de leche** (`goteo-azul.p
 ## Colors
 
 ### Primary
-- **Azul `#114A9B`**: color de la línea Pal' Arranque y también de la interfaz general (botones primarios, enlaces, íconos, tabla nutricional de Pal' Arranque).
+- **Azul `#114A9B`**: color de la línea Pal' Arranque y también de la interfaz general (botones primarios, enlaces, íconos).
 - **Naranja `#F2AE30`**: color de la línea Agroferia Tradicional (hero de Inicio, bloque "Amor y abundancia", banda de su catálogo, hero de sus fichas, etiqueta de línea).
 
 ### Neutral
@@ -118,7 +118,7 @@ Los bloques de color terminan en una franja de **goteo de leche** (`goteo-azul.p
 - **Bitter** (slab, eco de las letras de la cinta del logo) para h1 y h2.
 - **Figtree** para texto, navegación, botones y títulos pequeños.
 - **Barlow Condensed** 700–800 en mayúsculas, **solo** dentro de Pal' Arranque para subtítulos, datos de ruta y chips. El nombre de la línea no se escribe en Barlow: usa las letras de la etiqueta en imagen.
-- **Coustard** 400 (`--font-tradicional`, clase `.title-tradicional`) **solo** para el nombre "Agroferia Tradicional" (banda del catálogo, mega-menú, pestaña). Es la Clarendon ancha libre más cercana a las letras de la cinta "AGROFERIA" del logo.
+- **Letras de la línea Tradicional** (imagen exportada del PDF): `tradicional-letras.png`, igual que las de Pal' Arranque. El nombre de ninguna línea se escribe en tipografía normal en etiquetas ni títulos; en botones, pestañas y chips sí va texto normal.
 - **Letras y logos de etiqueta** (imagen, exportados del PDF vectorial): `pal-arranque-letras.png`, `pal-arranque-logo.png`, `tradicional-logo.png`.
 
 ### Hierarchy
@@ -141,11 +141,14 @@ Marco 28px (bandas de línea, heros, mapa, panel), tarjeta 16px, panel interno 1
 ### Buttons
 Píldora con texto y flecha en un círculo de 38px. Variantes: primario azul (texto blanco), claro (blanco con flecha azul), `btn--sun` (blanco con texto azul, sobre bloques azules), `btn--orange` (naranja con texto casi negro y flecha azul) y fantasma. Los enlaces pendientes usan `aria-disabled` y el texto "próximamente" o "enlace por agregar".
 
-### Etiquetas de producto
-`.badge--pa` (azul, texto blanco), `.badge--tradicional` (naranja, texto azul) y `.badge--artesanal` (blanco con borde del color de la línea). En la tarjeta van dentro de `.pcard__badges`, en las esquinas superiores; si no caben, la artesanal baja a una segunda línea y se mantiene a la derecha.
+### Etiquetas de línea (`LineaEtiqueta`)
+Única etiqueta de producto: las letras oficiales en imagen sobre azul (Pal' Arranque) o naranja (Tradicional). En tarjetas y fichas van como **cinta con borde triangulado** arriba y abajo (`cinta`), esquina superior izquierda de la imagen; en el navbar, como píldora. No hay etiqueta de texto "100% Artesanal": esa información la da el sello.
+
+### Sello artesanal (`SelloArtesanal`, `SelloLightbox`)
+Sello redondo "Producto Lácteo Artesanal" en la esquina inferior derecha de la imagen de cada tarjeta y de la ficha del producto (no en el termo). Es un botón: al hacer clic se abre en grande en un visor modal.
 
 ### Tarjeta de producto (`ProductCard`)
-Imagen 4:3 (hoy un ícono, con el `<img>` a insertar comentado), sello "Producto Lácteo Artesanal" (`sello-artesanal.png`) en la esquina inferior derecha de la imagen, doble etiqueta, título, párrafo de receta e ingredientes, y pie con la presentación y "Ver ficha" o "Ver detalles". El atributo `compacta` oculta la receta en el carrusel de Inicio.
+Imagen 4:3 (hoy un ícono, con el `<img>` a insertar comentado), etiqueta de línea en cinta arriba a la izquierda, sello artesanal abajo a la derecha, título, párrafo de receta e ingredientes, y pie con la presentación y "Ver ficha" o "Ver detalles". El atributo `compacta` oculta la receta en el carrusel de Inicio.
 
 ### Banda de línea (`LineaBanda`)
 Bloque de color de la línea con texto a la izquierda, el personaje a la derecha y la franja de goteo abajo. Encabeza cada línea en el catálogo.
@@ -165,8 +168,8 @@ Insignia con el logo de Agroferia; píldora blanca con Inicio · Productos · Pa
 ### Mapa del recorrido (`RutaInteractiva`, componente firma)
 Lienzo azul suave con montañas geométricas, un río y un camino curvo (Catmull-Rom) que pasa por 8 puntos: salida (marcador azul), seis banderitas numeradas (SVG; el `<img>` de la ilustración propia va comentado) y la meta en naranja (punto de acopio). El ciclista avanza por el camino con aceleración y desaceleración suaves, se voltea según la dirección y deja dibujada la línea del avance. Se maneja con clic en cada punto, con los botones Anterior y Siguiente o con las flechas del teclado. El panel azul muestra el número de parada, el tipo, km, altitud y descripción. Al llegar al punto 8 aparecen el cartel naranja "¡Ruta completada! Eres ganador de un premio" y el confeti, y se abre la celebración: `<dialog>` modal con fondo oscuro, la vaca "¡Lo lograste! ¡Vamos con toda!" (`celebracion-lo-lograste.png`, con silueta blanca) que crece desde el centro con rebote, rayos naranjas girando detrás y confeti azul, naranja y blanco (papelitos, estrellas y serpentinas) por delante. Se cierra con la X, "Seguir explorando el mapa", clic fuera o Esc; "¡Reclamar mi premio!" cierra y lleva al cartel del premio. Con movimiento reducido, el ciclista salta de punto en punto sin animación.
 
-### Ficha nutricional
-Tarjeta fija a la izquierda y, a la derecha, ingredientes, alérgenos, conservación, aviso de dato temporal y tabla Por 100 g/ml · Por porción con la cabecera del color de la línea. El termo reemplaza la tabla por "Material y dinámica de puntos".
+### Ficha de ingredientes
+Sin tabla nutricional (decisión del cliente). La ficha muestra los ingredientes como tarjetas numeradas (nombre y composición), con borde punteado y la marca "Por confirmar" mientras `ingredientesConfirmados` no sea verdadero en `productos.ts`, más alérgenos y conservación. El termo muestra material y dinámica de puntos.
 
 ## Do's and Don'ts
 

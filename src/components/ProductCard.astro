@@ -1,9 +1,9 @@
 ---
-import { Image } from 'astro:assets';
-import sello from '../assets/marca/sello-artesanal.png';
 import ProductGlyph from './ProductGlyph.astro';
 import Icon from './Icon.astro';
-import { esPalArranque, lineaPorKey, productoUrl, type Producto } from '../data/productos';
+import LineaEtiqueta from './LineaEtiqueta.astro';
+import SelloArtesanal from './SelloArtesanal.astro';
+import { esPalArranque, productoUrl, type Producto } from '../data/productos';
 
 interface Props {
   producto: Producto;
@@ -13,41 +13,37 @@ interface Props {
 
 const { producto: p, compacta = false } = Astro.props;
 const pa = esPalArranque(p);
-const linea = lineaPorKey[p.linea];
 ---
 
-<a class:list={['pcard', pa ? 'pcard--pa' : 'pcard--tradicional']} href={productoUrl(p)}>
+<article class:list={['pcard', pa ? 'pcard--pa' : 'pcard--tradicional']}>
   <div class="pcard__media">
     <!--
       PENDIENTE: foto del producto. Reemplazar el ícono por:
       <img src="/productos/SLUG.jpg" alt="NOMBRE DEL PRODUCTO" loading="lazy" />
     -->
     <ProductGlyph name={p.glyph} size={96} class="pcard__glyph" />
-    <span class="pcard__badges">
-      <span class:list={['badge', pa ? 'badge--pa' : 'badge--tradicional']}>{linea.nombre}</span>
-      <span class:list={['badge', 'badge--artesanal', pa ? 'is-pa' : 'is-tradicional', 'pcard__craft']}>
-        {p.etiqueta === 'Edición Especial · Ecológico' && <Icon name="leaf" size={13} />}
-        {p.etiqueta}
-      </span>
-    </span>
-    <Image class="pcard__sello" src={sello} alt="Sello Producto Lácteo Artesanal" width={160} height={160} />
+    <LineaEtiqueta linea={p.linea} alto={27} cinta class="pcard__linea" />
+    {p.sello !== false && <SelloArtesanal size={64} class="pcard__sello" />}
   </div>
   <div class="pcard__body">
-    <h3 class="pcard__name">{p.nombre}</h3>
+    <h3 class="pcard__name">
+      <a class="pcard__link" href={productoUrl(p)}>{p.nombre}</a>
+    </h3>
     {!compacta && <p class="pcard__recipe">{p.receta}</p>}
     <span class="pcard__foot">
       <span class="pcard__format">{p.presentacion.split(',')[0]}</span>
-      <span class="pcard__more">
-        {p.nutricion ? 'Ver ficha' : 'Ver detalles'}
+      <span class="pcard__more" aria-hidden="true">
+        Ver producto
         <span class="pcard__arrow"><Icon name="arrow-right" size={16} /></span>
       </span>
     </span>
   </div>
-</a>
+</article>
 
 <style>
   .pcard {
     --line-color: var(--orange);
+    position: relative;
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -62,7 +58,8 @@ const linea = lineaPorKey[p.linea];
   .pcard--pa {
     --line-color: var(--blue);
   }
-  .pcard:hover {
+  .pcard:hover,
+  .pcard:focus-within {
     transform: translateY(-3px);
     border-color: var(--line-color);
     box-shadow: 0 18px 36px -20px rgb(17 24 39 / 0.35);
@@ -73,10 +70,11 @@ const linea = lineaPorKey[p.linea];
     display: grid;
     place-items: center;
     aspect-ratio: 4 / 3;
+    padding-top: 40px;
     background: var(--panel);
     color: var(--line-color);
   }
-  .pcard__media :global(img:not(.pcard__sello)) {
+  .pcard__media > :global(img) {
     position: absolute;
     inset: 0;
     width: 100%;
@@ -89,35 +87,18 @@ const linea = lineaPorKey[p.linea];
   .pcard:hover .pcard__media :global(.pcard__glyph) {
     transform: scale(1.06) rotate(-3deg);
   }
-  .pcard__badges {
+  .pcard__media :global(.pcard__linea) {
     position: absolute;
     z-index: 1;
-    top: 10px;
-    left: 10px;
-    right: 10px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    justify-content: space-between;
+    top: 12px;
+    left: 12px;
   }
-  .pcard__craft {
-    margin-left: auto;
-  }
-  /* Sello artesanal: esquina inferior derecha de la imagen, por encima de la foto */
+  /* Sello artesanal: esquina inferior derecha de la imagen, por encima del enlace de la tarjeta */
   .pcard__media :global(.pcard__sello) {
     position: absolute;
+    z-index: 2;
     right: 10px;
     bottom: 10px;
-    z-index: 1;
-    width: clamp(56px, 22%, 76px);
-    height: auto;
-    border-radius: 50%;
-    box-shadow: 0 0 0 2px #fff, 0 6px 14px -6px rgb(17 24 39 / 0.45);
-    transform: rotate(-8deg);
-    transition: transform 0.5s var(--ease-out);
-  }
-  .pcard:hover .pcard__media :global(.pcard__sello) {
-    transform: rotate(0deg) scale(1.05);
   }
 
   .pcard__body {
@@ -132,6 +113,25 @@ const linea = lineaPorKey[p.linea];
     font-weight: 700;
     line-height: 1.3;
   }
+  .pcard__link {
+    color: inherit;
+    text-decoration: none;
+  }
+  /* Toda la tarjeta es clicable; el sello queda por encima con su propio clic */
+  .pcard__link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: inherit;
+  }
+  .pcard__link:focus-visible {
+    outline: none;
+  }
+  .pcard:has(.pcard__link:focus-visible) {
+    outline: 3px solid var(--line-color);
+    outline-offset: 3px;
+  }
   .pcard__recipe {
     color: var(--ink-2);
     font-size: 0.93rem;
@@ -139,6 +139,7 @@ const linea = lineaPorKey[p.linea];
   }
   .pcard__foot {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
     gap: 12px;

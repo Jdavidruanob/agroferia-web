@@ -3,6 +3,7 @@ import { Image } from 'astro:assets';
 import logo from '../assets/marca/logo-agroferia.png';
 import Icon from './Icon.astro';
 import PalArranqueLetras from './PalArranqueLetras.astro';
+import TradicionalLetras from './TradicionalLetras.astro';
 import { grupos, productosDeGrupo, productoUrl } from '../data/productos';
 import { whatsapp, waUrl } from '../data/contacto';
 
@@ -71,7 +72,7 @@ const links = [
                 <div class="mega" id="mega-productos" data-mega-panel hidden>
                   <div class="mega__grid">
                     <div class="mega__col mega__col--tr">
-                      <a class="mega__title mega__title--tr title-tradicional" href="/productos#tradicional">Agroferia Tradicional</a>
+                      <a class="mega__title mega__title--tr" href="/productos#tradicional" aria-label="Agroferia Tradicional"><TradicionalLetras width={150} alt="" /></a>
                       <ul>
                         {productosDeGrupo('tradicional').map((p) => (
                           <li>
@@ -82,7 +83,7 @@ const links = [
                     </div>
                     <div class="mega__col mega__col--pa">
                       <a class="mega__title mega__title--pa" href="/pal-arranque">
-                        <PalArranqueLetras width={118} />
+                        <PalArranqueLetras width={170} />
                       </a>
                       <div class="mega__subs">
                         {gruposPA.map((g) => (
@@ -113,7 +114,7 @@ const links = [
               <li class="nav__item">
                 {l.href === '/pal-arranque' ? (
                   <a class="nav__link nav__link--pa" href={l.href} aria-current={is(l.href) ? 'page' : undefined}>
-                    <PalArranqueLetras width={74} loading="eager" />
+                    <PalArranqueLetras width={104} loading="eager" />
                   </a>
                 ) : (
                   <a class="nav__link" href={l.href} aria-current={is(l.href) ? 'page' : undefined}>
@@ -169,7 +170,7 @@ const links = [
       </li>
       <li>
         <a href="/pal-arranque" aria-current={is('/pal-arranque') ? 'page' : undefined}>
-          <span class="mobile__pa"><PalArranqueLetras width={96} /></span>
+          <span class="mobile__pa"><PalArranqueLetras width={130} /></span>
         </a>
       </li>
       <li><a href="/nosotros" aria-current={is('/nosotros') ? 'page' : undefined}>Nosotros</a></li>
@@ -338,7 +339,7 @@ const links = [
   /* Pal' Arranque: píldora azul con sus letras, para marcar que es otra línea */
   .nav__link.nav__link--pa {
     margin: 0 4px;
-    padding: 5px 14px 6px;
+    padding: 6px 16px 7px;
     background: var(--blue);
     line-height: 0;
     transition: background-color 0.2s ease, box-shadow 0.2s ease, transform 0.3s var(--ease-out);
@@ -439,8 +440,7 @@ const links = [
   }
   .mega__title--tr {
     border-color: rgb(17 74 155 / 0.3);
-    color: var(--on-orange);
-    font-size: 1.4rem;
+    line-height: 0;
   }
   .mega__subs {
     display: grid;

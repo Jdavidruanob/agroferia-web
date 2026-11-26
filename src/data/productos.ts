@@ -5,9 +5,9 @@
  *   · Pal' Arranque (azul) → Portables y Para consumo en punto físico.
  *   · Agroferia Tradicional (naranja).
  *
- * ⚠️ DATOS TEMPORALES: presentaciones, porciones, materiales e información
- * nutricional son valores de referencia para la maqueta. Reemplazar por los
- * datos reales de etiqueta antes de publicar.
+ * ⚠️ DATOS TEMPORALES: presentaciones, ingredientes y materiales son valores
+ * de referencia para la maqueta. Reemplazar por los datos reales que confirme
+ * Agroferia antes de publicar. No se publica tabla nutricional.
  */
 import type { GlyphName, IconName } from '../components/icons';
 
@@ -63,20 +63,17 @@ export const grupos: Grupo[] = [
   },
 ];
 
-export interface FilaNutricional {
-  nutriente: string;
-  por100: string;
-  porPorcion: string;
-  destacado?: boolean;
-}
-
 export interface Caracteristica {
   icono: IconName;
   titulo: string;
   texto: string;
 }
 
-export type EtiquetaArtesanal = '100% Artesanal' | 'Producto Artesanal' | 'Edición Especial · Ecológico';
+export interface Ingrediente {
+  nombre: string;
+  /** Composición o aclaración, p. ej. "leche entera, cultivos lácticos". */
+  detalle?: string;
+}
 
 export interface Producto {
   slug: string;
@@ -84,22 +81,22 @@ export interface Producto {
   linea: LineaKey;
   grupo: GrupoKey;
   glyph: GlyphName;
-  etiqueta: EtiquetaArtesanal;
+  /** Muestra el sello "Producto Lácteo Artesanal". Falso solo en productos no lácteos (termo). */
+  sello?: boolean;
   /** Párrafo de receta e ingredientes que va en la tarjeta. */
   receta: string;
   resumen: string;
   descripcion: string;
   presentacion: string;
-  ingredientes: string;
+  /**
+   * PENDIENTE: lista de referencia. Agroferia debe confirmar ingredientes y receta de cada producto;
+   * al confirmarlos, poner `ingredientesConfirmados: true` y desaparece el aviso de "por confirmar".
+   */
+  ingredientes: Ingrediente[];
+  ingredientesConfirmados?: boolean;
   alergenos?: string;
   conservacion: string;
   caracteristicas: Caracteristica[];
-  /** Ausente en productos no alimenticios (termo). */
-  nutricion?: {
-    porcion: string;
-    base: '100 g' | '100 ml';
-    filas: FilaNutricional[];
-  };
   /** Solo para el termo plegable. */
   material?: {
     material: string;
@@ -111,36 +108,6 @@ export interface Producto {
     momento: 'En el bolsillo' | 'Tercer tiempo';
     consumo: 'Para llevar' | 'En el punto de venta';
     nota: string;
-  };
-}
-
-/** Atajo para construir la tabla nutricional en el mismo orden siempre. */
-function tabla(
-  porcion: string,
-  base: '100 g' | '100 ml',
-  v: [number, number, number, number, number, number, number, number, number],
-  factor: number,
-): Producto['nutricion'] {
-  const [kcal, grasa, sat, carb, azuc, anad, prot, sodio, calcio] = v;
-  const r = (n: number, d = 1) => {
-    const x = Math.round(n * factor * 10 ** d) / 10 ** d;
-    return x.toLocaleString('es-CO', { maximumFractionDigits: d });
-  };
-  const f = (n: number, d = 1) => n.toLocaleString('es-CO', { maximumFractionDigits: d });
-  return {
-    porcion,
-    base,
-    filas: [
-      { nutriente: 'Calorías (kcal)', por100: f(kcal, 0), porPorcion: r(kcal, 0), destacado: true },
-      { nutriente: 'Grasa total', por100: `${f(grasa)} g`, porPorcion: `${r(grasa)} g` },
-      { nutriente: 'Grasa saturada', por100: `${f(sat)} g`, porPorcion: `${r(sat)} g`, destacado: true },
-      { nutriente: 'Carbohidratos totales', por100: `${f(carb)} g`, porPorcion: `${r(carb)} g` },
-      { nutriente: 'Azúcares totales', por100: `${f(azuc)} g`, porPorcion: `${r(azuc)} g` },
-      { nutriente: 'Azúcares añadidos', por100: `${f(anad)} g`, porPorcion: `${r(anad)} g`, destacado: true },
-      { nutriente: 'Proteína', por100: `${f(prot)} g`, porPorcion: `${r(prot)} g`, destacado: true },
-      { nutriente: 'Sodio', por100: `${f(sodio, 0)} mg`, porPorcion: `${r(sodio, 0)} mg`, destacado: true },
-      { nutriente: 'Calcio', por100: `${f(calcio, 0)} mg`, porPorcion: `${r(calcio, 0)} mg` },
-    ],
   };
 }
 
@@ -168,13 +135,17 @@ export const productos: Producto[] = [
     linea: 'tradicional',
     grupo: 'tradicional',
     glyph: 'campesino',
-    etiqueta: '100% Artesanal',
     receta:
       'Leche del ordeño de la mañana, cuajada y prensada a mano como se ha hecho siempre en La Feria. Fresco, suave y con el punto justo de sal para la arepa, el chocolate o el desayuno.',
     resumen: 'Fresco y suave, en 1.000 g y 400 g.',
     descripcion: 'Queso fresco de receta campesina, hecho en La Feria con leche del día.',
     presentacion: 'Bloque 1.000 g · 400 g',
-    ingredientes: 'Leche entera, sal, cuajo, cloruro de calcio.',
+    ingredientes: [
+      { nombre: 'Leche entera' },
+      { nombre: 'Sal' },
+      { nombre: 'Cuajo' },
+      { nombre: 'Cloruro de calcio' },
+    ],
     alergenos: 'Contiene leche.',
     conservacion: 'Manténgase refrigerado. Consúmase en máximo 8 días.',
     caracteristicas: [
@@ -183,7 +154,6 @@ export const productos: Producto[] = [
       origen,
       directo,
     ],
-    nutricion: tabla('30 g', '100 g', [264, 20, 12.5, 2.5, 0.5, 0, 18, 560, 500], 0.3),
   },
   {
     slug: 'quesillo',
@@ -191,13 +161,17 @@ export const productos: Producto[] = [
     linea: 'tradicional',
     grupo: 'tradicional',
     glyph: 'quesillo',
-    etiqueta: 'Producto Artesanal',
     receta:
       'Queso especial de pasta hilada: la cuajada se amasa en agua caliente hasta formar hebras largas y elásticas. Funde parejo sobre la arepa y el pandebono.',
     resumen: 'Queso especial de hebra, 400 g.',
     descripcion: 'Quesillo de pasta hilada, elástico y suave, hecho a mano en La Feria.',
     presentacion: '400 g',
-    ingredientes: 'Leche entera, sal, cuajo, cloruro de calcio.',
+    ingredientes: [
+      { nombre: 'Leche entera' },
+      { nombre: 'Sal' },
+      { nombre: 'Cuajo' },
+      { nombre: 'Cloruro de calcio' },
+    ],
     alergenos: 'Contiene leche.',
     conservacion: 'Manténgase refrigerado.',
     caracteristicas: [
@@ -206,7 +180,6 @@ export const productos: Producto[] = [
       origen,
       directo,
     ],
-    nutricion: tabla('30 g', '100 g', [280, 21, 13, 2, 0.5, 0, 21, 480, 520], 0.3),
   },
   {
     slug: 'yogur-natural-frutas',
@@ -214,13 +187,17 @@ export const productos: Producto[] = [
     linea: 'tradicional',
     grupo: 'tradicional',
     glyph: 'botella',
-    etiqueta: '100% Artesanal',
     receta:
       'Yogur fermentado lentamente con la leche de las 30 familias y pulpa de fruta de temporada. Bebible y en botella, para la lonchera o la nevera de la casa.',
     resumen: 'Bebible, en botella.',
     descripcion: 'Yogur natural con fruta de temporada, en botella para toda la familia.',
     presentacion: 'Botella 1.000 ml (por confirmar)',
-    ingredientes: 'Leche entera, pulpa de fruta de temporada, azúcar, cultivos lácticos.',
+    ingredientes: [
+      { nombre: 'Leche entera' },
+      { nombre: 'Pulpa de fruta de temporada' },
+      { nombre: 'Azúcar' },
+      { nombre: 'Cultivos lácticos' },
+    ],
     alergenos: 'Contiene leche.',
     conservacion: 'Manténgase refrigerado. Una vez abierto, consúmase en máximo 5 días.',
     caracteristicas: [
@@ -229,7 +206,6 @@ export const productos: Producto[] = [
       origen,
       directo,
     ],
-    nutricion: tabla('200 ml', '100 ml', [78, 2.4, 1.5, 11.5, 10.5, 5, 3, 46, 105], 2),
   },
   {
     slug: 'yogur-griego-artesanal',
@@ -237,13 +213,15 @@ export const productos: Producto[] = [
     linea: 'tradicional',
     grupo: 'tradicional',
     glyph: 'vaso',
-    etiqueta: '100% Artesanal',
     receta:
       'Yogur colado en tela durante horas hasta quedar espeso y cremoso, sin azúcar añadida. Alto en proteína y con el sabor ácido suave de la leche de montaña.',
     resumen: 'Espeso, natural y alto en proteína.',
     descripcion: 'Yogur colado de textura espesa, sin azúcar añadida.',
     presentacion: 'Vaso 150 g',
-    ingredientes: 'Leche entera, cultivos lácticos.',
+    ingredientes: [
+      { nombre: 'Leche entera' },
+      { nombre: 'Cultivos lácticos' },
+    ],
     alergenos: 'Contiene leche.',
     conservacion: 'Manténgase refrigerado entre 2 °C y 6 °C.',
     caracteristicas: [
@@ -252,7 +230,6 @@ export const productos: Producto[] = [
       artesanal,
       directo,
     ],
-    nutricion: tabla('150 g', '100 g', [97, 5, 3.2, 4, 4, 0, 9, 36, 110], 1.5),
   },
   {
     slug: 'postres',
@@ -260,13 +237,15 @@ export const productos: Producto[] = [
     linea: 'tradicional',
     grupo: 'tradicional',
     glyph: 'crema',
-    etiqueta: 'Producto Artesanal',
     receta:
       'Yogur griego con mermelada de fruta de temporada cocinada en la finca, en vaso individual. Un dulce sencillo para cerrar el almuerzo.',
     resumen: 'Yogur griego con mermelada de fruta.',
     descripcion: 'Postre de yogur griego con mermelada de fruta de temporada, en vaso individual.',
     presentacion: 'Vaso 150 g',
-    ingredientes: 'Yogur griego (leche entera, cultivos lácticos), mermelada de fruta de temporada (fruta, azúcar).',
+    ingredientes: [
+      { nombre: 'Yogur griego', detalle: 'leche entera, cultivos lácticos' },
+      { nombre: 'Mermelada de fruta de temporada', detalle: 'fruta, azúcar' },
+    ],
     alergenos: 'Contiene leche.',
     conservacion: 'Manténgase refrigerado.',
     caracteristicas: [
@@ -275,7 +254,6 @@ export const productos: Producto[] = [
       artesanal,
       directo,
     ],
-    nutricion: tabla('150 g', '100 g', [128, 4, 2.6, 17, 16, 10, 6.5, 38, 100], 1.5),
   },
 
   /* =========================== PAL' ARRANQUE · Portables =========================== */
@@ -285,14 +263,16 @@ export const productos: Producto[] = [
     linea: 'pal-arranque',
     grupo: 'portables',
     glyph: 'bocadillo',
-    etiqueta: '100% Artesanal',
     receta:
       'Queso campesino prensado a mano con la leche del ordeño de la mañana, con un corazón de arequipe cremoso o de bocadillo de guayaba. Salado por fuera, dulce por dentro, en un empaque que no se aplasta en la cangurera.',
     resumen: 'Salado y dulce para la mitad de la subida.',
     descripcion:
       'Queso campesino relleno de arequipe o de bocadillo de guayaba, en porción individual para llevar. El sodio del queso y el azúcar del relleno dan energía rápida en la ruta.',
     presentacion: 'Paquete 40 g · con arequipe o con bocadillo',
-    ingredientes: 'Queso campesino (leche entera, sal, cuajo), arequipe (leche, azúcar) o bocadillo de guayaba (pulpa de guayaba, azúcar).',
+    ingredientes: [
+      { nombre: 'Queso campesino', detalle: 'leche entera, sal, cuajo' },
+      { nombre: 'Relleno a elegir', detalle: 'arequipe (leche, azúcar) o bocadillo de guayaba (pulpa de guayaba, azúcar)' },
+    ],
     alergenos: 'Contiene leche.',
     conservacion: 'Manténgase refrigerado. Fuera de la nevera, consúmase en las siguientes 4 horas.',
     caracteristicas: [
@@ -301,7 +281,6 @@ export const productos: Producto[] = [
       artesanal,
       directo,
     ],
-    nutricion: tabla('40 g', '100 g', [290, 13, 8.5, 30, 27, 21, 14, 300, 450], 0.4),
     ruta: { momento: 'En el bolsillo', consumo: 'Para llevar', nota: 'Va en la cangurera o en el bolsillo del jersey.' },
   },
   {
@@ -310,14 +289,17 @@ export const productos: Producto[] = [
     linea: 'pal-arranque',
     grupo: 'portables',
     glyph: 'arequipe',
-    etiqueta: 'Producto Artesanal',
     receta:
       'Panelita de leche cocida a fuego lento con panela, como se hace en las cocinas de la vereda, acompañada de hebras de quesillo suave. El dulce de siempre, en porción para el camino.',
     resumen: 'El dulce de la finca con quesillo.',
     descripcion:
       'Panelita de leche hecha con leche de La Feria y panela, acompañada de quesillo en hebras. Carbohidrato para seguir pedaleando y un toque salado.',
     presentacion: 'Paquete 40 g',
-    ingredientes: 'Leche entera, panela, quesillo (leche entera, sal, cuajo).',
+    ingredientes: [
+      { nombre: 'Leche entera' },
+      { nombre: 'Panela' },
+      { nombre: 'Quesillo', detalle: 'leche entera, sal, cuajo' },
+    ],
     alergenos: 'Contiene leche.',
     conservacion: 'Manténgase en lugar fresco. El quesillo, refrigerado.',
     caracteristicas: [
@@ -326,7 +308,6 @@ export const productos: Producto[] = [
       artesanal,
       directo,
     ],
-    nutricion: tabla('40 g', '100 g', [360, 10, 6.5, 52, 46, 38, 11, 210, 300], 0.4),
     ruta: { momento: 'En el bolsillo', consumo: 'Para llevar', nota: 'Para la mitad de la subida.' },
   },
   {
@@ -335,14 +316,17 @@ export const productos: Producto[] = [
     linea: 'pal-arranque',
     grupo: 'portables',
     glyph: 'doypack',
-    etiqueta: '100% Artesanal',
     receta:
       'Yogur griego colado lentamente hasta quedar espeso, mezclado con pulpa de las frutas que estén dando las fincas esa semana. Viene con tapa de rosca para tomarlo en marcha.',
     resumen: 'Yogur griego para tomar sin bajarse de la bici.',
     descripcion:
       'Yogur griego con fruta de temporada en doypack con tapa. Cabe en el bolsillo trasero del jersey y se abre con una mano.',
     presentacion: 'Doypack 150 g con tapa',
-    ingredientes: 'Yogur griego (leche entera, cultivos lácticos), pulpa de fruta de temporada, miel de abejas.',
+    ingredientes: [
+      { nombre: 'Yogur griego', detalle: 'leche entera, cultivos lácticos' },
+      { nombre: 'Pulpa de fruta de temporada' },
+      { nombre: 'Miel de abejas' },
+    ],
     alergenos: 'Contiene leche.',
     conservacion: 'Manténgase refrigerado. Fuera de la nevera, consúmase el mismo día.',
     caracteristicas: [
@@ -351,7 +335,6 @@ export const productos: Producto[] = [
       { icono: 'zap', titulo: '10,5 g de proteína', texto: 'Por doypack.' },
       directo,
     ],
-    nutricion: tabla('150 g', '100 g', [105, 4, 2.6, 11, 10, 4, 7, 40, 105], 1.5),
     ruta: { momento: 'En el bolsillo', consumo: 'Para llevar', nota: 'Se compra en el punto de acopio y se toma en la bajada.' },
   },
   {
@@ -360,14 +343,14 @@ export const productos: Producto[] = [
     linea: 'pal-arranque',
     grupo: 'portables',
     glyph: 'termo',
-    etiqueta: 'Edición Especial · Ecológico',
     receta:
       'Termo de silicona reutilizable que se pliega hasta caber en el bolsillo del jersey. Lo llenas con batido o bebida en el punto de acopio y cada recarga suma puntos: menos plástico de un solo uso en la montaña.',
     resumen: 'Reutilizable, plegable y con puntos por cada recarga.',
     descripcion:
       'El termo de la dinámica de puntos de Pal’ Arranque. Se recarga en el punto de acopio de La Feria y cada recarga acumula puntos canjeables.',
     presentacion: 'Termo plegable 500 ml (por confirmar)',
-    ingredientes: 'No aplica.',
+    sello: false,
+    ingredientes: [],
     conservacion: 'Lávese con agua tibia y jabón después de cada uso. Apto para bebidas frías.',
     caracteristicas: [
       { icono: 'leaf', titulo: 'Reutilizable', texto: 'Reemplaza vasos y botellas de un solo uso.' },
@@ -391,14 +374,17 @@ export const productos: Producto[] = [
     linea: 'pal-arranque',
     grupo: 'punto-fisico',
     glyph: 'batido',
-    etiqueta: '100% Artesanal',
     receta:
       'Leche fresca o yogur griego batidos al momento con frutas de temporada y un hilo de miel de abejas de la región. Se prepara en la barra del punto de acopio mientras el grupo deja las bicis.',
     resumen: 'Leche o yogur griego, frutas de temporada y miel.',
     descripcion:
       'Batido preparado al momento en la barra del punto de acopio, con leche fresca o yogur griego de La Feria, frutas de temporada y miel. Para recuperar energía al terminar la ruta.',
     presentacion: 'Vaso 350 ml, preparado al momento',
-    ingredientes: 'Leche entera o yogur griego, fruta de temporada, miel de abejas.',
+    ingredientes: [
+      { nombre: 'Leche entera o yogur griego' },
+      { nombre: 'Fruta de temporada' },
+      { nombre: 'Miel de abejas' },
+    ],
     alergenos: 'Contiene leche.',
     conservacion: 'Consúmase recién preparado.',
     caracteristicas: [
@@ -407,7 +393,6 @@ export const productos: Producto[] = [
       { icono: 'cup', titulo: 'Hecho al momento', texto: 'Lo prepara una persona de la asociación.' },
       directo,
     ],
-    nutricion: tabla('350 ml', '100 ml', [92, 1.8, 1.1, 13.5, 12, 3, 6, 50, 130], 3.5),
     ruta: { momento: 'Tercer tiempo', consumo: 'En el punto de venta', nota: 'Se prepara en la barra del punto de acopio.' },
   },
   {
@@ -416,14 +401,18 @@ export const productos: Producto[] = [
     linea: 'pal-arranque',
     grupo: 'punto-fisico',
     glyph: 'cuchara',
-    etiqueta: 'Producto Artesanal',
     receta:
       'Capas de yogur griego, mermelada de fruta de temporada hecha en la finca, granola crocante y miel. Se arma al momento, para comer con cuchara sentado con el grupo.',
     resumen: 'Yogur griego, mermelada de temporada, granola y miel.',
     descripcion:
       'Yogur griego con mermelada de fruta de temporada, granola y miel, servido en el punto de acopio. Proteína y carbohidrato para el tercer tiempo.',
     presentacion: 'Vaso 200 g, servido en el punto de acopio',
-    ingredientes: 'Yogur griego, mermelada de fruta de temporada, granola comercial, miel de abejas.',
+    ingredientes: [
+      { nombre: 'Yogur griego' },
+      { nombre: 'Mermelada de fruta de temporada' },
+      { nombre: 'Granola comercial' },
+      { nombre: 'Miel de abejas' },
+    ],
     alergenos: 'Contiene leche y avena. Puede contener trazas de frutos secos.',
     conservacion: 'Consúmase en el punto de venta.',
     caracteristicas: [
@@ -432,7 +421,6 @@ export const productos: Producto[] = [
       { icono: 'sun', titulo: 'Mermelada de temporada', texto: 'Fruta de la región, cocinada en la finca.' },
       directo,
     ],
-    nutricion: tabla('200 g', '100 g', [150, 5.5, 3, 18, 12, 6, 7.5, 45, 100], 2),
     ruta: { momento: 'Tercer tiempo', consumo: 'En el punto de venta', nota: 'Para la parada, sentado con el grupo.' },
   },
   {
@@ -441,14 +429,17 @@ export const productos: Producto[] = [
     linea: 'pal-arranque',
     grupo: 'punto-fisico',
     glyph: 'vaso',
-    etiqueta: '100% Artesanal',
     receta:
       'Yogur natural fermentado en la asociación con trozos de fruta de temporada, servido frío en vaso ecológico de presentación personal.',
     resumen: 'Presentación personal, en vaso ecológico.',
     descripcion:
       'Yogur con frutas de temporada servido frío en vaso ecológico, para tomar en la parada mientras el grupo se reagrupa.',
     presentacion: 'Vaso ecológico 200 g, presentación personal',
-    ingredientes: 'Yogur natural (leche entera, cultivos lácticos), fruta de temporada, azúcar.',
+    ingredientes: [
+      { nombre: 'Yogur natural', detalle: 'leche entera, cultivos lácticos' },
+      { nombre: 'Fruta de temporada' },
+      { nombre: 'Azúcar' },
+    ],
     alergenos: 'Contiene leche.',
     conservacion: 'Consúmase en el punto de venta.',
     caracteristicas: [
@@ -457,7 +448,6 @@ export const productos: Producto[] = [
       origen,
       directo,
     ],
-    nutricion: tabla('200 g', '100 g', [88, 2.6, 1.7, 13, 12, 6, 3.4, 48, 110], 2),
     ruta: { momento: 'Tercer tiempo', consumo: 'En el punto de venta', nota: 'Se sirve frío en el punto de acopio.' },
   },
 ];

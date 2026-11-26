@@ -1,0 +1,23 @@
+---
+/** Nombre "Tradicional" con la tipografía oficial de su etiqueta (letras azules). Usar sobre naranja o blanco. */
+import { Image } from 'astro:assets';
+import letras from '../assets/marca/tradicional-letras.png';
+
+interface Props {
+  /** Ancho visible en px. */
+  width?: number;
+  class?: string;
+  loading?: 'eager' | 'lazy';
+  alt?: string;
+}
+const { width = 320, class: className, loading = 'lazy', alt = 'Agroferia Tradicional' } = Astro.props;
+---
+
+<Image
+  src={letras}
+  alt={alt}
+  width={Math.min(width * 2, 800)}
+  class={className}
+  style={`width:${width}px;max-width:100%;height:auto`}
+  loading={loading}
+/>
