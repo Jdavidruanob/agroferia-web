@@ -15,21 +15,21 @@ const { producto: p, compacta = false } = Astro.props;
 const pa = esPalArranque(p);
 ---
 
-<article class:list={['pcard', pa ? 'pcard--pa' : 'pcard--tradicional']}>
+<article class:list={['pcard', pa ? 'pcard--pa' : 'pcard--tradicional', { 'pcard--compacta': compacta }]}>
   <div class="pcard__media">
     <!--
       PENDIENTE: foto del producto. Reemplazar el ícono por:
       <img src="/productos/SLUG.jpg" alt="NOMBRE DEL PRODUCTO" loading="lazy" />
     -->
     <ProductGlyph name={p.glyph} size={96} class="pcard__glyph" />
-    <LineaEtiqueta linea={p.linea} alto={27} cinta class="pcard__linea" />
-    {p.sello !== false && <SelloArtesanal size={64} class="pcard__sello" />}
+    <LineaEtiqueta linea={p.linea} alto={compacta ? 22 : 27} cinta class="pcard__linea" />
+    {p.sello !== false && <SelloArtesanal size={compacta ? 54 : 64} class="pcard__sello" />}
   </div>
   <div class="pcard__body">
     <h3 class="pcard__name">
       <a class="pcard__link" href={productoUrl(p)}>{p.nombre}</a>
     </h3>
-    {!compacta && <p class="pcard__recipe">{p.receta}</p>}
+    <p class="pcard__recipe">{compacta ? p.resumen : p.receta}</p>
     <span class="pcard__foot">
       <span class="pcard__format">{p.presentacion.split(',')[0]}</span>
       <span class="pcard__more" aria-hidden="true">
@@ -73,6 +73,16 @@ const pa = esPalArranque(p);
     padding-top: 40px;
     background: var(--panel);
     color: var(--line-color);
+  }
+  /* Carrusel de inicio: imagen más alta para que etiqueta, ícono y sello no se aprieten */
+  .pcard--compacta .pcard__media {
+    aspect-ratio: 1 / 1;
+    padding-top: 36px;
+    padding-bottom: 28px;
+  }
+  .pcard--compacta .pcard__media :global(.pcard__glyph) {
+    width: 78px;
+    height: 78px;
   }
   .pcard__media > :global(img) {
     position: absolute;

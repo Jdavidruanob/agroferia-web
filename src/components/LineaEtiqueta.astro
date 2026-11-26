@@ -23,19 +23,19 @@ const pa = linea === 'pal-arranque';
 const src = pa ? letrasPA : letrasTR;
 const ancho = Math.round((alto * src.width) / src.height);
 
-// Cinta: recorte triangulado arriba y abajo, calculado en px según el tamaño de la etiqueta.
-const padX = Math.round(alto * 0.7);
-const padY = Math.round(alto * 0.5);
+// Cinta: recorte triangulado en los lados izquierdo y derecho, calculado en px según el tamaño.
+const padX = Math.round(alto * 0.75);
+const padY = Math.round(alto * 0.4);
 const W = ancho + padX * 2;
 const H = alto + padY * 2;
-const dientes = Math.max(5, Math.round(W / (alto * 0.55)));
-const tw = W / dientes;
+const dientes = Math.max(4, Math.round(H / (alto * 0.5)));
+const th = H / dientes;
 const d = Math.round(alto * 0.22 * 10) / 10;
 const f = (n: number) => Math.round(n * 10) / 10;
-let pts: string[] = ['0 0'];
-for (let i = 0; i < dientes; i++) pts.push(`${f(i * tw + tw / 2)}px ${d}px`, `${f((i + 1) * tw)}px 0`);
-pts.push(`${f(W)}px ${f(H)}px`);
-for (let i = dientes - 1; i >= 0; i--) pts.push(`${f(i * tw + tw / 2)}px ${f(H - d)}px`, `${f(i * tw)}px ${f(H)}px`);
+const pts: string[] = [`${d}px 0`, `${f(W - d)}px 0`];
+for (let i = 0; i < dientes; i++) pts.push(`${f(W)}px ${f(i * th + th / 2)}px`, `${f(W - d)}px ${f((i + 1) * th)}px`);
+pts.push(`${d}px ${f(H)}px`);
+for (let i = dientes - 1; i >= 0; i--) pts.push(`0px ${f(i * th + th / 2)}px`, `${d}px ${f(i * th)}px`);
 const recorte = cinta ? `clip-path:polygon(${pts.join(',')});padding:${padY}px ${padX}px;` : '';
 ---
 
