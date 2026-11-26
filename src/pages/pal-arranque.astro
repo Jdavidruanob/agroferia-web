@@ -59,7 +59,7 @@ const pilares = [
       fetchpriority="high"
     />
     <div class="hero__copy">
-      <h1 id="pa-h1" class="wordmark"><PalArranqueLogo width={560} loading="eager" /></h1>
+      <h1 id="pa-h1" class="wordmark"><PalArranqueLogo width={900} loading="eager" /></h1>
       <p class="hero__by">Un programa de Agroferia</p>
       <p class="hero__tag">Energía de montaña para tu rodada.</p>
       <p class="hero__text">
@@ -234,7 +234,8 @@ const pilares = [
   .hero {
     position: relative;
     display: grid;
-    align-items: end;
+    align-items: center;
+    justify-items: center;
     min-height: min(680px, calc(100svh - 110px));
     border-radius: var(--r-frame);
     overflow: hidden;
@@ -256,25 +257,28 @@ const pilares = [
     inset: 0;
     z-index: -1;
     background:
-      linear-gradient(90deg, rgb(16 74 155 / 0.96) 0%, rgb(16 74 155 / 0.86) 38%, rgb(16 74 155 / 0.2) 75%),
-      linear-gradient(0deg, rgb(16 74 155 / 0.7), transparent 45%);
+      radial-gradient(ellipse 60% 70% at 50% 45%, rgb(16 74 155 / 0.9) 0%, rgb(16 74 155 / 0.72) 55%, rgb(16 74 155 / 0.3) 100%),
+      linear-gradient(0deg, rgb(16 74 155 / 0.75), transparent 40%);
   }
   .hero__copy {
-    max-width: 620px;
-    padding: clamp(32px, 5vw, 64px);
+    display: grid;
+    justify-items: center;
+    max-width: 880px;
+    padding: clamp(28px, 4vw, 56px) clamp(20px, 5vw, 64px);
     color: var(--ink-on-dark);
+    text-align: center;
   }
   .wordmark {
-    margin-left: -8px;
+    width: 100%;
     line-height: 0;
   }
   .hero__by {
-    margin-top: 14px;
+    margin-top: 6px;
     color: var(--ink-on-blue-2);
     font-size: 0.95rem;
   }
   .hero__tag {
-    margin-top: 26px;
+    margin-top: 20px;
     color: #fff;
     font-family: var(--font-display);
     font-weight: 700;
@@ -283,13 +287,14 @@ const pilares = [
   }
   .hero__text {
     margin-top: 12px;
-    max-width: 46ch;
+    max-width: 52ch;
     color: var(--ink-on-blue-2);
     font-size: 1.06rem;
   }
   .hero__actions {
     display: flex;
     flex-wrap: wrap;
+    justify-content: center;
     align-items: center;
     gap: 14px 26px;
     margin-top: 28px;
@@ -311,7 +316,7 @@ const pilares = [
       padding-top: 46vw;
     }
     .hero::after {
-      background: linear-gradient(0deg, rgb(16 74 155 / 1) 45%, rgb(16 74 155 / 0.25) 100%);
+      background: linear-gradient(0deg, rgb(16 74 155 / 1) 50%, rgb(16 74 155 / 0.2) 100%);
     }
   }
 

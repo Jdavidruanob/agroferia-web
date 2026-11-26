@@ -22,7 +22,7 @@ const pa = esPalArranque(p);
       <img src="/productos/SLUG.jpg" alt="NOMBRE DEL PRODUCTO" loading="lazy" />
     -->
     <ProductGlyph name={p.glyph} size={96} class="pcard__glyph" />
-    <LineaEtiqueta linea={p.linea} alto={compacta ? 22 : 27} cinta class="pcard__linea" />
+    <LineaEtiqueta linea={p.linea} alto={compacta ? 29 : 34} cinta class="pcard__linea" />
     {p.sello !== false && <SelloArtesanal size={compacta ? 54 : 64} class="pcard__sello" />}
   </div>
   <div class="pcard__body">
@@ -69,16 +69,17 @@ const pa = esPalArranque(p);
     position: relative;
     display: grid;
     place-items: center;
+    flex: 1 0 auto;
     aspect-ratio: 4 / 3;
-    padding-top: 40px;
+    padding-top: 52px;
     background: var(--panel);
     color: var(--line-color);
   }
   /* Carrusel de inicio: imagen más alta para que etiqueta, ícono y sello no se aprieten */
   .pcard--compacta .pcard__media {
     aspect-ratio: 1 / 1;
-    padding-top: 36px;
-    padding-bottom: 28px;
+    padding-top: 46px;
+    padding-bottom: 20px;
   }
   .pcard--compacta .pcard__media :global(.pcard__glyph) {
     width: 78px;
@@ -113,7 +114,7 @@ const pa = esPalArranque(p);
 
   .pcard__body {
     display: flex;
-    flex: 1;
+    flex: 0 0 auto;
     flex-direction: column;
     gap: 10px;
     padding: 18px 18px 16px;
@@ -153,7 +154,7 @@ const pa = esPalArranque(p);
     align-items: center;
     justify-content: space-between;
     gap: 12px;
-    margin-top: auto;
+    margin-top: 0;
     padding-top: 12px;
     border-top: 1px solid var(--line);
   }
