@@ -1,4 +1,6 @@
 ---
+import { Image } from 'astro:assets';
+import sello from '../assets/marca/sello-artesanal.png';
 import ProductGlyph from './ProductGlyph.astro';
 import Icon from './Icon.astro';
 import { esPalArranque, lineaPorKey, productoUrl, type Producto } from '../data/productos';
@@ -28,6 +30,7 @@ const linea = lineaPorKey[p.linea];
         {p.etiqueta}
       </span>
     </span>
+    <Image class="pcard__sello" src={sello} alt="Sello Producto Lácteo Artesanal" width={160} height={160} />
   </div>
   <div class="pcard__body">
     <h3 class="pcard__name">{p.nombre}</h3>
@@ -73,7 +76,7 @@ const linea = lineaPorKey[p.linea];
     background: var(--panel);
     color: var(--line-color);
   }
-  .pcard__media :global(img) {
+  .pcard__media :global(img:not(.pcard__sello)) {
     position: absolute;
     inset: 0;
     width: 100%;
@@ -88,6 +91,7 @@ const linea = lineaPorKey[p.linea];
   }
   .pcard__badges {
     position: absolute;
+    z-index: 1;
     top: 10px;
     left: 10px;
     right: 10px;
@@ -98,6 +102,22 @@ const linea = lineaPorKey[p.linea];
   }
   .pcard__craft {
     margin-left: auto;
+  }
+  /* Sello artesanal: esquina inferior derecha de la imagen, por encima de la foto */
+  .pcard__media :global(.pcard__sello) {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    z-index: 1;
+    width: clamp(56px, 22%, 76px);
+    height: auto;
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px #fff, 0 6px 14px -6px rgb(17 24 39 / 0.45);
+    transform: rotate(-8deg);
+    transition: transform 0.5s var(--ease-out);
+  }
+  .pcard:hover .pcard__media :global(.pcard__sello) {
+    transform: rotate(0deg) scale(1.05);
   }
 
   .pcard__body {

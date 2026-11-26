@@ -3,6 +3,7 @@ import { Image } from 'astro:assets';
 import logo from '../assets/marca/logo-agroferia.png';
 import Icon from './Icon.astro';
 import { grupos } from '../data/productos';
+import { correo, whatsapp, waUrl } from '../data/contacto';
 ---
 
 <footer class="footer">
@@ -35,6 +36,7 @@ import { grupos } from '../data/productos';
           <li><a href="/nosotros">Nuestra historia</a></li>
           <li><a href="/nosotros#territorio">El territorio</a></li>
           <li><a href="/nosotros#como-nos-organizamos">Cómo nos organizamos</a></li>
+          <li><a href="/nosotros#aliados">Aliados</a></li>
           <li><a href="/pal-arranque#mapa">Mapa del recorrido</a></li>
         </ul>
       </nav>
@@ -47,14 +49,16 @@ import { grupos } from '../data/productos';
             <span>Centro de Acopio, corregimiento La Feria. 12 km de Pradera, Valle del Cauca.</span>
           </li>
           <li>
-            <Icon name="message" size={18} />
-            <!-- PENDIENTE: número de WhatsApp real -->
-            <span>WhatsApp: por definir</span>
+            <Icon name="whatsapp" size={18} />
+            <span>
+              WhatsApp <a href={waUrl(whatsapp.principal.numero)} target="_blank" rel="noopener">{whatsapp.principal.etiqueta}</a>
+              <br />
+              Alterno <a href={waUrl(whatsapp.alterno.numero)} target="_blank" rel="noopener">{whatsapp.alterno.etiqueta}</a>
+            </span>
           </li>
           <li>
             <Icon name="mail" size={18} />
-            <!-- PENDIENTE: correo real -->
-            <span>Correo: por definir</span>
+            <a class="footer__mail" href={`mailto:${correo}`}>{correo}</a>
           </li>
         </ul>
       </div>
@@ -128,6 +132,14 @@ import { grupos } from '../data/productos';
     grid-template-columns: 18px 1fr;
     gap: 10px;
     align-items: start;
+  }
+  .footer__contact a {
+    color: #fff;
+    font-weight: 600;
+  }
+  .footer__mail {
+    font-size: 1.02rem;
+    word-break: break-all;
   }
   .footer__contact :global(svg) {
     margin-top: 3px;

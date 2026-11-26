@@ -3,7 +3,8 @@
  * Mapa del recorrido Pal' Arranque: 8 puntos sobre un camino ilustrado.
  * El personaje ciclista avanza entre puntos (clic en la banderita o
  * botones Anterior / Siguiente). Al llegar al punto 8 (punto de acopio)
- * aparece el cartel de premio.
+ * aparece el cartel de premio y se abre la celebración a pantalla completa
+ * (vaca "¡Lo lograste!" que crece desde el centro + explosión de confeti).
  *
  * ⚠️ Nombres, kilómetros y altitudes de las paradas son de referencia:
  * ajustar con el trazado oficial de Wikiloc.
@@ -11,6 +12,7 @@
 import { Image } from 'astro:assets';
 import Icon from './Icon.astro';
 import ciclista from '../assets/marca/personaje-pal-arranque.png';
+import celebracion from '../assets/marca/celebracion-lo-lograste.png';
 
 type Tipo = 'inicio' | 'natural' | 'turistico' | 'meta';
 const puntos: { x: number; y: number; tipo: Tipo; nombre: string; km: string; alt: string; texto: string }[] = [
@@ -163,6 +165,33 @@ const H = 600;
       </button>
     </div>
   </div>
+
+  <!-- Celebración al llegar al punto 8: overlay modal con la vaca que crece desde el centro y confeti -->
+  <dialog class="celebra" data-celebra aria-labelledby="celebra-title">
+    <div class="celebra__confeti" data-celebra-confeti aria-hidden="true"></div>
+    <button type="button" class="celebra__x" data-celebra-cerrar aria-label="Cerrar celebración">
+      <Icon name="close" size={22} />
+    </button>
+    <div class="celebra__stage">
+      <span class="celebra__rayos" aria-hidden="true"></span>
+      <Image
+        class="celebra__img"
+        src={celebracion}
+        alt="¡Lo lograste! ¡Vamos con toda! La vaca de Pal' Arranque celebra en su bicicleta"
+        widths={[440, 880]}
+        sizes="(max-width: 560px) 78vw, 440px"
+        loading="eager"
+      />
+      <h2 id="celebra-title" class="visually-hidden">¡Lo lograste! Ruta completada</h2>
+      <div class="celebra__acciones">
+        <button type="button" class="btn btn--orange" data-celebra-premio>
+          ¡Reclamar mi premio!
+          <span class="btn__arrow"><Icon name="gift" size={18} /></span>
+        </button>
+        <button type="button" class="celebra__seguir" data-celebra-cerrar>Seguir explorando el mapa</button>
+      </div>
+    </div>
+  </dialog>
 
   <p class="placeholder-note mapa__nota">
     <Icon name="info" size={16} />
@@ -538,6 +567,179 @@ const H = 600;
     to { transform: translate(var(--x, 0px), 640px) rotate(var(--r, 360deg)); opacity: 0; }
   }
 
+  /* ---------- Celebración (overlay modal) ---------- */
+  .celebra {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    max-width: none;
+    height: 100%;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #fff;
+    overflow: hidden;
+  }
+  .celebra[open] {
+    display: grid;
+    place-items: center;
+  }
+  .celebra::backdrop {
+    background: rgb(9 14 28 / 0.74);
+    backdrop-filter: blur(3px);
+  }
+  .celebra[open]::backdrop {
+    animation: celebra-fondo 0.35s ease-out;
+  }
+  .celebra.is-closing,
+  .celebra.is-closing::backdrop {
+    animation: celebra-salida 0.22s ease-in forwards;
+  }
+  @keyframes celebra-fondo {
+    from { opacity: 0; }
+  }
+  @keyframes celebra-salida {
+    to { opacity: 0; }
+  }
+  .celebra__stage {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    justify-items: center;
+    gap: clamp(14px, 3vh, 26px);
+    padding: 24px 16px;
+  }
+  .celebra :global(.celebra__img) {
+    position: relative;
+    width: min(78vw, 52dvh, 440px);
+    height: auto;
+    filter: drop-shadow(0 22px 40px rgb(0 0 0 / 0.45));
+    transform-origin: 50% 55%;
+  }
+  .celebra[open] :global(.celebra__img) {
+    animation: celebra-pop 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+  @keyframes celebra-pop {
+    0% { transform: scale(0) rotate(-14deg); opacity: 0; }
+    45% { opacity: 1; }
+    62% { transform: scale(1.08) rotate(3deg); }
+    80% { transform: scale(0.97) rotate(-1deg); }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  }
+  /* Rayos detrás de la ilustración */
+  .celebra__rayos {
+    position: absolute;
+    left: 50%;
+    top: 42%;
+    width: min(150vw, 980px);
+    aspect-ratio: 1;
+    translate: -50% -50%;
+    background: repeating-conic-gradient(from 0deg, rgb(242 174 48 / 0.26) 0deg 9deg, transparent 9deg 22.5deg);
+    mask: radial-gradient(closest-side, #000 18%, transparent 72%);
+    pointer-events: none;
+    z-index: -1;
+  }
+  .celebra[open] .celebra__rayos {
+    animation: celebra-rayos-in 0.7s 0.15s var(--ease-out) both, celebra-giro 26s linear infinite;
+  }
+  @keyframes celebra-rayos-in {
+    from { opacity: 0; scale: 0.2; }
+  }
+  @keyframes celebra-giro {
+    to { rotate: 360deg; }
+  }
+  .celebra__acciones {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 10px 18px;
+  }
+  .celebra[open] .celebra__acciones {
+    animation: celebra-sube 0.5s 0.55s var(--ease-out) both;
+  }
+  @keyframes celebra-sube {
+    from { opacity: 0; transform: translateY(14px); }
+  }
+  .celebra .btn {
+    border: 0;
+    cursor: pointer;
+  }
+  .celebra__seguir {
+    padding: 10px 6px;
+    border: 0;
+    background: none;
+    color: #fff;
+    font: 600 0.98rem/1.2 var(--font-body);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    cursor: pointer;
+  }
+  .celebra__seguir:hover {
+    color: var(--orange);
+  }
+  .celebra__x {
+    position: absolute;
+    top: max(16px, env(safe-area-inset-top));
+    right: 16px;
+    z-index: 3;
+    display: grid;
+    place-items: center;
+    width: 46px;
+    height: 46px;
+    border: 0;
+    border-radius: 50%;
+    background: #fff;
+    color: var(--blue);
+    box-shadow: 0 8px 20px -8px rgb(0 0 0 / 0.5);
+    cursor: pointer;
+    transition: transform 0.3s var(--ease-out);
+  }
+  .celebra__x:hover {
+    transform: rotate(90deg);
+  }
+  .celebra :focus-visible {
+    outline: 3px solid var(--orange);
+    outline-offset: 3px;
+  }
+  /* Confeti a pantalla completa, por delante de la ilustración */
+  .celebra__confeti {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .celebra__confeti :global(i) {
+    position: absolute;
+    left: 50%;
+    top: 45%;
+    width: 10px;
+    height: 15px;
+    border-radius: 2px;
+    will-change: transform, opacity;
+  }
+  .celebra__confeti :global(i.is-estrella) {
+    width: 18px;
+    height: 18px;
+    border-radius: 0;
+    clip-path: polygon(50% 0, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  }
+  .celebra__confeti :global(i.is-serpentina) {
+    width: 6px;
+    height: 34px;
+    border-radius: 3px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .celebra[open] :global(.celebra__img),
+    .celebra[open] .celebra__rayos,
+    .celebra[open] .celebra__acciones {
+      animation: celebra-fondo 0.2s ease-out both;
+    }
+  }
+
   @media (max-width: 900px) {
     .mapa__head {
       grid-template-columns: 1fr;
@@ -595,6 +797,9 @@ const H = 600;
     const info = root.querySelector<HTMLElement>('[data-info]')!;
     const confeti = root.querySelector<HTMLElement>('[data-confeti]')!;
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const celebra = root.querySelector<HTMLDialogElement>('[data-celebra]')!;
+    const celebraConfeti = root.querySelector<HTMLElement>('[data-celebra-confeti]')!;
+    let celebraTimer = 0;
 
     // Longitud acumulada del camino en cada punto.
     const total = progreso.getTotalLength();
@@ -638,8 +843,109 @@ const H = 600;
       premio.hidden = !meta;
       info.hidden = meta;
       reset.hidden = !meta;
-      if (meta) celebrar();
+      if (meta) {
+        celebrar();
+        window.clearTimeout(celebraTimer);
+        celebraTimer = window.setTimeout(abrirCelebracion, reduce ? 0 : 450);
+      }
     };
+
+    // ---------- Celebración a pantalla completa ----------
+    const lanzarConfeti = () => {
+      celebraConfeti.replaceChildren();
+      if (reduce) return;
+      const colores = ['#114a9b', '#f2ae30', '#ffffff'];
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const piezas: [HTMLElement, Keyframe[], KeyframeAnimationOptions][] = [];
+      const forma = (i: number) => (i % 7 === 0 ? 'is-estrella' : i % 5 === 0 ? 'is-serpentina' : '');
+
+      // Explosión desde el centro, con caída por gravedad
+      for (let i = 0; i < 90; i++) {
+        const c = document.createElement('i');
+        const f = forma(i);
+        if (f) c.className = f;
+        c.style.background = colores[i % colores.length];
+        const ang = Math.random() * Math.PI * 2;
+        const r = (0.18 + Math.random() * 0.42) * Math.max(vw, vh);
+        const dx = Math.cos(ang) * r;
+        const dy = Math.sin(ang) * r * 0.75 - vh * 0.12;
+        const giro = (Math.random() - 0.5) * 1440;
+        piezas.push([
+          c,
+          [
+            { transform: 'translate(-50%, -50%) scale(0.3) rotate(0deg)', opacity: 1 },
+            { transform: `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(1) rotate(${giro * 0.5}deg)`, opacity: 1, offset: 0.35 },
+            { transform: `translate(calc(-50% + ${dx * 1.15}px), calc(-50% + ${dy + vh * 0.75}px)) scale(0.9) rotate(${giro}deg)`, opacity: 0 },
+          ],
+          { duration: 2200 + Math.random() * 1400, delay: 180 + Math.random() * 160, easing: 'cubic-bezier(0.2, 0.7, 0.4, 1)', fill: 'both' },
+        ]);
+      }
+      // Lluvia desde arriba
+      for (let i = 0; i < 70; i++) {
+        const c = document.createElement('i');
+        const f = forma(i + 3);
+        if (f) c.className = f;
+        c.style.background = colores[(i + 1) % colores.length];
+        c.style.left = `${Math.random() * 100}%`;
+        c.style.top = '-40px';
+        const giro = (Math.random() - 0.5) * 1080;
+        const deriva = (Math.random() - 0.5) * 160;
+        piezas.push([
+          c,
+          [
+            { transform: 'translate(0, 0) rotate(0deg)', opacity: 1 },
+            { transform: `translate(${deriva}px, ${vh + 80}px) rotate(${giro}deg)`, opacity: 0.9 },
+          ],
+          { duration: 2600 + Math.random() * 2200, delay: 300 + Math.random() * 1600, easing: 'linear', fill: 'both' },
+        ]);
+      }
+      piezas.forEach(([c, k, o]) => {
+        celebraConfeti.appendChild(c);
+        c.animate(k, o).finished.then(() => c.remove(), () => {});
+      });
+    };
+
+    const abrirCelebracion = () => {
+      if (celebra.open || typeof celebra.showModal !== 'function') return;
+      celebra.classList.remove('is-closing');
+      celebra.showModal();
+      document.documentElement.style.overflow = 'hidden';
+      lanzarConfeti();
+    };
+
+    const cerrarCelebracion = (despues?: () => void) => {
+      if (!celebra.open) return;
+      const fin = () => {
+        celebra.classList.remove('is-closing');
+        celebra.close();
+        celebraConfeti.replaceChildren();
+        document.documentElement.style.overflow = '';
+        despues?.();
+      };
+      if (reduce) return fin();
+      celebra.classList.add('is-closing');
+      window.setTimeout(fin, 220);
+    };
+
+    root.querySelectorAll('[data-celebra-cerrar]').forEach((b) => b.addEventListener('click', () => cerrarCelebracion(() => reset.focus())));
+    root.querySelector('[data-celebra-premio]')!.addEventListener('click', () =>
+      cerrarCelebracion(() => {
+        premio.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' });
+        premio.setAttribute('tabindex', '-1');
+        premio.focus({ preventScroll: true });
+      }),
+    );
+    // Clic fuera de la ilustración y los botones
+    celebra.addEventListener('click', (e) => {
+      const t = e.target as HTMLElement;
+      if (!t.closest('.celebra__img, .celebra__acciones, .celebra__x')) cerrarCelebracion(() => reset.focus());
+    });
+    // Esc: cerrar con la misma salida
+    celebra.addEventListener('cancel', (e) => {
+      e.preventDefault();
+      cerrarCelebracion(() => reset.focus());
+    });
 
     const celebrar = () => {
       if (reduce) return;
@@ -666,6 +972,7 @@ const H = 600;
       const dur = reduce ? 0 : Math.min(2400, Math.max(500, Math.abs(hasta - desde) * 1.6));
       const t0 = performance.now();
       actual = destino;
+      window.clearTimeout(celebraTimer);
       if (!premio.hidden) {
         premio.hidden = true;
         info.hidden = false;

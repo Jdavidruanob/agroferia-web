@@ -118,6 +118,7 @@ Los bloques de color terminan en una franja de **goteo de leche** (`goteo-azul.p
 - **Bitter** (slab, eco de las letras de la cinta del logo) para h1 y h2.
 - **Figtree** para texto, navegación, botones y títulos pequeños.
 - **Barlow Condensed** 700–800 en mayúsculas, **solo** dentro de Pal' Arranque para subtítulos, datos de ruta y chips. El nombre de la línea no se escribe en Barlow: usa las letras de la etiqueta en imagen.
+- **Coustard** 400 (`--font-tradicional`, clase `.title-tradicional`) **solo** para el nombre "Agroferia Tradicional" (banda del catálogo, mega-menú, pestaña). Es la Clarendon ancha libre más cercana a las letras de la cinta "AGROFERIA" del logo.
 - **Letras y logos de etiqueta** (imagen, exportados del PDF vectorial): `pal-arranque-letras.png`, `pal-arranque-logo.png`, `tradicional-logo.png`.
 
 ### Hierarchy
@@ -144,16 +145,25 @@ Píldora con texto y flecha en un círculo de 38px. Variantes: primario azul (te
 `.badge--pa` (azul, texto blanco), `.badge--tradicional` (naranja, texto azul) y `.badge--artesanal` (blanco con borde del color de la línea). En la tarjeta van dentro de `.pcard__badges`, en las esquinas superiores; si no caben, la artesanal baja a una segunda línea y se mantiene a la derecha.
 
 ### Tarjeta de producto (`ProductCard`)
-Imagen 4:3 (hoy un ícono, con el `<img>` a insertar comentado), doble etiqueta, título, párrafo de receta e ingredientes, y pie con la presentación y "Ver ficha" o "Ver detalles". El atributo `compacta` oculta la receta en el carrusel de Inicio.
+Imagen 4:3 (hoy un ícono, con el `<img>` a insertar comentado), sello "Producto Lácteo Artesanal" (`sello-artesanal.png`) en la esquina inferior derecha de la imagen, doble etiqueta, título, párrafo de receta e ingredientes, y pie con la presentación y "Ver ficha" o "Ver detalles". El atributo `compacta` oculta la receta en el carrusel de Inicio.
 
 ### Banda de línea (`LineaBanda`)
 Bloque de color de la línea con texto a la izquierda, el personaje a la derecha y la franja de goteo abajo. Encabeza cada línea en el catálogo.
+
+### Orden de líneas
+Agroferia Tradicional va primero (izquierda en escritorio, arriba en móvil) y Pal' Arranque segundo: catálogo, pestañas, mega-menú, menú móvil y pie de página. El orden sale de `lineas`, `grupos` y `productos` en `src/data/productos.ts`.
+
+### Barra superior y contacto
+Franja azul encima del navbar (no fija) con los dos WhatsApp (`wa.me`); el principal en píldora blanca. El pie de página muestra los WhatsApp y el correo `mailto:`. Los datos viven en `src/data/contacto.ts`.
+
+### Aliados (`Aliados`, en Nosotros `#aliados`)
+Cuadrícula de tarjetas blancas con borde superior azul o naranja alternado: espacio de logo, etiqueta de aporte, nombre, descripción y los productos en los que colabora. Datos de ejemplo en `src/data/aliados.ts`.
 
 ### Navigation
 Insignia con el logo de Agroferia; píldora blanca con Inicio · Productos · Pal' Arranque · Nosotros; botón "Visítanos" en `#172033`. "Pal' Arranque" es una píldora azul con sus letras oficiales (anillo blanco y azul cuando está activa). El mega-menú tiene dos columnas: Pal' Arranque en azul, con Portables y Punto físico más el enlace "Mapa del recorrido", y Agroferia Tradicional en naranja.
 
 ### Mapa del recorrido (`RutaInteractiva`, componente firma)
-Lienzo azul suave con montañas geométricas, un río y un camino curvo (Catmull-Rom) que pasa por 8 puntos: salida (marcador azul), seis banderitas numeradas (SVG; el `<img>` de la ilustración propia va comentado) y la meta en naranja (punto de acopio). El ciclista avanza por el camino con aceleración y desaceleración suaves, se voltea según la dirección y deja dibujada la línea del avance. Se maneja con clic en cada punto, con los botones Anterior y Siguiente o con las flechas del teclado. El panel azul muestra el número de parada, el tipo, km, altitud y descripción. Al llegar al punto 8 aparecen el cartel naranja "¡Ruta completada! Eres ganador de un premio" y el confeti. Con movimiento reducido, el ciclista salta de punto en punto sin animación.
+Lienzo azul suave con montañas geométricas, un río y un camino curvo (Catmull-Rom) que pasa por 8 puntos: salida (marcador azul), seis banderitas numeradas (SVG; el `<img>` de la ilustración propia va comentado) y la meta en naranja (punto de acopio). El ciclista avanza por el camino con aceleración y desaceleración suaves, se voltea según la dirección y deja dibujada la línea del avance. Se maneja con clic en cada punto, con los botones Anterior y Siguiente o con las flechas del teclado. El panel azul muestra el número de parada, el tipo, km, altitud y descripción. Al llegar al punto 8 aparecen el cartel naranja "¡Ruta completada! Eres ganador de un premio" y el confeti, y se abre la celebración: `<dialog>` modal con fondo oscuro, la vaca "¡Lo lograste! ¡Vamos con toda!" (`celebracion-lo-lograste.png`, con silueta blanca) que crece desde el centro con rebote, rayos naranjas girando detrás y confeti azul, naranja y blanco (papelitos, estrellas y serpentinas) por delante. Se cierra con la X, "Seguir explorando el mapa", clic fuera o Esc; "¡Reclamar mi premio!" cierra y lleva al cartel del premio. Con movimiento reducido, el ciclista salta de punto en punto sin animación.
 
 ### Ficha nutricional
 Tarjeta fija a la izquierda y, a la derecha, ingredientes, alérgenos, conservación, aviso de dato temporal y tabla Por 100 g/ml · Por porción con la cabecera del color de la línea. El termo reemplaza la tabla por "Material y dinámica de puntos".

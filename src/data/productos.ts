@@ -29,20 +29,26 @@ export interface Grupo {
 
 export const lineas: Linea[] = [
   {
-    key: 'pal-arranque',
-    nombre: "Pal' Arranque",
-    descripcion:
-      'La línea para ciclistas de montaña: energía de origen para llevar en la rodada y para el tercer tiempo en el punto de acopio.',
-  },
-  {
     key: 'tradicional',
     nombre: 'Agroferia Tradicional',
     descripcion:
       'Quesos, yogures y postres de siempre, hechos a mano con la leche de las 30 familias de La Feria.',
   },
+  {
+    key: 'pal-arranque',
+    nombre: "Pal' Arranque",
+    descripcion:
+      'La línea para ciclistas de montaña: energía de origen para llevar en la rodada y para el tercer tiempo en el punto de acopio.',
+  },
 ];
 
 export const grupos: Grupo[] = [
+  {
+    key: 'tradicional',
+    linea: 'tradicional',
+    nombre: 'Agroferia Tradicional',
+    descripcion: 'Quesos, yogures y postres artesanales para la mesa de la casa.',
+  },
   {
     key: 'portables',
     linea: 'pal-arranque',
@@ -54,12 +60,6 @@ export const grupos: Grupo[] = [
     linea: 'pal-arranque',
     nombre: 'Para consumo en punto físico',
     descripcion: 'Se preparan y se sirven en el punto de acopio, para comer con el grupo en el tercer tiempo.',
-  },
-  {
-    key: 'tradicional',
-    linea: 'tradicional',
-    nombre: 'Agroferia Tradicional',
-    descripcion: 'Quesos, yogures y postres artesanales para la mesa de la casa.',
   },
 ];
 
@@ -161,6 +161,123 @@ const directo: Caracteristica = {
 };
 
 export const productos: Producto[] = [
+  /* ============================== AGROFERIA TRADICIONAL ============================== */
+  {
+    slug: 'queso-campesino',
+    nombre: 'Queso campesino',
+    linea: 'tradicional',
+    grupo: 'tradicional',
+    glyph: 'campesino',
+    etiqueta: '100% Artesanal',
+    receta:
+      'Leche del ordeño de la mañana, cuajada y prensada a mano como se ha hecho siempre en La Feria. Fresco, suave y con el punto justo de sal para la arepa, el chocolate o el desayuno.',
+    resumen: 'Fresco y suave, en 1.000 g y 400 g.',
+    descripcion: 'Queso fresco de receta campesina, hecho en La Feria con leche del día.',
+    presentacion: 'Bloque 1.000 g · 400 g',
+    ingredientes: 'Leche entera, sal, cuajo, cloruro de calcio.',
+    alergenos: 'Contiene leche.',
+    conservacion: 'Manténgase refrigerado. Consúmase en máximo 8 días.',
+    caracteristicas: [
+      { icono: 'users', titulo: 'Saber campesino', texto: 'Receta que pasa de una generación a otra.' },
+      { icono: 'package', titulo: 'Dos tamaños', texto: '1.000 g para la familia, 400 g para la semana.' },
+      origen,
+      directo,
+    ],
+    nutricion: tabla('30 g', '100 g', [264, 20, 12.5, 2.5, 0.5, 0, 18, 560, 500], 0.3),
+  },
+  {
+    slug: 'quesillo',
+    nombre: 'Quesillo',
+    linea: 'tradicional',
+    grupo: 'tradicional',
+    glyph: 'quesillo',
+    etiqueta: 'Producto Artesanal',
+    receta:
+      'Queso especial de pasta hilada: la cuajada se amasa en agua caliente hasta formar hebras largas y elásticas. Funde parejo sobre la arepa y el pandebono.',
+    resumen: 'Queso especial de hebra, 400 g.',
+    descripcion: 'Quesillo de pasta hilada, elástico y suave, hecho a mano en La Feria.',
+    presentacion: '400 g',
+    ingredientes: 'Leche entera, sal, cuajo, cloruro de calcio.',
+    alergenos: 'Contiene leche.',
+    conservacion: 'Manténgase refrigerado.',
+    caracteristicas: [
+      { icono: 'sun', titulo: 'Para fundir', texto: 'Se derrite parejo en la arepa.' },
+      artesanal,
+      origen,
+      directo,
+    ],
+    nutricion: tabla('30 g', '100 g', [280, 21, 13, 2, 0.5, 0, 21, 480, 520], 0.3),
+  },
+  {
+    slug: 'yogur-natural-frutas',
+    nombre: 'Yogur natural de frutas de temporada',
+    linea: 'tradicional',
+    grupo: 'tradicional',
+    glyph: 'botella',
+    etiqueta: '100% Artesanal',
+    receta:
+      'Yogur fermentado lentamente con la leche de las 30 familias y pulpa de fruta de temporada. Bebible y en botella, para la lonchera o la nevera de la casa.',
+    resumen: 'Bebible, en botella.',
+    descripcion: 'Yogur natural con fruta de temporada, en botella para toda la familia.',
+    presentacion: 'Botella 1.000 ml (por confirmar)',
+    ingredientes: 'Leche entera, pulpa de fruta de temporada, azúcar, cultivos lácticos.',
+    alergenos: 'Contiene leche.',
+    conservacion: 'Manténgase refrigerado. Una vez abierto, consúmase en máximo 5 días.',
+    caracteristicas: [
+      { icono: 'sun', titulo: 'Fruta de temporada', texto: 'Cambia según la cosecha de la región.' },
+      { icono: 'package', titulo: 'En botella', texto: 'Para servir en casa o llevar.' },
+      origen,
+      directo,
+    ],
+    nutricion: tabla('200 ml', '100 ml', [78, 2.4, 1.5, 11.5, 10.5, 5, 3, 46, 105], 2),
+  },
+  {
+    slug: 'yogur-griego-artesanal',
+    nombre: 'Yogur griego artesanal',
+    linea: 'tradicional',
+    grupo: 'tradicional',
+    glyph: 'vaso',
+    etiqueta: '100% Artesanal',
+    receta:
+      'Yogur colado en tela durante horas hasta quedar espeso y cremoso, sin azúcar añadida. Alto en proteína y con el sabor ácido suave de la leche de montaña.',
+    resumen: 'Espeso, natural y alto en proteína.',
+    descripcion: 'Yogur colado de textura espesa, sin azúcar añadida.',
+    presentacion: 'Vaso 150 g',
+    ingredientes: 'Leche entera, cultivos lácticos.',
+    alergenos: 'Contiene leche.',
+    conservacion: 'Manténgase refrigerado entre 2 °C y 6 °C.',
+    caracteristicas: [
+      { icono: 'zap', titulo: 'Alto en proteína', texto: 'Casi el triple que un yogur tradicional.' },
+      { icono: 'sprout', titulo: 'Sin azúcar añadida', texto: 'Solo leche y cultivos.' },
+      artesanal,
+      directo,
+    ],
+    nutricion: tabla('150 g', '100 g', [97, 5, 3.2, 4, 4, 0, 9, 36, 110], 1.5),
+  },
+  {
+    slug: 'postres',
+    nombre: 'Postres',
+    linea: 'tradicional',
+    grupo: 'tradicional',
+    glyph: 'crema',
+    etiqueta: 'Producto Artesanal',
+    receta:
+      'Yogur griego con mermelada de fruta de temporada cocinada en la finca, en vaso individual. Un dulce sencillo para cerrar el almuerzo.',
+    resumen: 'Yogur griego con mermelada de fruta.',
+    descripcion: 'Postre de yogur griego con mermelada de fruta de temporada, en vaso individual.',
+    presentacion: 'Vaso 150 g',
+    ingredientes: 'Yogur griego (leche entera, cultivos lácticos), mermelada de fruta de temporada (fruta, azúcar).',
+    alergenos: 'Contiene leche.',
+    conservacion: 'Manténgase refrigerado.',
+    caracteristicas: [
+      { icono: 'heart', titulo: 'Para el antojo', texto: 'Postre o merienda en un vaso.' },
+      { icono: 'sun', titulo: 'Mermelada de temporada', texto: 'Fruta de la región.' },
+      artesanal,
+      directo,
+    ],
+    nutricion: tabla('150 g', '100 g', [128, 4, 2.6, 17, 16, 10, 6.5, 38, 100], 1.5),
+  },
+
   /* =========================== PAL' ARRANQUE · Portables =========================== */
   {
     slug: 'snack-queso-relleno',
@@ -342,123 +459,6 @@ export const productos: Producto[] = [
     ],
     nutricion: tabla('200 g', '100 g', [88, 2.6, 1.7, 13, 12, 6, 3.4, 48, 110], 2),
     ruta: { momento: 'Tercer tiempo', consumo: 'En el punto de venta', nota: 'Se sirve frío en el punto de acopio.' },
-  },
-
-  /* ============================== AGROFERIA TRADICIONAL ============================== */
-  {
-    slug: 'queso-campesino',
-    nombre: 'Queso campesino',
-    linea: 'tradicional',
-    grupo: 'tradicional',
-    glyph: 'campesino',
-    etiqueta: '100% Artesanal',
-    receta:
-      'Leche del ordeño de la mañana, cuajada y prensada a mano como se ha hecho siempre en La Feria. Fresco, suave y con el punto justo de sal para la arepa, el chocolate o el desayuno.',
-    resumen: 'Fresco y suave, en 1.000 g y 400 g.',
-    descripcion: 'Queso fresco de receta campesina, hecho en La Feria con leche del día.',
-    presentacion: 'Bloque 1.000 g · 400 g',
-    ingredientes: 'Leche entera, sal, cuajo, cloruro de calcio.',
-    alergenos: 'Contiene leche.',
-    conservacion: 'Manténgase refrigerado. Consúmase en máximo 8 días.',
-    caracteristicas: [
-      { icono: 'users', titulo: 'Saber campesino', texto: 'Receta que pasa de una generación a otra.' },
-      { icono: 'package', titulo: 'Dos tamaños', texto: '1.000 g para la familia, 400 g para la semana.' },
-      origen,
-      directo,
-    ],
-    nutricion: tabla('30 g', '100 g', [264, 20, 12.5, 2.5, 0.5, 0, 18, 560, 500], 0.3),
-  },
-  {
-    slug: 'quesillo',
-    nombre: 'Quesillo',
-    linea: 'tradicional',
-    grupo: 'tradicional',
-    glyph: 'quesillo',
-    etiqueta: 'Producto Artesanal',
-    receta:
-      'Queso especial de pasta hilada: la cuajada se amasa en agua caliente hasta formar hebras largas y elásticas. Funde parejo sobre la arepa y el pandebono.',
-    resumen: 'Queso especial de hebra, 400 g.',
-    descripcion: 'Quesillo de pasta hilada, elástico y suave, hecho a mano en La Feria.',
-    presentacion: '400 g',
-    ingredientes: 'Leche entera, sal, cuajo, cloruro de calcio.',
-    alergenos: 'Contiene leche.',
-    conservacion: 'Manténgase refrigerado.',
-    caracteristicas: [
-      { icono: 'sun', titulo: 'Para fundir', texto: 'Se derrite parejo en la arepa.' },
-      artesanal,
-      origen,
-      directo,
-    ],
-    nutricion: tabla('30 g', '100 g', [280, 21, 13, 2, 0.5, 0, 21, 480, 520], 0.3),
-  },
-  {
-    slug: 'yogur-natural-frutas',
-    nombre: 'Yogur natural de frutas de temporada',
-    linea: 'tradicional',
-    grupo: 'tradicional',
-    glyph: 'botella',
-    etiqueta: '100% Artesanal',
-    receta:
-      'Yogur fermentado lentamente con la leche de las 30 familias y pulpa de fruta de temporada. Bebible y en botella, para la lonchera o la nevera de la casa.',
-    resumen: 'Bebible, en botella.',
-    descripcion: 'Yogur natural con fruta de temporada, en botella para toda la familia.',
-    presentacion: 'Botella 1.000 ml (por confirmar)',
-    ingredientes: 'Leche entera, pulpa de fruta de temporada, azúcar, cultivos lácticos.',
-    alergenos: 'Contiene leche.',
-    conservacion: 'Manténgase refrigerado. Una vez abierto, consúmase en máximo 5 días.',
-    caracteristicas: [
-      { icono: 'sun', titulo: 'Fruta de temporada', texto: 'Cambia según la cosecha de la región.' },
-      { icono: 'package', titulo: 'En botella', texto: 'Para servir en casa o llevar.' },
-      origen,
-      directo,
-    ],
-    nutricion: tabla('200 ml', '100 ml', [78, 2.4, 1.5, 11.5, 10.5, 5, 3, 46, 105], 2),
-  },
-  {
-    slug: 'yogur-griego-artesanal',
-    nombre: 'Yogur griego artesanal',
-    linea: 'tradicional',
-    grupo: 'tradicional',
-    glyph: 'vaso',
-    etiqueta: '100% Artesanal',
-    receta:
-      'Yogur colado en tela durante horas hasta quedar espeso y cremoso, sin azúcar añadida. Alto en proteína y con el sabor ácido suave de la leche de montaña.',
-    resumen: 'Espeso, natural y alto en proteína.',
-    descripcion: 'Yogur colado de textura espesa, sin azúcar añadida.',
-    presentacion: 'Vaso 150 g',
-    ingredientes: 'Leche entera, cultivos lácticos.',
-    alergenos: 'Contiene leche.',
-    conservacion: 'Manténgase refrigerado entre 2 °C y 6 °C.',
-    caracteristicas: [
-      { icono: 'zap', titulo: 'Alto en proteína', texto: 'Casi el triple que un yogur tradicional.' },
-      { icono: 'sprout', titulo: 'Sin azúcar añadida', texto: 'Solo leche y cultivos.' },
-      artesanal,
-      directo,
-    ],
-    nutricion: tabla('150 g', '100 g', [97, 5, 3.2, 4, 4, 0, 9, 36, 110], 1.5),
-  },
-  {
-    slug: 'postres',
-    nombre: 'Postres',
-    linea: 'tradicional',
-    grupo: 'tradicional',
-    glyph: 'crema',
-    etiqueta: 'Producto Artesanal',
-    receta:
-      'Yogur griego con mermelada de fruta de temporada cocinada en la finca, en vaso individual. Un dulce sencillo para cerrar el almuerzo.',
-    resumen: 'Yogur griego con mermelada de fruta.',
-    descripcion: 'Postre de yogur griego con mermelada de fruta de temporada, en vaso individual.',
-    presentacion: 'Vaso 150 g',
-    ingredientes: 'Yogur griego (leche entera, cultivos lácticos), mermelada de fruta de temporada (fruta, azúcar).',
-    alergenos: 'Contiene leche.',
-    conservacion: 'Manténgase refrigerado.',
-    caracteristicas: [
-      { icono: 'heart', titulo: 'Para el antojo', texto: 'Postre o merienda en un vaso.' },
-      { icono: 'sun', titulo: 'Mermelada de temporada', texto: 'Fruta de la región.' },
-      artesanal,
-      directo,
-    ],
-    nutricion: tabla('150 g', '100 g', [128, 4, 2.6, 17, 16, 10, 6.5, 38, 100], 1.5),
   },
 ];
 

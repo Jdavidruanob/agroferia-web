@@ -2,6 +2,8 @@
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
+import { correo, whatsapp, waUrl } from '../data/contacto';
+import Aliados from '../components/Aliados.astro';
 import tractor from '../assets/marca/personaje-tradicional.png';
 import goteoNaranja from '../assets/marca/goteo-naranja.png';
 
@@ -46,7 +48,7 @@ const valores = [
   ['Solidaridad', 'Somos una sola familia campesina: “uno para todos y todos para uno”.'],
 ];
 
-const aliados = [
+const instituciones = [
   'Alquería',
   'SENA',
   'IMCA',
@@ -224,7 +226,7 @@ const aliados = [
     </div>
   </section>
 
-  <!-- ============ VALORES + ALIADOS ============ -->
+  <!-- ============ VALORES + INSTITUCIONES ============ -->
   <section class="container valores" aria-labelledby="val-title">
     <div>
       <h2 id="val-title">Nuestros valores</h2>
@@ -239,14 +241,17 @@ const aliados = [
         }
       </dl>
     </div>
-    <div class="aliados">
-      <h2 class="aliados__title">Con quién trabajamos</h2>
-      <p>Aliados comerciales, de formación y de transición energética que han acompañado a la asociación.</p>
+    <div class="inst">
+      <h2 class="inst__title">Instituciones que nos acompañan</h2>
+      <p>Entidades comerciales, de formación y de transición energética que han acompañado a la asociación.</p>
       <ul>
-        {aliados.map((a) => <li>{a}</li>)}
+        {instituciones.map((a) => <li>{a}</li>)}
       </ul>
     </div>
   </section>
+
+  <!-- ============ ALIADOS (productores y marcas que colaboran) ============ -->
+  <Aliados />
 
   <!-- ============ VISÍTANOS ============ -->
   <section id="visitanos" class="container visit" aria-labelledby="vis-title">
@@ -258,9 +263,16 @@ const aliados = [
       </p>
       <ul class="visit__list">
         <li><Icon name="map-pin" size={20} /> Centro de Acopio, corregimiento La Feria, Pradera</li>
-        <!-- PENDIENTE: horarios, WhatsApp y correo reales -->
+        <!-- PENDIENTE: horario real -->
         <li><Icon name="clock" size={20} /> Horario: por confirmar</li>
-        <li><Icon name="message" size={20} /> WhatsApp: por definir</li>
+        <li>
+          <Icon name="whatsapp" size={20} />
+          <span>
+            WhatsApp <a href={waUrl(whatsapp.principal.numero)} target="_blank" rel="noopener">{whatsapp.principal.etiqueta}</a> · alterno{' '}
+            <a href={waUrl(whatsapp.alterno.numero)} target="_blank" rel="noopener">{whatsapp.alterno.etiqueta}</a>
+          </span>
+        </li>
+        <li><Icon name="mail" size={20} /> <a href={`mailto:${correo}`}>{correo}</a></li>
       </ul>
       <a class="btn btn--light" href="https://www.google.com/maps/search/?api=1&query=Corregimiento+La+Feria+Pradera+Valle+del+Cauca" target="_blank" rel="noopener">
         Abrir en Google Maps
@@ -601,7 +613,7 @@ const aliados = [
     }
   }
 
-  /* ---------- Valores y aliados ---------- */
+  /* ---------- Valores e instituciones ---------- */
   .valores {
     display: grid;
     grid-template-columns: 1.2fr 1fr;
@@ -624,19 +636,19 @@ const aliados = [
     color: var(--ink-2);
     font-size: 0.97rem;
   }
-  .aliados {
+  .inst {
     padding: 32px;
     border-radius: 22px;
     background: var(--panel);
   }
-  .aliados__title {
+  .inst__title {
     font-size: clamp(1.5rem, 2.2vw, 1.9rem);
   }
-  .aliados p {
+  .inst p {
     margin-top: 10px;
     color: var(--ink-2);
   }
-  .aliados ul {
+  .inst ul {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
@@ -644,7 +656,7 @@ const aliados = [
     padding: 0;
     list-style: none;
   }
-  .aliados li {
+  .inst li {
     padding: 8px 14px;
     border-radius: 999px;
     background: #fff;
@@ -694,6 +706,10 @@ const aliados = [
     grid-template-columns: 20px 1fr;
     gap: 12px;
     color: #fff;
+  }
+  .visit__list a {
+    color: #fff;
+    font-weight: 700;
   }
   .visit__list :global(svg) {
     color: var(--on-blue);

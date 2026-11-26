@@ -17,9 +17,29 @@ const gruposPA = grupos.filter((g) => g.linea === 'pal-arranque');
       cómo conservarlo y su información nutricional.
     </p>
     <nav class="tabs" aria-label="Líneas de producto">
-      <a class="tabs__link tabs__link--pa" href="#pal-arranque">Pal' Arranque</a>
       <a class="tabs__link tabs__link--tr" href="#tradicional">Agroferia Tradicional</a>
+      <a class="tabs__link tabs__link--pa" href="#pal-arranque">Pal' Arranque</a>
     </nav>
+  </section>
+
+  <!-- ===================== AGROFERIA TRADICIONAL ===================== -->
+  <section id="tradicional" class="container linea" aria-labelledby="t-tr">
+    <LineaBanda linea="tradicional">
+      <h2 id="t-tr" class="linea__title title-tradicional">Agroferia Tradicional</h2>
+      <p class="linea__desc">{lineaPorKey.tradicional.descripcion}</p>
+    </LineaBanda>
+
+    <div class="grupo grupo--tr">
+      <ul class="grid">
+        {
+          productosDeGrupo('tradicional').map((p) => (
+            <li>
+              <ProductCard producto={p} />
+            </li>
+          ))
+        }
+      </ul>
+    </div>
   </section>
 
   <!-- ===================== PAL' ARRANQUE ===================== -->
@@ -50,26 +70,6 @@ const gruposPA = grupos.filter((g) => g.linea === 'pal-arranque');
         </div>
       ))
     }
-  </section>
-
-  <!-- ===================== AGROFERIA TRADICIONAL ===================== -->
-  <section id="tradicional" class="container linea" aria-labelledby="t-tr">
-    <LineaBanda linea="tradicional">
-      <h2 id="t-tr" class="linea__title">Agroferia Tradicional</h2>
-      <p class="linea__desc">{lineaPorKey.tradicional.descripcion}</p>
-    </LineaBanda>
-
-    <div class="grupo grupo--tr">
-      <ul class="grid">
-        {
-          productosDeGrupo('tradicional').map((p) => (
-            <li>
-              <ProductCard producto={p} />
-            </li>
-          ))
-        }
-      </ul>
-    </div>
   </section>
 </Base>
 
@@ -105,6 +105,8 @@ const gruposPA = grupos.filter((g) => g.linea === 'pal-arranque');
   .tabs__link--tr {
     background: var(--orange);
     color: var(--on-orange);
+    font-family: var(--font-tradicional);
+    font-weight: 400;
   }
 
   .linea {
@@ -117,7 +119,7 @@ const gruposPA = grupos.filter((g) => g.linea === 'pal-arranque');
   }
   .linea__title {
     color: var(--on-orange);
-    font-size: clamp(2rem, 4vw, 3rem);
+    font-size: clamp(2.1rem, 4.4vw, 3.3rem);
   }
   .linea__desc {
     max-width: 52ch;

@@ -1,0 +1,179 @@
+---
+import Icon from './Icon.astro';
+import { aliados } from '../data/aliados';
+import { productos, productoUrl } from '../data/productos';
+
+const porSlug = Object.fromEntries(productos.map((p) => [p.slug, p]));
+---
+
+<section id="aliados" class="section aliados" aria-labelledby="aliados-title">
+  <div class="container">
+    <div class="section-head">
+      <h2 id="aliados-title">Nuestros aliados</h2>
+      <p>
+        Productores y marcas de la región que ponen su parte en algunos de nuestros productos. Lo que no sale de La Feria lo
+        traemos de gente que trabaja como nosotros.
+      </p>
+    </div>
+
+    <ul class="aliados__grid">
+      {
+        aliados.map((a, i) => (
+          <li class:list={['aliado', i % 2 ? 'aliado--orange' : 'aliado--blue']}>
+            <div class="aliado__logo">
+              {/* PENDIENTE: logo o foto del aliado en src/data/aliados.ts (campo logo) */}
+              {a.logo ? (
+                <img src={a.logo} alt={`Logo de ${a.nombre}`} loading="lazy" />
+              ) : (
+                <span class="aliado__ph" aria-hidden="true">
+                  <Icon name={a.icono} size={34} />
+                  <small>Logo del aliado</small>
+                </span>
+              )}
+            </div>
+            <div class="aliado__body">
+              <span class="aliado__aporte">{a.aporte}</span>
+              <h3 class="aliado__name">{a.nombre}</h3>
+              <p class="aliado__desc">{a.descripcion}</p>
+              <p class="aliado__prods-label">Colabora en</p>
+              <ul class="aliado__prods">
+                {a.productos
+                  .filter((s) => porSlug[s])
+                  .map((s) => (
+                    <li>
+                      <a href={productoUrl(porSlug[s])}>{porSlug[s].nombre}</a>
+                    </li>
+                  ))}
+              </ul>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .aliados {
+    scroll-margin-top: 100px;
+  }
+  .aliados__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .aliado {
+    --accent: var(--blue);
+    --accent-soft: var(--blue-soft);
+    --accent-ink: #fff;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-top: 5px solid var(--accent);
+    border-radius: var(--r-card);
+    background: #fff;
+    transition: transform 0.4s var(--ease-out), box-shadow 0.3s ease;
+  }
+  .aliado--orange {
+    --accent: var(--orange);
+    --accent-soft: #fdf1da;
+    --accent-ink: var(--on-orange-ink);
+  }
+  .aliado:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 18px 36px -22px rgb(17 24 39 / 0.35);
+  }
+  .aliado__logo {
+    display: grid;
+    place-items: center;
+    aspect-ratio: 16 / 9;
+    padding: 18px;
+    background: var(--accent-soft);
+  }
+  .aliado__logo img {
+    max-width: 70%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+  .aliado__ph {
+    display: grid;
+    justify-items: center;
+    gap: 8px;
+    color: var(--blue);
+  }
+  .aliado__ph :global(svg) {
+    display: block;
+    padding: 18px;
+    width: 72px;
+    height: 72px;
+    border: 2px dashed currentColor;
+    border-radius: 50%;
+    background: #fff;
+    box-sizing: border-box;
+  }
+  .aliado__ph small {
+    color: var(--ink-2);
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+  .aliado__body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 8px;
+    padding: 20px 20px 22px;
+  }
+  .aliado__aporte {
+    align-self: flex-start;
+    padding: 4px 11px;
+    border-radius: 999px;
+    background: var(--accent);
+    color: var(--accent-ink);
+    font-size: 0.76rem;
+    font-weight: 700;
+  }
+  .aliado__name {
+    margin-top: 4px;
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+  .aliado__desc {
+    color: var(--ink-2);
+    font-size: 0.94rem;
+    line-height: 1.55;
+  }
+  .aliado__prods-label {
+    margin-top: auto;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+    color: var(--ink-2);
+    font-size: 0.78rem;
+    font-weight: 700;
+  }
+  .aliado__prods {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .aliado__prods a {
+    display: inline-block;
+    padding: 4px 10px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    color: var(--blue);
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .aliado__prods a:hover {
+    border-color: var(--blue);
+  }
+</style>

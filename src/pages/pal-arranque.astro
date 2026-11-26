@@ -9,6 +9,7 @@ import RutaInteractiva from '../components/RutaInteractiva.astro';
 import ProductCard from '../components/ProductCard.astro';
 import etiqueta from '../assets/marca/pal-arranque-etiqueta.png';
 import { grupos, productosDeGrupo } from '../data/productos';
+import { whatsapp, waUrl } from '../data/contacto';
 
 import ciclistas from '../assets/fotos/ciclistas-acopio.jpeg';
 import muralFeria from '../assets/fotos/mural-la-feria.png';
@@ -225,10 +226,9 @@ const pilares = [
     <Image class="close__art" src={ciclistaArte} alt="Personaje de Pal' Arranque: vaca con casco y gafas montando bicicleta" widths={[300, 600]} sizes="200px" />
     <h2 id="close-title">Trae a tu club hasta La Feria</h2>
     <p>Cuéntanos cuándo suben y cuántos son. Preparamos la parada para que nadie llegue a esperar.</p>
-    <!-- PENDIENTE: enlace de WhatsApp real de Agroferia -->
-    <a class="btn btn--sun" href="/nosotros#visitanos">
-      Cómo llegar y contacto
-      <span class="btn__arrow"><Icon name="arrow-right" size={18} /></span>
+    <a class="btn btn--sun" href={waUrl(whatsapp.principal.numero, 'Hola Agroferia, queremos subir con nuestro club a La Feria.')} target="_blank" rel="noopener">
+      Escríbenos por WhatsApp
+      <span class="btn__arrow"><Icon name="whatsapp" size={18} /></span>
     </a>
   </section>
 </Base>

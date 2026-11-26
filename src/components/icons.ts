@@ -22,6 +22,8 @@ export const uiIcons = {
   store: '<path d="M4 10v10h16V10"/><path d="M3 6l1.5-3h15L21 6v1.5a3 3 0 0 1-6 0 3 3 0 0 1-6 0 3 3 0 0 1-6 0z"/><path d="M10 20v-5h4v5"/>',
   package: '<path d="M21 8l-9-5-9 5v8l9 5 9-5z"/><path d="M3 8l9 5 9-5"/><path d="M12 13v8"/>',
   message: '<path d="M21 12a8.5 8.5 0 0 1-12.6 7.4L3 21l1.6-5.2A8.5 8.5 0 1 1 21 12z"/>',
+  whatsapp:
+    '<path d="M12 3.5a8.5 8.5 0 0 0-7.3 12.9L3.5 20.5l4.2-1.2A8.5 8.5 0 1 0 12 3.5z"/><path fill="currentColor" stroke="none" d="M9.3 7.6c-.6 0-1.5.7-1.5 1.9 0 2.2 2.9 6 6.6 6.8 1 .2 1.9-.5 2.1-1.2l.1-.7-2.3-1.1-1 1.1c-1.3-.5-2.5-1.7-3-3l1-.9-1-2.5c-.3-.4-.6-.4-1-.4z"/>',
   mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',
   award: '<circle cx="12" cy="9" r="6"/><path d="M8.5 14L7 21l5-3 5 3-1.5-7"/>',
   cup: '<path d="M5 9h12v6a5 5 0 0 1-5 5h-2a5 5 0 0 1-5-5z"/><path d="M17 11h1.5a2.5 2.5 0 0 1 0 5H17"/><path d="M9 3v3M13 3v3"/>',

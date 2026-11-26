@@ -49,6 +49,8 @@
   --font-body: 'Figtree Variable', system-ui, sans-serif;
   --font-display: 'Bitter Variable', Georgia, serif;
   --font-sport: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+  /* Letras de la cinta "AGROFERIA" del logo (Clarendon ancha): nombre de la línea Tradicional */
+  --font-tradicional: 'Coustard', 'Bitter Variable', Georgia, serif;
 
   --container: 1180px;
   --gutter: clamp(16px, 4vw, 32px);
@@ -270,3 +272,11 @@ a {
 .badge--artesanal { background: #fff; color: var(--ink); border: 1.5px solid currentColor; }
 .badge--artesanal.is-pa { color: var(--blue); }
 .badge--artesanal.is-tradicional { border-color: var(--orange); color: var(--ink); }
+
+/* Nombre de la línea Agroferia Tradicional con la tipografía del logo */
+.title-tradicional {
+  font-family: var(--font-tradicional);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  line-height: 1.1;
+}
