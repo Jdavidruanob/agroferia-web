@@ -71,8 +71,12 @@ export interface Caracteristica {
 
 export interface Ingrediente {
   nombre: string;
-  /** Composición o aclaración, p. ej. "leche entera, cultivos lácticos". */
+  /** Cantidad por unidad de producto, p. ej. "70 g" o "80 %". */
+  cantidad?: string;
+  /** De qué está hecho, p. ej. "leche y cultivos lácteos". */
   detalle?: string;
+  /** Solo para productos con dos versiones, p. ej. "Con bocadillo". */
+  version?: string;
 }
 
 export interface Producto {
@@ -135,24 +139,23 @@ export const productos: Producto[] = [
     linea: 'tradicional',
     grupo: 'tradicional',
     glyph: 'campesino',
-    receta:
-      'Leche del ordeño de la mañana, cuajada y prensada a mano como se ha hecho siempre en La Feria. Fresco, suave y con el punto justo de sal para la arepa, el chocolate o el desayuno.',
-    resumen: 'Fresco y suave, en 1.000 g y 400 g.',
-    descripcion: 'Queso fresco de receta campesina, hecho en La Feria con leche del día.',
+    receta: 'Hecho solo con leche, sal y cuajo: la leche del ordeño de la mañana se cuaja, se prensa a mano y se sala. Queso fresco, suave y de sabor limpio, para la arepa, el chocolate o el desayuno.',
+    resumen: 'Leche, sal y cuajo. En 1.000 g y 400 g.',
+    descripcion: 'Queso campesino fresco hecho con tres ingredientes: leche, sal y cuajo.',
     presentacion: 'Bloque 1.000 g · 400 g',
     ingredientes: [
-      { nombre: 'Leche entera' },
+      { nombre: 'Leche' },
       { nombre: 'Sal' },
       { nombre: 'Cuajo' },
-      { nombre: 'Cloruro de calcio' },
     ],
+    ingredientesConfirmados: true,
     alergenos: 'Contiene leche.',
     conservacion: 'Manténgase refrigerado. Consúmase en máximo 8 días.',
     caracteristicas: [
       { icono: 'users', titulo: 'Saber campesino', texto: 'Receta que pasa de una generación a otra.' },
+      { icono: 'sprout', titulo: 'Solo tres ingredientes', texto: 'Leche, sal y cuajo.' },
       { icono: 'package', titulo: 'Dos tamaños', texto: '1.000 g para la familia, 400 g para la semana.' },
       origen,
-      directo,
     ],
   },
   {
@@ -161,17 +164,16 @@ export const productos: Producto[] = [
     linea: 'tradicional',
     grupo: 'tradicional',
     glyph: 'quesillo',
-    receta:
-      'Queso especial de pasta hilada: la cuajada se amasa en agua caliente hasta formar hebras largas y elásticas. Funde parejo sobre la arepa y el pandebono.',
-    resumen: 'Queso especial de hebra, 400 g.',
-    descripcion: 'Quesillo de pasta hilada, elástico y suave, hecho a mano en La Feria.',
+    receta: 'Leche, sal y cuajo, nada más. La cuajada se amasa en agua caliente hasta formar hebras largas y elásticas. Funde parejo sobre la arepa y el pandebono.',
+    resumen: 'Queso de hebra: leche, sal y cuajo.',
+    descripcion: 'Quesillo de pasta hilada, elástico y suave, hecho con leche, sal y cuajo.',
     presentacion: '400 g',
     ingredientes: [
-      { nombre: 'Leche entera' },
+      { nombre: 'Leche' },
       { nombre: 'Sal' },
       { nombre: 'Cuajo' },
-      { nombre: 'Cloruro de calcio' },
     ],
+    ingredientesConfirmados: true,
     alergenos: 'Contiene leche.',
     conservacion: 'Manténgase refrigerado.',
     caracteristicas: [
@@ -187,17 +189,15 @@ export const productos: Producto[] = [
     linea: 'tradicional',
     grupo: 'tradicional',
     glyph: 'botella',
-    receta:
-      'Yogur fermentado lentamente con la leche de las 30 familias y pulpa de fruta de temporada. Bebible y en botella, para la lonchera o la nevera de la casa.',
-    resumen: 'Bebible, en botella.',
-    descripcion: 'Yogur natural con fruta de temporada, en botella para toda la familia.',
+    receta: 'Yogur de leche y cultivos lácteos con un 20 % de mermelada de la fruta de temporada. Bebible y en botella, para la lonchera o la nevera de la casa.',
+    resumen: 'Yogur con mermelada de fruta, en botella.',
+    descripcion: 'Yogur de fruta de temporada: 80 % yogur de leche y cultivos lácteos y 20 % mermelada de fruta con azúcar.',
     presentacion: 'Botella 1.000 ml (por confirmar)',
     ingredientes: [
-      { nombre: 'Leche entera' },
-      { nombre: 'Pulpa de fruta de temporada' },
-      { nombre: 'Azúcar' },
-      { nombre: 'Cultivos lácticos' },
+      { nombre: 'Yogur', cantidad: '80 %', detalle: 'leche y cultivos lácteos' },
+      { nombre: 'Mermelada de fruta de temporada', cantidad: '20 %', detalle: 'fruta y azúcar' },
     ],
+    ingredientesConfirmados: true,
     alergenos: 'Contiene leche.',
     conservacion: 'Manténgase refrigerado. Una vez abierto, consúmase en máximo 5 días.',
     caracteristicas: [
@@ -213,20 +213,19 @@ export const productos: Producto[] = [
     linea: 'tradicional',
     grupo: 'tradicional',
     glyph: 'vaso',
-    receta:
-      'Yogur colado en tela durante horas hasta quedar espeso y cremoso, sin azúcar añadida. Alto en proteína y con el sabor ácido suave de la leche de montaña.',
-    resumen: 'Espeso, natural y alto en proteína.',
-    descripcion: 'Yogur colado de textura espesa, sin azúcar añadida.',
-    presentacion: 'Vaso 150 g',
+    receta: 'Yogur griego natural hecho solo con leche y cultivos lácteos: espeso, cremoso y con el sabor ácido suave de la leche de montaña. Sin nada más.',
+    resumen: 'Yogur griego natural: leche y cultivos.',
+    descripcion: 'Yogur griego natural de 200 g, hecho únicamente con leche y cultivos lácteos.',
+    presentacion: 'Vaso 200 g',
     ingredientes: [
-      { nombre: 'Leche entera' },
-      { nombre: 'Cultivos lácticos' },
+      { nombre: 'Yogur griego natural', cantidad: '200 g', detalle: 'leche y cultivos lácteos' },
     ],
+    ingredientesConfirmados: true,
     alergenos: 'Contiene leche.',
     conservacion: 'Manténgase refrigerado entre 2 °C y 6 °C.',
     caracteristicas: [
-      { icono: 'zap', titulo: 'Alto en proteína', texto: 'Casi el triple que un yogur tradicional.' },
-      { icono: 'sprout', titulo: 'Sin azúcar añadida', texto: 'Solo leche y cultivos.' },
+      { icono: 'sprout', titulo: 'Solo leche y cultivos', texto: 'Sin ingredientes añadidos.' },
+      { icono: 'droplet', titulo: 'Espeso y cremoso', texto: 'Textura de yogur griego.' },
       artesanal,
       directo,
     ],
@@ -237,15 +236,15 @@ export const productos: Producto[] = [
     linea: 'tradicional',
     grupo: 'tradicional',
     glyph: 'crema',
-    receta:
-      'Yogur griego con mermelada de fruta de temporada cocinada en la finca, en vaso individual. Un dulce sencillo para cerrar el almuerzo.',
+    receta: 'Yogur griego de leche y cultivos lácteos con mermelada de la fruta de temporada, en vaso individual. Un dulce sencillo para cerrar el almuerzo.',
     resumen: 'Yogur griego con mermelada de fruta.',
-    descripcion: 'Postre de yogur griego con mermelada de fruta de temporada, en vaso individual.',
-    presentacion: 'Vaso 150 g',
+    descripcion: 'Postre de 200 g: 150 g de yogur griego y 50 g de mermelada de fruta de temporada.',
+    presentacion: 'Vaso 200 g',
     ingredientes: [
-      { nombre: 'Yogur griego', detalle: 'leche entera, cultivos lácticos' },
-      { nombre: 'Mermelada de fruta de temporada', detalle: 'fruta, azúcar' },
+      { nombre: 'Yogur griego', cantidad: '150 g', detalle: 'leche y cultivos lácteos' },
+      { nombre: 'Mermelada de fruta de temporada', cantidad: '50 g', detalle: 'fruta y azúcar' },
     ],
+    ingredientesConfirmados: true,
     alergenos: 'Contiene leche.',
     conservacion: 'Manténgase refrigerado.',
     caracteristicas: [
@@ -263,21 +262,21 @@ export const productos: Producto[] = [
     linea: 'pal-arranque',
     grupo: 'portables',
     glyph: 'bocadillo',
-    receta:
-      'Queso campesino prensado a mano con la leche del ordeño de la mañana, con un corazón de arequipe cremoso o de bocadillo de guayaba. Salado por fuera, dulce por dentro, en un empaque que no se aplasta en la cangurera.',
-    resumen: 'Salado y dulce para la mitad de la subida.',
-    descripcion:
-      'Queso campesino relleno de arequipe o de bocadillo de guayaba, en porción individual para llevar. El sodio del queso y el azúcar del relleno dan energía rápida en la ruta.',
-    presentacion: 'Paquete 40 g · con arequipe o con bocadillo',
+    receta: 'Quesillo de hebras suaves hecho con leche, sal y cuajo, relleno de arequipe artesanal de leche y azúcar o de dulce de guayaba. Salado por fuera, dulce por dentro, para comer a mitad de la subida.',
+    resumen: 'Quesillo relleno, salado y dulce.',
+    descripcion: 'Quesillo de 70 g relleno de arequipe artesanal o de dulce de guayaba, en porción individual para llevar en la cangurera.',
+    presentacion: 'Quesillo 70 g · con arequipe o con bocadillo',
     ingredientes: [
-      { nombre: 'Queso campesino', detalle: 'leche entera, sal, cuajo' },
-      { nombre: 'Relleno a elegir', detalle: 'arequipe (leche, azúcar) o bocadillo de guayaba (pulpa de guayaba, azúcar)' },
+      { nombre: 'Quesillo', cantidad: '70 g', detalle: 'leche, sal y cuajo' },
+      { nombre: 'Dulce de guayaba (bocadillo)', detalle: 'guayaba y azúcar', version: 'Versión con bocadillo' },
+      { nombre: 'Arequipe artesanal', cantidad: '30 g', detalle: 'leche y azúcar', version: 'Versión con arequipe' },
     ],
+    ingredientesConfirmados: true,
     alergenos: 'Contiene leche.',
     conservacion: 'Manténgase refrigerado. Fuera de la nevera, consúmase en las siguientes 4 horas.',
     caracteristicas: [
-      { icono: 'pocket', titulo: 'Cabe en la cangurera', texto: 'Empaque firme que no se aplasta.' },
-      { icono: 'zap', titulo: 'Salado y dulce', texto: 'Sodio y energía rápida en una porción.' },
+      { icono: 'pocket', titulo: 'Cabe en la cangurera', texto: 'Porción individual y firme.' },
+      { icono: 'heart', titulo: 'Salado y dulce', texto: 'Quesillo y relleno en una sola porción.' },
       artesanal,
       directo,
     ],
@@ -289,22 +288,20 @@ export const productos: Producto[] = [
     linea: 'pal-arranque',
     grupo: 'portables',
     glyph: 'arequipe',
-    receta:
-      'Panelita de leche cocida a fuego lento con panela, como se hace en las cocinas de la vereda, acompañada de hebras de quesillo suave. El dulce de siempre, en porción para el camino.',
-    resumen: 'El dulce de la finca con quesillo.',
-    descripcion:
-      'Panelita de leche hecha con leche de La Feria y panela, acompañada de quesillo en hebras. Carbohidrato para seguir pedaleando y un toque salado.',
-    presentacion: 'Paquete 40 g',
+    receta: 'Panelita de leche artesanal, hecha con leche y azúcar, junto a hebras de quesillo de leche, sal y cuajo. El dulce de siempre con un toque salado, en porción para el camino.',
+    resumen: 'Panelita de leche y quesillo.',
+    descripcion: 'Porción de 50 g con panelita de leche artesanal (20 g) y quesillo (30 g), para llevar en el bolsillo del jersey.',
+    presentacion: 'Paquete 50 g',
     ingredientes: [
-      { nombre: 'Leche entera' },
-      { nombre: 'Panela' },
-      { nombre: 'Quesillo', detalle: 'leche entera, sal, cuajo' },
+      { nombre: 'Quesillo', cantidad: '30 g', detalle: 'leche, sal y cuajo' },
+      { nombre: 'Panelita de leche artesanal', cantidad: '20 g', detalle: 'leche y azúcar' },
     ],
+    ingredientesConfirmados: true,
     alergenos: 'Contiene leche.',
     conservacion: 'Manténgase en lugar fresco. El quesillo, refrigerado.',
     caracteristicas: [
       { icono: 'pocket', titulo: 'Para llevar', texto: 'Porción individual para el bolsillo.' },
-      { icono: 'zap', titulo: 'Energía para subir', texto: 'Carbohidrato de la panela y la leche.' },
+      { icono: 'heart', titulo: 'Dulce y salado', texto: 'Panelita de leche con quesillo.' },
       artesanal,
       directo,
     ],
@@ -316,23 +313,21 @@ export const productos: Producto[] = [
     linea: 'pal-arranque',
     grupo: 'portables',
     glyph: 'doypack',
-    receta:
-      'Yogur griego colado lentamente hasta quedar espeso, mezclado con pulpa de las frutas que estén dando las fincas esa semana. Viene con tapa de rosca para tomarlo en marcha.',
-    resumen: 'Yogur griego para tomar sin bajarse de la bici.',
-    descripcion:
-      'Yogur griego con fruta de temporada en doypack con tapa. Cabe en el bolsillo trasero del jersey y se abre con una mano.',
-    presentacion: 'Doypack 150 g con tapa',
+    receta: 'Yogur griego de leche y cultivos lácteos, espeso y cremoso, con mermelada de la fruta de temporada. Viene en doypack con tapa de rosca para tomarlo en marcha.',
+    resumen: 'Yogur griego con mermelada, para tomar en marcha.',
+    descripcion: 'Doypack de 120 g: 90 g de yogur griego y 30 g de mermelada de fruta de temporada. Cabe en el bolsillo trasero del jersey y se abre con una mano.',
+    presentacion: 'Doypack 120 g con tapa',
     ingredientes: [
-      { nombre: 'Yogur griego', detalle: 'leche entera, cultivos lácticos' },
-      { nombre: 'Pulpa de fruta de temporada' },
-      { nombre: 'Miel de abejas' },
+      { nombre: 'Yogur griego', cantidad: '90 g', detalle: 'leche y cultivos lácteos' },
+      { nombre: 'Mermelada de fruta de temporada', cantidad: '30 g', detalle: 'fruta y azúcar' },
     ],
+    ingredientesConfirmados: true,
     alergenos: 'Contiene leche.',
     conservacion: 'Manténgase refrigerado. Fuera de la nevera, consúmase el mismo día.',
     caracteristicas: [
       { icono: 'pocket', titulo: 'Cabe en el jersey', texto: 'Empaque flexible para el bolsillo trasero.' },
       { icono: 'hand', titulo: 'Se abre con una mano', texto: 'Tapa de rosca, sin detener la marcha.' },
-      { icono: 'zap', titulo: '10,5 g de proteína', texto: 'Por doypack.' },
+      { icono: 'sun', titulo: 'Fruta de temporada', texto: 'La mermelada cambia con la cosecha.' },
       directo,
     ],
     ruta: { momento: 'En el bolsillo', consumo: 'Para llevar', nota: 'Se compra en el punto de acopio y se toma en la bajada.' },
@@ -388,7 +383,7 @@ export const productos: Producto[] = [
     alergenos: 'Contiene leche.',
     conservacion: 'Consúmase recién preparado.',
     caracteristicas: [
-      { icono: 'zap', titulo: '21 g de proteína', texto: 'Por vaso, para recuperar después de rodar.' },
+      { icono: 'zap', titulo: 'Para recuperar', texto: 'Leche o yogur griego con fruta, para después de rodar.' },
       { icono: 'sun', titulo: 'Fruta de temporada', texto: 'Lo que esté dando la tierra esa semana.' },
       { icono: 'cup', titulo: 'Hecho al momento', texto: 'Lo prepara una persona de la asociación.' },
       directo,
@@ -401,24 +396,22 @@ export const productos: Producto[] = [
     linea: 'pal-arranque',
     grupo: 'punto-fisico',
     glyph: 'cuchara',
-    receta:
-      'Capas de yogur griego, mermelada de fruta de temporada hecha en la finca, granola crocante y miel. Se arma al momento, para comer con cuchara sentado con el grupo.',
-    resumen: 'Yogur griego, mermelada de temporada, granola y miel.',
-    descripcion:
-      'Yogur griego con mermelada de fruta de temporada, granola y miel, servido en el punto de acopio. Proteína y carbohidrato para el tercer tiempo.',
+    receta: 'Capas de yogur griego, mermelada de fruta de temporada y granola endulzada con miel natural. Se arma al momento, para comer con cuchara sentado con el grupo.',
+    resumen: 'Yogur griego, mermelada y granola con miel.',
+    descripcion: 'Yogur griego con mermelada de fruta de temporada y granola endulzada con miel natural, servido en el punto de acopio para el tercer tiempo.',
     presentacion: 'Vaso 200 g, servido en el punto de acopio',
     ingredientes: [
       { nombre: 'Yogur griego' },
       { nombre: 'Mermelada de fruta de temporada' },
-      { nombre: 'Granola comercial' },
-      { nombre: 'Miel de abejas' },
+      { nombre: 'Granola comercial', detalle: 'endulzada con miel natural' },
     ],
-    alergenos: 'Contiene leche y avena. Puede contener trazas de frutos secos.',
+    ingredientesConfirmados: true,
+    alergenos: 'Contiene leche. La granola comercial puede contener cereales con gluten y frutos secos: revisar su empaque.',
     conservacion: 'Consúmase en el punto de venta.',
     caracteristicas: [
-      { icono: 'zap', titulo: '15 g de proteína', texto: 'Por porción, gracias al yogur griego.' },
-      { icono: 'sprout', titulo: 'Granola y miel', texto: 'Energía que dura el resto del día.' },
+      { icono: 'sprout', titulo: 'Granola con miel natural', texto: 'Crocante y endulzada con miel.' },
       { icono: 'sun', titulo: 'Mermelada de temporada', texto: 'Fruta de la región, cocinada en la finca.' },
+      { icono: 'users', titulo: 'Para compartir', texto: 'El tercer tiempo con el grupo.' },
       directo,
     ],
     ruta: { momento: 'Tercer tiempo', consumo: 'En el punto de venta', nota: 'Para la parada, sentado con el grupo.' },
@@ -429,17 +422,15 @@ export const productos: Producto[] = [
     linea: 'pal-arranque',
     grupo: 'punto-fisico',
     glyph: 'vaso',
-    receta:
-      'Yogur natural fermentado en la asociación con trozos de fruta de temporada, servido frío en vaso ecológico de presentación personal.',
-    resumen: 'Presentación personal, en vaso ecológico.',
-    descripcion:
-      'Yogur con frutas de temporada servido frío en vaso ecológico, para tomar en la parada mientras el grupo se reagrupa.',
+    receta: 'Yogur de leche y cultivos lácteos con mermelada de fruta de temporada, servido frío en vaso ecológico de presentación personal.',
+    resumen: 'Yogur con mermelada, en vaso ecológico.',
+    descripcion: 'Yogur de fruta de temporada: 80 % yogur de leche y cultivos lácteos y 20 % mermelada de fruta con azúcar, en vaso ecológico para la parada.',
     presentacion: 'Vaso ecológico 200 g, presentación personal',
     ingredientes: [
-      { nombre: 'Yogur natural', detalle: 'leche entera, cultivos lácticos' },
-      { nombre: 'Fruta de temporada' },
-      { nombre: 'Azúcar' },
+      { nombre: 'Yogur', cantidad: '80 %', detalle: 'leche y cultivos lácteos' },
+      { nombre: 'Mermelada de fruta de temporada', cantidad: '20 %', detalle: 'fruta y azúcar' },
     ],
+    ingredientesConfirmados: true,
     alergenos: 'Contiene leche.',
     conservacion: 'Consúmase en el punto de venta.',
     caracteristicas: [
