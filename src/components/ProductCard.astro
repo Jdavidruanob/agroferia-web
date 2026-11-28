@@ -1,9 +1,11 @@
 ---
+import { Image } from 'astro:assets';
 import ProductGlyph from './ProductGlyph.astro';
 import Icon from './Icon.astro';
 import LineaEtiqueta from './LineaEtiqueta.astro';
 import SelloArtesanal from './SelloArtesanal.astro';
 import { esPalArranque, productoUrl, type Producto } from '../data/productos';
+import { fotosDe, faltaEmpaque } from '../data/fotos';
 
 interface Props {
   producto: Producto;
@@ -13,18 +15,31 @@ interface Props {
 
 const { producto: p, compacta = false } = Astro.props;
 const pa = esPalArranque(p);
+const foto = fotosDe(p.slug)[0];
 ---
 
 <article class:list={['pcard', pa ? 'pcard--pa' : 'pcard--tradicional', { 'pcard--compacta': compacta }]}>
-  <div class="pcard__media">
-    <!--
-      PENDIENTE: foto del producto. Reemplazar el ícono por:
-      <img src="/productos/SLUG.jpg" alt="NOMBRE DEL PRODUCTO" loading="lazy" />
-    -->
-    <ProductGlyph name={p.glyph} size={96} class="pcard__glyph" />
-    <LineaEtiqueta linea={p.linea} alto={compacta ? 29 : 34} cinta class="pcard__linea" />
-    {p.sello !== false && <SelloArtesanal size={compacta ? 54 : 64} class="pcard__sello" />}
-  </div>
+  {
+    foto ? (
+      <div class="pcard__media pcard__media--foto">
+        <Image
+          class="pcard__foto"
+          src={foto}
+          alt={`${p.nombre}, empaque de ${pa ? "Pal' Arranque" : 'Agroferia Tradicional'}`}
+          widths={[340, 680]}
+          sizes={compacta ? '260px' : '(max-width: 600px) 90vw, 290px'}
+        />
+        {faltaEmpaque(p.slug) && <ProductGlyph name={p.glyph} size={96} class="pcard__glyph" />}
+        {p.sello !== false && <SelloArtesanal fantasma class="pcard__sello" />}
+      </div>
+    ) : (
+      <div class="pcard__media">
+        <ProductGlyph name={p.glyph} size={96} class="pcard__glyph" />
+        <LineaEtiqueta linea={p.linea} alto={compacta ? 29 : 34} cinta class="pcard__linea" />
+        {p.sello !== false && <SelloArtesanal size={compacta ? 54 : 64} class="pcard__sello" />}
+      </div>
+    )
+  }
   <div class="pcard__body">
     <h3 class="pcard__name">
       <a class="pcard__link" href={productoUrl(p)}>{p.nombre}</a>
@@ -74,6 +89,36 @@ const pa = esPalArranque(p);
     padding-top: 40px;
     background: var(--panel);
     color: var(--line-color);
+  }
+  /* Imagen compuesta (fondo + etiqueta + sello + empaque): se muestra completa, sin recortar */
+  .pcard .pcard__media.pcard__media--foto {
+    display: block;
+    aspect-ratio: 337 / 276;
+    padding: 0;
+    background: #fff;
+  }
+  .pcard .pcard__media--foto :global(.pcard__foto) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .pcard .pcard__media--foto :global(.pcard__glyph) {
+    position: absolute;
+    left: 50%;
+    top: 46%;
+    width: 84px;
+    height: 84px;
+    translate: -50% -50%;
+  }
+  /* Botón invisible sobre el sello dibujado en la imagen */
+  .pcard .pcard__media--foto :global(.pcard__sello) {
+    right: 3%;
+    bottom: 2%;
+    width: 25%;
+    height: auto;
+    aspect-ratio: 1;
   }
   /* Carrusel de inicio: imagen más alta para que etiqueta, ícono y sello no se aprieten */
   .pcard--compacta .pcard__media {

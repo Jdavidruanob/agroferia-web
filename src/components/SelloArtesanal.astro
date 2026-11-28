@@ -6,13 +6,15 @@ import sello from '../assets/marca/sello-artesanal.png';
 interface Props {
   /** Ancho visible en px. */
   size?: number;
+  /** Botón invisible para ponerlo sobre un sello que ya viene dibujado en la imagen. */
+  fantasma?: boolean;
   class?: string;
 }
-const { size = 72, class: className } = Astro.props;
+const { size = 72, fantasma = false, class: className } = Astro.props;
 ---
 
-<button type="button" class:list={['sello', className]} data-sello-abrir aria-label="Ver en grande el sello Producto Lácteo Artesanal" style={`--s:${size}px`}>
-  <Image src={sello} alt="" width={Math.min(size * 2, 400)} height={Math.min(size * 2, 400)} />
+<button type="button" class:list={['sello', { 'sello--fantasma': fantasma }, className]} data-sello-abrir aria-label="Ver en grande el sello Producto Lácteo Artesanal" style={`--s:${size}px`}>
+  {!fantasma && <Image src={sello} alt="" width={Math.min(size * 2, 400)} height={Math.min(size * 2, 400)} />}
 </button>
 
 <style>
@@ -37,6 +39,18 @@ const { size = 72, class: className } = Astro.props;
   .sello:focus-visible {
     outline: 3px solid var(--orange);
     outline-offset: 3px;
+  }
+  .sello--fantasma {
+    background: transparent;
+    box-shadow: none;
+    transform: none;
+  }
+  .sello--fantasma:hover {
+    transform: none;
+    box-shadow: 0 0 0 3px rgb(255 255 255 / 0.9), 0 8px 18px -6px rgb(17 24 39 / 0.5);
+  }
+  .sello--fantasma:focus-visible {
+    transform: none;
   }
   .sello :global(img) {
     display: block;

@@ -6,6 +6,7 @@ import ProductGlyph from '../../components/ProductGlyph.astro';
 import ProductCard from '../../components/ProductCard.astro';
 import LineaEtiqueta from '../../components/LineaEtiqueta.astro';
 import SelloArtesanal from '../../components/SelloArtesanal.astro';
+import { fotosDe, faltaEmpaque, versiones } from '../../data/fotos';
 import { esPalArranque, grupoPorKey, productos, productosDeLinea, type Producto } from '../../data/productos';
 import personajePA from '../../assets/marca/personaje-pal-arranque.png';
 import personajeTR from '../../assets/marca/personaje-tradicional.png';
@@ -21,6 +22,8 @@ interface Props {
 const { producto: p } = Astro.props;
 const pa = esPalArranque(p);
 const grupo = grupoPorKey[p.grupo];
+const fotos = fotosDe(p.slug);
+const nombresVersion = versiones[p.slug] ?? [];
 const relacionados = productosDeLinea(p.linea)
   .filter((x) => x.slug !== p.slug)
   .slice(0, 4);
@@ -73,22 +76,48 @@ const puntos = pa
         {p.ruta && <li><Icon name={p.ruta.consumo === 'Para llevar' ? 'pocket' : 'store'} size={16} /> {p.ruta.consumo}</li>}
       </ul>
     </div>
-    <div class="phero__visual">
-      <!--
-        PENDIENTE: foto del producto. Reemplazar el ícono por:
-        <img src="/productos/SLUG.jpg" alt="NOMBRE DEL PRODUCTO" />
-      -->
-      <ProductGlyph name={p.glyph} size={200} class="phero__glyph" />
-      <LineaEtiqueta linea={p.linea} alto={34} cinta class="phero__linea" loading="eager" />
-      <Image
-        class="phero__personaje"
-        src={pa ? personajePA : personajeTR}
-        alt=""
-        widths={[240, 400]}
-        sizes="150px"
-      />
-      {p.sello !== false && <SelloArtesanal size={96} class="phero__sello" />}
-    </div>
+    {
+      fotos.length > 0 ? (
+        <div class="phero__visual phero__visual--foto" data-galeria>
+          <div class="phero__marco">
+            {fotos.map((f, n) => (
+              <Image
+                class="phero__foto"
+                src={f}
+                alt={`${p.nombre}${nombresVersion[n] ? `, ${nombresVersion[n].toLowerCase()}` : ''}`}
+                widths={[480, 960]}
+                sizes="(max-width: 860px) 92vw, 520px"
+                loading="eager"
+                data-version={n}
+                hidden={n > 0}
+              />
+            ))}
+            {faltaEmpaque(p.slug) && <ProductGlyph name={p.glyph} size={150} class="phero__glyph" />}
+            {p.sello !== false && <SelloArtesanal fantasma class="phero__sello" />}
+          </div>
+          {fotos.length > 1 && (
+            <div class="phero__versiones" role="group" aria-label="Versión del producto">
+              {fotos.map((_, n) => (
+                <button type="button" data-ver={n} aria-pressed={n === 0 ? 'true' : 'false'}>
+                  {nombresVersion[n] ?? `Versión ${n + 1}`}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      ) : (
+        <div class="phero__visual">
+          <!--
+            PENDIENTE: foto del producto. Reemplazar el ícono por:
+            <img src="/productos/SLUG.jpg" alt="NOMBRE DEL PRODUCTO" />
+          -->
+          <ProductGlyph name={p.glyph} size={200} class="phero__glyph" />
+          <LineaEtiqueta linea={p.linea} alto={34} cinta class="phero__linea" loading="eager" />
+          <Image class="phero__personaje" src={pa ? personajePA : personajeTR} alt="" widths={[240, 400]} sizes="150px" />
+          {p.sello !== false && <SelloArtesanal size={96} class="phero__sello" />}
+        </div>
+      )
+    }
   </section>
 
   <!-- ============ CARACTERÍSTICAS ============ -->
@@ -115,8 +144,8 @@ const puntos = pa
   <section class:list={['container', 'ficha', pa ? 'ficha--pa' : 'ficha--tr']} aria-labelledby="n-title">
     <aside class="ficha__card">
       <p class="ficha__name">{p.nombre}</p>
-      <div class="ficha__media">
-        <ProductGlyph name={p.glyph} size={120} />
+      <div class:list={['ficha__media', { 'ficha__media--foto': fotos.length > 0 }]}>
+        {fotos.length > 0 ? <Image src={fotos[0]} alt="" widths={[340, 680]} sizes="300px" /> : <ProductGlyph name={p.glyph} size={120} />}
       </div>
       <dl class="ficha__meta">
         <div><dt>Presentación</dt><dd>{p.presentacion}</dd></div>
@@ -376,11 +405,80 @@ const puntos = pa
     right: 18px;
     bottom: 18px;
   }
+  /* Imagen compuesta: ocupa todo el panel; etiqueta, personaje y sello vienen dibujados en ella */
+  .phero__visual--foto {
+    align-self: center;
+    place-items: stretch;
+    margin: 20px 20px 20px 0;
+    padding: 0;
+    overflow: hidden;
+  }
+  .phero__marco {
+    position: relative;
+    aspect-ratio: 337 / 276;
+  }
+  .phero__visual--foto :global(.phero__foto) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .phero__visual--foto :global(.phero__glyph) {
+    position: absolute;
+    left: 50%;
+    top: 46%;
+    width: 26%;
+    height: auto;
+    translate: -50% -50%;
+  }
+  .phero__visual--foto :global(.phero__sello) {
+    position: absolute;
+    right: 3%;
+    bottom: 2%;
+    width: 25%;
+    height: auto;
+    aspect-ratio: 1;
+  }
+  .phero__versiones {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px;
+    background: #fff;
+  }
+  .phero__versiones button {
+    padding: 8px 16px;
+    border: 1.5px solid var(--c);
+    border-radius: 999px;
+    background: #fff;
+    color: var(--c);
+    font: 700 0.9rem/1 var(--font-body);
+    cursor: pointer;
+  }
+  .phero--tr .phero__versiones button {
+    color: var(--on-orange);
+  }
+  .phero__versiones button[aria-pressed='true'] {
+    background: var(--c);
+    color: #fff;
+  }
+  .phero--tr .phero__versiones button[aria-pressed='true'] {
+    color: var(--on-orange);
+  }
+  @media (max-width: 860px) {
+    .phero__visual--foto {
+      order: -1;
+      margin: 12px 12px 0;
+    }
+  }
+
   @media (max-width: 860px) {
     .phero {
       grid-template-columns: 1fr;
     }
-    .phero__visual {
+    .phero__visual:not(.phero__visual--foto) {
       order: -1;
       aspect-ratio: 16 / 10.5;
       margin: 12px 12px 0;
@@ -482,6 +580,16 @@ const puntos = pa
     border-radius: 14px;
     background: var(--panel);
     color: var(--c);
+  }
+  .ficha__media--foto {
+    aspect-ratio: 337 / 276;
+    overflow: hidden;
+    background: #fff;
+  }
+  .ficha__media--foto :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
   .ficha__meta {
     display: grid;
@@ -806,3 +914,17 @@ const puntos = pa
     list-style: none;
   }
 </style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-galeria]').forEach((g) => {
+    const fotos = [...g.querySelectorAll<HTMLElement>('[data-version]')];
+    const botones = [...g.querySelectorAll<HTMLButtonElement>('[data-ver]')];
+    botones.forEach((b) =>
+      b.addEventListener('click', () => {
+        const n = Number(b.dataset.ver);
+        fotos.forEach((f, i) => (f.hidden = i !== n));
+        botones.forEach((x, i) => x.setAttribute('aria-pressed', String(i === n)));
+      }),
+    );
+  });
+</script>
