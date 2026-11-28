@@ -6,12 +6,12 @@ import type { ImageMetadata } from 'astro';
  * Una segunda versión del producto (p. ej. el snack con bocadillo) va en <slug>-2.jpg.
  *
  * Para cambiar una foto: volver a componerla con el fondo de la diseñadora y reemplazar el archivo.
- * PENDIENTE: foto del quesillo (por ahora muestra solo el fondo con el ícono provisional).
+ * Todos los productos tienen foto de empaque.
  */
 const archivos = import.meta.glob<ImageMetadata>('../assets/productos/tarjetas/*.jpg', { eager: true, import: 'default' });
 
 /** Productos cuya imagen aún no incluye el empaque. */
-const sinEmpaque = new Set(['quesillo']);
+const sinEmpaque = new Set<string>();
 
 export function fotosDe(slug: string): ImageMetadata[] {
   return Object.entries(archivos)
